@@ -12,7 +12,6 @@ apply plugin: 'base'
 apply plugin: "com.github.node-gradle.node"
 
 node {
-    // Set the work directory where node_modules should be located
     nodeModulesDir = file("${rootProject.projectDir}/main/src/main/js/launch")
 }
 
