@@ -1,0 +1,36 @@
+.MuiSnackbar-root .MuiAlert-standardError {
+    background-color: var(--theme-danger);
+    color: white;
+}
+
+.MuiSnackbar-root .MuiAlert-standardError .MuiAlert-message {
+    display: flex;
+    align-items: center;
+}
+
+.MuiSnackbar-root.error-view.MuiSnackbar-anchorOriginTopCenter {
+    top: 24px;
+    left: 50%;
+    right: auto;
+    width: 70%;
+    transform: translateX(-50%);
+}
+
+.MuiSnackbar-root.error-view .MuiAlert-standardError .MuiAlert-icon {
+    color: white;
+}
+
+.MuiSnackbar-root .MuiAlert-standardError {
+    width: 100%;
+}
+
+/* Media */
+@media screen and (max-width: 768px) {
+    .MuiSnackbar-root.error-view.MuiSnackbar-anchorOriginTopCenter {
+        left: 0;
+        top: 0;
+        right: 0;
+        width: 100%;
+        transform: translateX(0);
+    }
+}

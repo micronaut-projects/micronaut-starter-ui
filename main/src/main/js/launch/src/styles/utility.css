@@ -1,0 +1,22 @@
+.d-flex {
+    display: flex;
+}
+.flex-row {
+    flex-direction: row;
+}
+.flex-col {
+    flex-direction: column;
+}
+.flex {
+    flex: 1;
+}
+
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    z-index: 1001;
+}
+
+.clickable {
+    cursor: pointer;
+}

@@ -1,0 +1,38 @@
+.mn-footer-container {
+    flex: 1;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+
+    display: flex;
+    z-index: 1001;
+    padding-bottom: 1em;
+    padding-right: 12px;
+    padding-left: 12px;
+}
+
+.mn-footer-container .google-logo {
+    padding: 10px;
+}
+
+.mn-footer-container .google-logo,
+.mn-footer-container .oci-logo {
+    height: 80px;
+    height: calc(100vw / 9);
+    min-height: 50px;
+    max-height: 120px;
+    width: auto;
+}
+
+@media only screen and (max-width: 350px) {
+    .mn-footer-container {
+        padding-right: 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .mn-footer-container .google-logo {
+        padding: 5px;
+    }
+}
