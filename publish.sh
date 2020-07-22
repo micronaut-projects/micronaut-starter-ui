@@ -31,7 +31,7 @@ fi
 
 git clone https://${GH_TOKEN}@github.com/${GITHUB_SLUG}.git -b gh-pages gh-pages --single-branch > /dev/null
 cd gh-pages/launch
-cp -r ../../build/* .
+cp -r ../../build/launch/* .
 if git diff --quiet; then
   echo "No changes in Micronaut Launch Website"
 else
