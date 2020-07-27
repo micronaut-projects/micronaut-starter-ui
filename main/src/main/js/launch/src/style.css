@@ -226,14 +226,12 @@ body.dark .dropdown-content li > span:hover {
 }
 
 body.light svg.mn-logo path,
-body.light svg.oci-logo path,
-body.light svg.google-logo path {
+body.light svg.oci-logo path {
   fill: var(--theme-dark);
 }
 
 body.dark svg.mn-logo path,
-body.dark svg.oci-logo path,
-body.dark svg.google-logo path {
+body.dark svg.oci-logo path {
   fill: var(--theme-light);
 }
 
