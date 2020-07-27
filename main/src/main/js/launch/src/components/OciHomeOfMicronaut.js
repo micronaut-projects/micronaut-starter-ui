@@ -4,7 +4,7 @@ import React from "react";
 const OciHomeOfMicronaut = ({ theme }) => {
     return (
         <a
-            alt="OCI home to micronaut"
+            title="Discover OCI solutions with Micronaut"
             href="https://objectcomputing.com/products/micronaut"
         >
             <svg
@@ -14,7 +14,7 @@ const OciHomeOfMicronaut = ({ theme }) => {
                 height="90.77"
                 viewBox="0 0 233.92 90.77"
             >
-                <title>OCI_HTM_V1_ColoredWhite</title>
+                <title>OCI Home to Micronaut</title>
                 <path
                     d="M64,100.8a1.07,1.07,0,0,1-1.46,1L15.87,88.25a2.13,2.13,0,0,1-1.46-1.9V37a1.06,1.06,0,0,1,1.46-1L62.5,49.5A2.13,2.13,0,0,1,64,51.4v49.4ZM48.77,60.93A2.16,2.16,0,0,0,47.31,59L29.37,53.5a1,1,0,0,0-1.45,1V75.75a2.16,2.16,0,0,0,1.45,1.92l17.94,5.51a1,1,0,0,0,1.46-1V60.93Z"
                     transform="translate(-14.41 -11.14)"
