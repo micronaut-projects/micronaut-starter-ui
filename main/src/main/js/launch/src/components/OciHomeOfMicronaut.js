@@ -4,7 +4,7 @@ import React from "react";
 const OciHomeOfMicronaut = ({ theme }) => {
     return (
         <a
-            alt="OCI home to micronaut"
+            title="Discover OCI solutions with Micronaut"
             href="https://objectcomputing.com/products/micronaut"
         >
             <svg
