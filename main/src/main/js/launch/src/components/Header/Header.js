@@ -1,12 +1,12 @@
 // Header.js
 import React, { useState, useEffect } from "react";
+import { Button } from "react-materialize";
+import Icon from "react-materialize/lib/Icon";
 import GitHub from "../GitHubLink";
 import Twitter from "../TwitterLink";
 import InfoButton from "../InfoButton";
-import { Button } from "react-materialize";
-import Icon from "react-materialize/lib/Icon";
 
-import MicronautLaunchLogo from "../MicronautLaunchLogo";
+import {ReactComponent as MicronautLaunchLogo} from '../../images/micronaut-launch.svg';
 
 const Header = ({ info, theme, onToggleTheme, onShowInfo }) => {
     const [active, setActive] = useState(false);
@@ -28,7 +28,7 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo }) => {
         <div className="mn-header d-flex">
             <div className="logo-wrapper">
                 <a href="https://micronaut.io">
-                    <MicronautLaunchLogo />
+                    <MicronautLaunchLogo className="mn-logo micronaut-launch-logo"/>
                 </a>
             </div>
             <span className={`icon-wrapper ${active && "active"}`}>
