@@ -20,7 +20,7 @@ export const BUILD_OPTS = [
 export const TEST_OPTS = [
     { value: "junit", label: "JUnit" },
     { value: "spock", label: "Spock" },
-    { value: "kotlintest", label: "Kotlintest" },
+    { value: "kotest", label: "KoTest" },
 ];
 
 export const JAVA_OPTS = JAVA_VERSIONS.map((v) => ({
