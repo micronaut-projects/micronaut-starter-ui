@@ -4,7 +4,7 @@ export const API_URL =
 export const SNAPSHOT_API_URL =
     process.env.REACT_APP_SNAPSHOT_API_URL || "https://snapshot.micronaut.io";
 
-export const JAVA_VERSIONS = [8, 9, 10, 11, 12, 13, 14];
+export const JAVA_VERSIONS = [8, 9, 10, 11, 12, 13, 14, 15];
 
 export const LANG_OPTS = [
     { label: "Java", value: "java" },
