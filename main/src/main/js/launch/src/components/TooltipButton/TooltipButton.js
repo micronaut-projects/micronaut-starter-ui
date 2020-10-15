@@ -30,4 +30,14 @@ const TooltipButton = ({ tooltip, children, ...props }) => {
     );
 };
 
+export const TooltipWrapper = ({ tooltip, children }) => {
+    return (
+        <MuiThemeProvider theme={theme}>
+            <Tooltip enterDelay={600} enterNextDelay={350} enterTouchDelay={300} title={tooltip} arrow placement="top">
+                {children}
+            </Tooltip>
+        </MuiThemeProvider>
+    );
+};
+
 export default TooltipButton;

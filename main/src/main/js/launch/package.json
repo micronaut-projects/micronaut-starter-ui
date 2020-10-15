@@ -16,9 +16,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-local" : "export export REACT_APP_API_URL=http://localhost:8080; export REACT_APP_SNAPSHOT_API_URL=http://localhost:8080;export CORS_ALLOWED_ORIGIN=http://localhost:3000; npm run start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+
   },
   "eslintConfig": {
     "extends": "react-app"

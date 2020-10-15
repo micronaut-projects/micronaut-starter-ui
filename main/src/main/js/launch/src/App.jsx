@@ -1,8 +1,13 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import { ProgressBar } from "react-materialize";
 import Col from "react-materialize/lib/Col";
 import Icon from "react-materialize/lib/Icon";
 import Row from "react-materialize/lib/Row";
+import Dropdown from "react-materialize/lib/Dropdown";
+import Divider from "react-materialize/lib/Divider";
+import Button from "react-materialize/lib/Button";
+import GitHubIcon from "@material-ui/icons/GitHub";
+
 import {
   FeatureSelectorModal,
   FeatureSelectedList,
@@ -11,8 +16,8 @@ import CodePreview from "./components/CodePreview";
 import Diff from "./components/Diff";
 import Header from "./components/Header";
 import StarterForm from "./components/StarterForm";
-import ErrorView from "./components/ErrorView";
-import TooltipButton from "./components/TooltipButton";
+import ErrorView, {ErrorViewData} from "./components/ErrorView";
+import {TooltipWrapper} from "./components/TooltipButton";
 import Footer from "./components/Footer";
 
 import {
@@ -26,6 +31,7 @@ import {
 import messages from "./constants/messages.json";
 
 import useAppTheme from "./hooks/useAppTheme";
+import useLocalStorage from './hooks/useLocalStorage'
 
 import {
   downloadBlob,
@@ -33,15 +39,17 @@ import {
   responseHandler,
   debounceResponse,
 } from "./utility";
-import Cache from "./helpers/Cache";
+
 
 import "./style.css";
 import "./styles/button-row.css";
 import "./styles/modal-overrides.css";
 import "./styles/utility.css";
 
-export default function App() {
-  const initialForm = {
+import Cache from "./helpers/Cache";
+import { parseQuery } from './helpers/url'
+
+const initialForm = {
     name: "demo",
     package: "com.example",
     type: "DEFAULT",
@@ -52,38 +60,85 @@ export default function App() {
     micronautVersion: false,
   };
 
-  const emptyVersions = [];
-  const [form, setForm] = useState(initialForm);
+const emptyVersions = [];
+export default function App() {
+
+
+  const [form, setForm] = useLocalStorage("LATEST_FORM_DATA", initialForm);
 
   const [availableVersions, setAvailableVersions] = useState(emptyVersions);
-  const [types, setTypes] = useState([{ name: "DEFAULT", title: "" }]);
+  const [types, setTypes] = useState([{ name: form.type, title: "" }]);
   const [featuresAvailable, setFeaturesAvailable] = useState([]);
   const [featuresSelected, setFeaturesSelected] = useState({});
   const [initializationAttempted, setInitializationAttempted] = useState(false);
 
   const [loadingFeatures, setLoadingFeatures] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [preview, setPreview] = useState({});
   const [diff, setDiff] = useState(null);
+
+  // Error Handling
+  const [error, setError] = useState(ErrorViewData.ofSuccess(""))
+  const hasError = Boolean(error.message);
+  const handleResponseError = async (response) => {
+        if (response instanceof Error) {
+          return setError(new ErrorViewData(response));
+        }
+        const payload = ErrorViewData.ofError("something went wrong.")
+        if (!response.json instanceof Function) {
+          return setError(payload);
+        }
+        try {
+          const json = await response.json();
+          const message = json.message || payload.message
+          setError(ErrorViewData.ofError(message));
+        } catch (e) {
+          setError(payload);
+        }
+      }
 
   const [theme, toggleTheme] = useAppTheme();
   const previewButton = useRef();
   const diffButton = useRef();
 
+
   const disabled =
     !initializationAttempted || downloading || loadingFeatures || !form.name || !form.package;
-  const hasError = Boolean(errorMessage);
-  const appType = form.type;
 
+  const appType = form.type;
   // creates a watchable primitive to include in the useEffect deps
   const { micronautVersion } = form;
 
-  const getApiUrl = (versions, desiredVersion) => {
-    return versions.find((v) => {
-      return desiredVersion === v.value;
-    }).api;
-  };
+  const loadInfo = useMemo(()=> {
+      const [baseUrl, query] = window.location.toString().split("?", 2)
+      const info = parseQuery(query || "")
+      console.log({baseUrl, query, info})
+      window.history.replaceState({}, document.title, baseUrl );
+      return info
+  }, [])
+
+  const apiUrl = useMemo(()=>{
+      const version =  availableVersions.find((v) => {
+        return micronautVersion === v.value;
+      });
+      return version ? version.api : null
+  }, [micronautVersion, availableVersions])
+
+
+
+  useEffect(()=> {
+    const { error, cloneUrl} = loadInfo
+    setTimeout(()=>{
+      console.log({error, cloneUrl})
+      if(error) {
+        setError(ErrorViewData.ofError(error))
+      }
+      else if(cloneUrl) {
+        setError(ErrorViewData.ofSuccess(`Successfully Created Repo ${cloneUrl}`))
+      }
+    }, 2000)
+  }, [loadInfo])
+
 
   useEffect(() => {
     const retrieveVersion = async (baseUrl) => {
@@ -106,10 +161,14 @@ export default function App() {
       try {
         const versions = await Promise.all([retrieveVersion(API_URL), retrieveVersion(SNAPSHOT_API_URL)]);
         setAvailableVersions(versions ? versions : emptyVersions);
-        const defaultVer = versions && versions.length > 0 ? versions[0].value : false;
-        setForm({
-          ...initialForm,
-          micronautVersion: defaultVer
+
+        setForm((form)=>{
+          const micronautVersion = Array.isArray(versions) && versions.length > 0 ?
+          (versions.find((v)=>v.value === form.micronautVersion) || versions[0]).value : false;
+          return {
+            ...form,
+            micronautVersion,
+          }
         });
       } catch (error) {
         await handleResponseError(error);
@@ -127,13 +186,13 @@ export default function App() {
       initializeForm();
     }
 
-  }, [initialForm, emptyVersions, initializationAttempted, downloading]);
+  }, [initializationAttempted, downloading, setForm]);
 
   useEffect(() => {
     const load = async () => {
       setDownloading(true);
       try {
-        const url = `${getApiUrl(availableVersions, micronautVersion)}/application-types`;
+        const url = `${apiUrl}/application-types`;
         const data = await Cache.cache(url, () =>
           fetch(url).then(responseHandler("json"))
         );
@@ -147,34 +206,32 @@ export default function App() {
         setDownloading(false);
       }
     };
-    if (initializationAttempted && micronautVersion) {
+
+    if (initializationAttempted && apiUrl) {
       load();
     }
-  }, [micronautVersion, availableVersions, initializationAttempted]);
+  }, [apiUrl, initializationAttempted]);
 
   useEffect(() => {
     const loadFeatures = async () => {
       setLoadingFeatures(true);
-      setErrorMessage("");
+      setError(ErrorViewData.ofNone());
       try {
-        const url = `${getApiUrl(
-          availableVersions,
-          micronautVersion
-        )}/application-types/${appType}/features`;
+        const url = `${apiUrl}/application-types/${appType}/features`;
         const data = await Cache.cache(url, () =>
           fetch(url).then(responseHandler("json"))
         );
         setFeaturesAvailable(data.features);
       } catch (error) {
-        setErrorMessage(error.messages);
+        await handleResponseError(error);
       } finally {
         setLoadingFeatures(false);
       }
     };
-    if (initializationAttempted && micronautVersion) {
+    if (initializationAttempted && apiUrl) {
       loadFeatures();
     }
-  }, [appType, micronautVersion, availableVersions, initializationAttempted]);
+  }, [appType, apiUrl, initializationAttempted]);
 
   const buildFeaturesQuery = () => {
     return Object.keys(featuresSelected)
@@ -188,11 +245,10 @@ export default function App() {
   const buildFetchUrl = (prefix, form) => {
     if (!prefix) {
       console.error(
-        "A prefix is required, should be one of 'diff', 'preview' or 'create'"
+        "A prefix is required, should be one of 'diff', 'preview', 'github', 'create'"
       );
     }
     const {
-      micronautVersion,
       type,
       name,
       lang,
@@ -203,7 +259,7 @@ export default function App() {
     } = form;
     const features = buildFeaturesQuery();
     const fqpkg = `${pkg}.${name}`;
-    const base = `${getApiUrl(availableVersions, micronautVersion)}/${prefix}/${type}/${fqpkg}`;
+    const base = `${apiUrl}/${prefix}/${type}/${fqpkg}`;
     const query = [
       `lang=${lang}`,
       `build=${build}`,
@@ -216,23 +272,7 @@ export default function App() {
     return encodeURI(`${base}?${query.join("&")}`);
   };
 
-  const handleResponseError = async (response) => {
-    if (response instanceof Error) {
-      return setErrorMessage(response.message);
-    }
 
-    let defaultError = "something went wrong.";
-    if (!response.json instanceof Function) {
-      setErrorMessage(defaultError);
-      return;
-    }
-    try {
-      const json = await response.json();
-      setErrorMessage(json.message || defaultError);
-    } catch (e) {
-      setErrorMessage(defaultError);
-    }
-  };
 
   const addFeature = (feature) => {
     setFeaturesSelected(({ ...draft }) => {
@@ -265,10 +305,17 @@ export default function App() {
     if (event && event.preventDefault instanceof Function) {
       event.preventDefault();
     }
-    setErrorMessage("");
+    setError(ErrorViewData.ofNone());
     setDownloading(true);
   };
 
+ // GitHub Clone Feat
+  const cloneProject = async (e) => {
+    setDownloading(true)
+  }
+  const gitHubCreateHref = (apiUrl) ? buildFetchUrl("github", form) : "#"
+
+  // Create Feat
   const generateProject = async (e) => {
     requestPrep(e);
     const url = buildFetchUrl("create", form);
@@ -287,6 +334,7 @@ export default function App() {
     }
   };
 
+  // Preview Feat
   const loadPreview = async (e) => {
     requestPrep(e);
     try {
@@ -306,7 +354,12 @@ export default function App() {
       setDownloading(false);
     }
   };
+  const clearPreview = () => {
+    setPreview({});
+  };
 
+
+  // Diff Feat
   const loadDiff = async (e) => {
     requestPrep(e);
     try {
@@ -332,10 +385,6 @@ export default function App() {
 
   const clearDiff = () => {
     setDiff(null);
-  };
-
-  const clearPreview = () => {
-    setPreview({});
   };
 
   return (
@@ -391,18 +440,66 @@ export default function App() {
                   />
                 </Col>
                 <Col s={3} className="xs6">
-                  <TooltipButton
+          <Dropdown
+            id="build_now_dropdown"
+            trigger={
+              <Button
+                options={{
+                  alignment: 'left',
+                  autoTrigger: true,
+                  closeOnClick: true,
+                  constrainWidth: true,
+                  container: null,
+                  coverTrigger: true,
+                  hover: false,
+                  inDuration: 150,
+                  onCloseEnd: null,
+                  onCloseStart: null,
+                  onOpenEnd: null,
+                  onOpenStart: null,
+                  outDuration: 250
+                }}
+                disabled={disabled}
+                style={{width: "100%"}}
+                className={theme}
+                node="button"
+              >
+              <Icon className="action-button-icon" left>build</Icon>
+              Generate project
+              </Button>
+            }
+          >
+            <TooltipWrapper tooltip={messages.tooltips.createRepo}>
+                 <a
+                    href={gitHubCreateHref}
+                    disabled={disabled}
+                    waves="light"
+                    className={theme}
+                    style={{alignItems: "center", display: "flex"}}
+                    onClick={cloneProject}
+                  >
+                    <GitHubIcon style={{marginLeft: "4px", marginRight: "28px"}} fontSize="small" className="action-button-icon">clone_app</GitHubIcon>
+                    Clone to Github
+                  </a>
+            </TooltipWrapper>
+            <Divider />
+            <TooltipWrapper tooltip={messages.tooltips.generate}>
+                 <a
+                    role='button'
+                    href="/create"
                     tooltip={messages.tooltips.generate}
                     disabled={disabled}
                     waves="light"
                     className={theme}
-                    style={{ marginRight: "5px", width: "100%" }}
+                    onClick={generateProject}
                   >
                     <Icon className="action-button-icon" left>
                       get_app
                     </Icon>
-                    Generate project
-                  </TooltipButton>
+                    Download Zip
+                  </a>
+                  </TooltipWrapper>
+          </Dropdown>
                 </Col>
               </Row>
             </form>
@@ -421,9 +518,10 @@ export default function App() {
       </div>
       <Footer />
       <ErrorView
-        error={hasError}
-        errorMessage={errorMessage}
-        onClose={() => setErrorMessage("")}
+        hasError={hasError}
+        severity={error.severity}
+        message={error.message}
+        onClose={() => setError({message: "", "severity": ""})}
       />
     </Fragment>
   );

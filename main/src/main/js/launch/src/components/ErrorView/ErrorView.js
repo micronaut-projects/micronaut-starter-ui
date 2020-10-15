@@ -5,8 +5,8 @@ import Avatar from "@material-ui/core/Avatar";
 
 import Alert from "@material-ui/lab/Alert";
 import logo from "../../images/micronaut-white-icon.png";
-const ErrorView = ({ error, errorMessage, onClose }) => {
-    const open = Boolean(errorMessage && error);
+const ErrorView = ({ hasError, message, severity, onClose }) => {
+    const open = Boolean(message && hasError);
 
     return (
         <Snackbar
@@ -18,9 +18,10 @@ const ErrorView = ({ error, errorMessage, onClose }) => {
             <Alert
                 icon={<Avatar src={logo}>N</Avatar>}
                 onClose={onClose}
-                severity="error"
+                severity={severity}
+                variant="filled"
             >
-                {errorMessage}
+                {message}
             </Alert>
         </Snackbar>
     );
@@ -29,5 +30,5 @@ const ErrorView = ({ error, errorMessage, onClose }) => {
 export default React.memo(
     ErrorView,
     (next, prev) =>
-        next.errorMessage === prev.errorMessage && next.error === prev.error
+        next.message === prev.message && next.hasError === prev.hasError
 );

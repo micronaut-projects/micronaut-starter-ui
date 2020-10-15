@@ -1,7 +1,8 @@
-.MuiSnackbar-root .MuiAlert-standardError {
+.MuiSnackbar-root .MuiAlert-filledError {
     background-color: var(--theme-danger);
     color: white;
 }
+
 
 .MuiSnackbar-root .MuiAlert-standardError .MuiAlert-message {
     display: flex;
@@ -20,7 +21,7 @@
     color: white;
 }
 
-.MuiSnackbar-root .MuiAlert-standardError {
+.MuiPaper-root.MuiAlert-root {
     width: 100%;
 }
 
