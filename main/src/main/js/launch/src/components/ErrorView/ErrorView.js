@@ -5,7 +5,7 @@ import Avatar from "@material-ui/core/Avatar";
 
 import Alert from "@material-ui/lab/Alert";
 import logo from "../../images/micronaut-white-icon.png";
-const ErrorView = ({ hasError, message, severity, onClose }) => {
+const ErrorView = ({ hasError, message, severity, link, onClose }) => {
     const open = Boolean(message && hasError);
 
     return (
@@ -21,7 +21,7 @@ const ErrorView = ({ hasError, message, severity, onClose }) => {
                 severity={severity}
                 variant="filled"
             >
-                {message}
+                {message} {link && <a class='error-link' href={link} target="_blank">{link}</a>}
             </Alert>
         </Snackbar>
     );

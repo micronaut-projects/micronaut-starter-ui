@@ -3,6 +3,9 @@
     color: white;
 }
 
+.MuiAlert-message {
+    font-size: 1.1em;
+}
 
 .MuiSnackbar-root .MuiAlert-standardError .MuiAlert-message {
     display: flex;

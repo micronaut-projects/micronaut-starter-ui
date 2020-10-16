@@ -1,5 +1,5 @@
 export const parseQuery = (query) => {
-    if(typeof query === "string" || !query.includes("=")) {
+    if(typeof query !== "string" || !query.includes("=")) {
         return {}
     }
 

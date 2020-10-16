@@ -81,6 +81,12 @@ body {
   color: var(--label-grey) !important;
 }
 
+.error-link {
+  color: white !important;
+  text-decoration: underline;
+  font-weight: bolder;
+}
+
 label.MuiFormLabel-root,
 .input-field > label {
   color: var(--label-grey);

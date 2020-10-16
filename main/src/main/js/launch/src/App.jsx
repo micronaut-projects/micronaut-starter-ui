@@ -109,14 +109,6 @@ export default function App() {
   // creates a watchable primitive to include in the useEffect deps
   const { micronautVersion } = form;
 
-  const loadInfo = useMemo(()=> {
-      const [baseUrl, query] = window.location.toString().split("?", 2)
-      const info = parseQuery(query || "")
-      console.log({baseUrl, query, info})
-      window.history.replaceState({}, document.title, baseUrl );
-      return info
-  }, [])
-
   const apiUrl = useMemo(()=>{
       const version =  availableVersions.find((v) => {
         return micronautVersion === v.value;
@@ -127,17 +119,21 @@ export default function App() {
 
 
   useEffect(()=> {
-    const { error, cloneUrl} = loadInfo
+    const [baseUrl, query] = window.location.toString().split("?", 2)
+    const { error, htmlUrl } = parseQuery(query)
+    if(!error && !htmlUrl) {
+      return // nothing more to do
+    }
+    window.history.replaceState({}, document.title, baseUrl );
     setTimeout(()=>{
-      console.log({error, cloneUrl})
       if(error) {
-        setError(ErrorViewData.ofError(error))
+        setError(ErrorViewData.ofError(error.replaceAll("+", " ")))
       }
-      else if(cloneUrl) {
-        setError(ErrorViewData.ofSuccess(`Successfully Created Repo ${cloneUrl}`))
+      else if(htmlUrl) {
+        setError(ErrorViewData.ofSuccess(`Successfully created repo`, htmlUrl))
       }
-    }, 2000)
-  }, [loadInfo])
+    }, 700)
+  }, [])
 
 
   useEffect(() => {
@@ -521,7 +517,8 @@ export default function App() {
         hasError={hasError}
         severity={error.severity}
         message={error.message}
-        onClose={() => setError({message: "", "severity": ""})}
+        link={error.link}
+        onClose={() => setError(ErrorViewData.ofNone())}
       />
     </Fragment>
   );
