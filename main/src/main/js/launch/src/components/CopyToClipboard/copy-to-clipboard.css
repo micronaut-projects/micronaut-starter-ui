@@ -1,0 +1,19 @@
+.copy-to-clipboard {
+    position: relative;
+    display: flex;
+}
+
+.copy-to-clipboard .copied {
+    position: absolute;
+    left: -5em;
+    background: black;
+    color: white;
+    padding: 2px 4px;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity .5s ease;
+}
+
+.copy-to-clipboard .copied.active {
+    opacity: 1;
+}

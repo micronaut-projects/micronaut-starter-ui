@@ -1,6 +1,7 @@
 .d-flex {
     display: flex;
 }
+
 .flex-row {
     flex-direction: row;
 }
@@ -11,6 +12,13 @@
     flex: 1;
 }
 
+.flex-grow {
+    flex-grow: 1;
+}
+.flex-shrink {
+    flex-shrink: 1;
+}
+
 .sticky {
     position: -webkit-sticky;
     position: sticky;
@@ -19,4 +27,12 @@
 
 .clickable {
     cursor: pointer;
+}
+
+.jcc {
+    justify-content: center;
+}
+
+.aic {
+    align-items: center;
 }

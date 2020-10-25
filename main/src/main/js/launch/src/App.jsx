@@ -14,9 +14,10 @@ import {
 } from "./components/FeatureSelector";
 import CodePreview from "./components/CodePreview";
 import Diff from "./components/Diff";
-import Header from "./components/Header";
-import StarterForm from "./components/StarterForm";
 import ErrorView, {ErrorViewData} from "./components/ErrorView";
+import Header from "./components/Header";
+import NextSteps from './components/NextSteps'
+import StarterForm from "./components/StarterForm";
 import {TooltipWrapper} from "./components/TooltipButton";
 import Footer from "./components/Footer";
 
@@ -77,6 +78,8 @@ export default function App() {
   const [preview, setPreview] = useState({});
   const [diff, setDiff] = useState(null);
 
+  const [nextStepsInfo, setNextStepsInfo] = useState({});
+
   // Error Handling
   const [error, setError] = useState(ErrorViewData.ofSuccess(""))
   const hasError = Boolean(error.message);
@@ -117,22 +120,20 @@ export default function App() {
   }, [micronautVersion, availableVersions])
 
 
-
   useEffect(()=> {
     const [baseUrl, query] = window.location.toString().split("?", 2)
-    const { error, htmlUrl } = parseQuery(query)
+    const { error, htmlUrl, cloneUrl } = parseQuery(query)
     if(!error && !htmlUrl) {
       return // nothing more to do
     }
     window.history.replaceState({}, document.title, baseUrl );
     setTimeout(()=>{
-      if(error) {
-        setError(ErrorViewData.ofError(error.replaceAll("+", " ")))
+      if(cloneUrl) {
+        setNextStepsInfo({cloneUrl, htmlUrl, show: true, type: 'clone'})
+      } else if (error) {
+          setError(ErrorViewData.ofError(error.replaceAll("+", " ")))
       }
-      else if(htmlUrl) {
-        setError(ErrorViewData.ofSuccess(`Successfully created repo`, htmlUrl))
-      }
-    }, 700)
+    }, 500)
   }, [])
 
 
@@ -323,6 +324,7 @@ export default function App() {
         .then(responseHandler("blob"));
 
       downloadBlob(blob, `${form.name}.zip`);
+      setNextStepsInfo({show: true, type: 'zip'})
     } catch (error) {
       await handleResponseError(error);
     } finally {
@@ -383,6 +385,16 @@ export default function App() {
     setDiff(null);
   };
 
+  const onStartOver = () => {
+      const replace = {name: initialForm.name, package: initialForm.package}
+      setForm(form=>({...form, ...replace}))
+      setNextStepsInfo({})
+  };
+
+  const onCloseNextSteps = () => {
+      setNextStepsInfo({})
+  };
+
   return (
     <Fragment>
       <div id="mn-main-container" className="mn-main-container sticky">
@@ -436,66 +448,67 @@ export default function App() {
                   />
                 </Col>
                 <Col s={3} className="xs6">
-          <Dropdown
-            id="build_now_dropdown"
-            trigger={
-              <Button
-                options={{
-                  alignment: 'left',
-                  autoTrigger: true,
-                  closeOnClick: true,
-                  constrainWidth: true,
-                  container: null,
-                  coverTrigger: true,
-                  hover: false,
-                  inDuration: 150,
-                  onCloseEnd: null,
-                  onCloseStart: null,
-                  onOpenEnd: null,
-                  onOpenStart: null,
-                  outDuration: 250
-                }}
-                disabled={disabled}
-                style={{width: "100%"}}
-                className={theme}
-                node="button"
-              >
-              <Icon className="action-button-icon" left>build</Icon>
-              Generate project
-              </Button>
-            }
-          >
-            <TooltipWrapper tooltip={messages.tooltips.createRepo}>
-                 <a
-                    href={gitHubCreateHref}
-                    disabled={disabled}
-                    waves="light"
-                    className={theme}
-                    style={{alignItems: "center", display: "flex"}}
-                    onClick={cloneProject}
+                  <Dropdown
+                    id="build_now_dropdown"
+                    trigger={
+                      <Button
+                        options={{
+                          alignment: 'left',
+                          autoTrigger: true,
+                          closeOnClick: true,
+                          constrainWidth: true,
+                          container: null,
+                          coverTrigger: true,
+                          hover: false,
+                          inDuration: 150,
+                          onCloseEnd: null,
+                          onCloseStart: null,
+                          onOpenEnd: null,
+                          onOpenStart: null,
+                          outDuration: 250
+                        }}
+                        disabled={disabled}
+                        style={{width: "100%"}}
+                        className={theme}
+                        node="button"
+                      >
+                      <Icon className="action-button-icon" left>build</Icon>
+                      Generate project
+                      </Button>
+                    }
                   >
-                    <GitHubIcon style={{marginLeft: "4px", marginRight: "28px"}} fontSize="small" className="action-button-icon">clone_app</GitHubIcon>
-                    Clone to Github
-                  </a>
-            </TooltipWrapper>
-            <Divider />
-            <TooltipWrapper tooltip={messages.tooltips.generate}>
-                 <a
-                    role='button'
-                    href="/create"
-                    tooltip={messages.tooltips.generate}
-                    disabled={disabled}
-                    waves="light"
-                    className={theme}
-                    onClick={generateProject}
-                  >
-                    <Icon className="action-button-icon" left>
-                      get_app
-                    </Icon>
-                    Download Zip
-                  </a>
-                  </TooltipWrapper>
-          </Dropdown>
+                    <TooltipWrapper tooltip={messages.tooltips.createRepo}>
+                         <a
+                            href={gitHubCreateHref}
+                            disabled={disabled}
+                            waves="light"
+                            className={theme}
+                            style={{alignItems: "center", display: "flex"}}
+                            onClick={cloneProject}
+                          >
+                            <GitHubIcon style={{marginLeft: "4px", marginRight: "28px"}} fontSize="small" className="action-button-icon">clone_app</GitHubIcon>
+                            Push to GitHub
+                          </a>
+                    </TooltipWrapper>
+                    <Divider />
+                    <TooltipWrapper tooltip={messages.tooltips.generate}>
+                         <a
+                            role='button'
+                            href="/create"
+                            tooltip={messages.tooltips.generate}
+                            disabled={disabled}
+                            waves="light"
+                            className={theme}
+                            onClick={generateProject}
+                          >
+                            <Icon className="action-button-icon" left>
+                              get_app
+                            </Icon>
+                            Download Zip
+                          </a>
+                          </TooltipWrapper>
+                  </Dropdown>
+
                 </Col>
               </Row>
             </form>
@@ -513,11 +526,20 @@ export default function App() {
         />
       </div>
       <Footer />
+      {nextStepsInfo.show && <NextSteps
+              onClose={onCloseNextSteps}
+              onStartOver={onStartOver}
+              info={nextStepsInfo}
+              theme={theme}
+              name={form.name}
+              buildTool={form.build}
+       />}
       <ErrorView
         hasError={hasError}
         severity={error.severity}
         message={error.message}
         link={error.link}
+        clipboard={error.clipboard}
         onClose={() => setError(ErrorViewData.ofNone())}
       />
     </Fragment>

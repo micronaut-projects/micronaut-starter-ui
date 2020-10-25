@@ -1,3 +1,14 @@
+.clipboard {
+    margin-top: 1em;
+    display: flex;
+    align-items: center;
+}
+
+.clipboard:hover {
+    text-decoration: underline;
+    cursor: pointer;
+
+}
 .MuiSnackbar-root .MuiAlert-filledError {
     background-color: var(--theme-danger);
     color: white;
