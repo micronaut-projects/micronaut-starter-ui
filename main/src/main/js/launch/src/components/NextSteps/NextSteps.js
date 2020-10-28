@@ -19,7 +19,7 @@ const NextSteps = ({name, buildTool, info, theme='light', onClose, onStartOver})
             case 'clone':
                 return {action: "Clone the repo", cmd: `git clone ${cloneUrl}`}
             case "zip":
-                return {action: "unzip the archive", cmd: `unzip ${name}.zip`}
+                return {action: "Unzip the archive", cmd: `unzip ${name}.zip`}
             default:
                 return null
         }
