@@ -80,7 +80,8 @@ const NextSteps = ({name, buildTool, info, theme='light', onClose, onStartOver})
             </Row>
         </div>
 
-        <p className='info'>Learn more at <a href='https://micronaut.io/documentation.html'>Mirconaut Guides</a></p>
+        <p className='info'>Once you’ve gotten your new project started, you can continue your journey by reviewing our <a href='https://micronaut.io/documentation.html'>documentation</a> and <a href='https://micronaut.io/learn.html'>learning resources</a>
+         </p>
     </Modal>
 }
 
