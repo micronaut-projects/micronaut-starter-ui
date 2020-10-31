@@ -1,3 +1,25 @@
+export const OS_LINUX = 'linux'
+export const OS_MAC = 'mac'
+export const OS_UNIX = "unix"
+export const OS_WINDOWS = "win"
+
+
+export const osOpts = [
+  {value: "linux", label: "Linux"},
+  {value: "mac", label: "macOS"},
+  {value: "unix", label: "UNIX"},
+  {value: "win", label: "Windows"},
+]
+
+export const guessOs = () => {
+  const { appVersion} = window.navigator
+  if (appVersion.indexOf("Linux") !== -1) return OS_LINUX;
+  if (appVersion.indexOf("Mac") !== -1) return OS_MAC;
+  if (appVersion.indexOf("X11") !== -1) return OS_UNIX;
+  if (appVersion.indexOf("Win") !== -1) return OS_WINDOWS;
+  return ""
+}
+
 export const capitalize = (s) => {
     if (typeof s !== "string") return "";
     return s.charAt(0).toUpperCase() + s.slice(1);
