@@ -46,7 +46,7 @@ const NextSteps = ({name, buildTool, info, theme='light', onClose, onStartOver})
         const cmd = { action: "Launch!"}
         if(buildTool === "maven") {
             const nix = `./mvnw mn:run`
-            const win = "mvnw md:run"
+            const win = "mvnw mn:run"
             cmd.cmd = {[OS_LINUX]: nix,[OS_MAC]: nix, [OS_UNIX]: nix, [OS_WINDOWS]: win}
         } else if(buildTool === 'gradle') {
             const nix = `./gradlew run`
