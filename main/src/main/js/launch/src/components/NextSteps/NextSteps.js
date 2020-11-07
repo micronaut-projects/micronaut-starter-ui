@@ -6,9 +6,7 @@ import {
     guessOs,
     osOpts,
     OS_WINDOWS,
-    OS_MAC,
-    OS_LINUX,
-    OS_UNIX,
+    OS_NIX,
 } from '../../utility';
 
 const guessedOs = guessOs()
@@ -21,37 +19,41 @@ const NextSteps = ({name, buildTool, info, theme='light', onClose, onStartOver})
     const [os, setOs] = useState(guessedOs)
 
     const unpackCommand = useMemo(()=>{
-        switch (info.type) {
+        switch (info.type.toLowerCase()) {
             case 'clone':
                 const all = `git clone ${cloneUrl}`
-                const cmd = {[OS_LINUX]: all,[OS_MAC]: all, [OS_UNIX]: all, [OS_WINDOWS]: all}
+                const cmd = {[OS_NIX]: all, [OS_WINDOWS]: all}
                 return {action: "Clone the repo", cmd}
             case "zip":
-                return {action: "Unzip the archive"}
+                const nix = `unzip  ${name}.zip -d ${name}`
+                const unzip = {[OS_NIX]: nix, }
+                return {action: "Unzip the archive", cmd: unzip}
             default:
                 return null
         }
-    }, [info.type, cloneUrl])
+    }, [info.type, cloneUrl, name])
 
     const cdCommand = useMemo(()=>{
         const win = `cd ${name}`
         const nix = `./cd ${name}`
         return {
             action: 'cd into the project',
-            cmd:{[OS_LINUX]: nix,[OS_MAC]: nix, [OS_UNIX]: nix, [OS_WINDOWS]: win}
+            cmd:{[OS_NIX]: nix, [OS_WINDOWS]: win}
         }
     }, [name])
 
     const launchCommand = useMemo(()=>{
         const cmd = { action: "Launch!"}
-        if(buildTool === "maven") {
-            const nix = `./mvnw mn:run`
-            const win = "mvnw mn:run"
-            cmd.cmd = {[OS_LINUX]: nix,[OS_MAC]: nix, [OS_UNIX]: nix, [OS_WINDOWS]: win}
-        } else if(buildTool === 'gradle') {
-            const nix = `./gradlew run`
-            const win = 'gradlew run'
-            cmd.cmd = {[OS_LINUX]: nix,[OS_MAC]: nix, [OS_UNIX]: nix, [OS_WINDOWS]: win}
+        const tool = buildTool.toLowerCase();
+        switch (tool) {
+            case "maven":
+                cmd.cmd = {[OS_NIX]: `./mvnw mn:run`, [OS_WINDOWS]: "mvnw mn:run"}
+             break
+            case 'gradle':
+            case 'gradle_kotlin':
+            default:
+                cmd.cmd = {[OS_NIX]: "./gradlew run", [OS_WINDOWS]: 'gradlew run'}
+                break
         }
         return cmd
     }, [buildTool])
@@ -94,7 +96,7 @@ const NextSteps = ({name, buildTool, info, theme='light', onClose, onStartOver})
         {unpackCommand &&
             <div className='next-steps-wrapper'>
                <h5 className='heading'>{unpackCommand.action}</h5>
-                {unpackCommand.cmd &&
+                {unpackCommand.cmd[os] &&
                     <Row className="next-steps-row">
                         <Col className='text'>{unpackCommand.cmd[os]}</Col>
                         <Col className="icon"><CopyToClipboard value={unpackCommand.cmd[os]}/></Col>

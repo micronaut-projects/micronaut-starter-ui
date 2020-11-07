@@ -1,21 +1,17 @@
-export const OS_LINUX = 'linux'
-export const OS_MAC = 'mac'
-export const OS_UNIX = "unix"
+export const OS_NIX = '*nix'
 export const OS_WINDOWS = "win"
 
 
 export const osOpts = [
-  {value: "linux", label: "Linux"},
-  {value: "mac", label: "macOS"},
-  {value: "unix", label: "UNIX"},
+  {value: "*nix", label: "Unix/Linux/macOS"},
   {value: "win", label: "Windows"},
 ]
 
 export const guessOs = () => {
   const { appVersion} = window.navigator
-  if (appVersion.indexOf("Linux") !== -1) return OS_LINUX;
-  if (appVersion.indexOf("Mac") !== -1) return OS_MAC;
-  if (appVersion.indexOf("X11") !== -1) return OS_UNIX;
+  if (appVersion.indexOf("Linux") !== -1) return OS_NIX;
+  if (appVersion.indexOf("Mac") !== -1) return OS_NIX;
+  if (appVersion.indexOf("X11") !== -1) return OS_NIX;
   if (appVersion.indexOf("Win") !== -1) return OS_WINDOWS;
   return ""
 }
@@ -43,6 +39,27 @@ export const debounceResponse = (start, atLeast = 700) => (response) => {
         }, Math.max(atLeast - diff, 0));
     });
 };
+
+export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const takeAtLeast = async (fn, atLeast = 1000) => {
+  const start = Date.now();
+  let results, error;
+
+  try {
+    results = await fn();
+  } catch (err) {
+    error = err;
+  }
+  const end = Date.now();
+  const minWait = atLeast - (end - start);
+  if (minWait > 0) {
+    await wait(minWait);
+  }
+  if (error) throw error;
+  return results;
+};
+
 
 export const makeNodeTree = (data) => {
     let nodes = {};
