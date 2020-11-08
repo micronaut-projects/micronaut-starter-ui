@@ -22,8 +22,8 @@ const RadioGroup = ({ name, label, options, id, value, onChange, expected = 3, l
                             type="radio"
                             name={name}
                             value={option.value}
-                            checked={value === option.value}
-                            onChange={loading ? null : onChange}
+                            checked={loading ? undefined : value === option.value}
+                            onChange={loading ? undefined : onChange}
                         />
                         <span className='radio-text'>{option.label}</span>
                     </label>
