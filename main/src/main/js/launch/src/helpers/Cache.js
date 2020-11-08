@@ -13,6 +13,25 @@ export class CacheStorageAdapterAbstract {
   };
 }
 
+export class SessionStorageAdapter extends CacheStorageAdapterAbstract {
+  constructor(prefix = "LocalStorageAdapter") {
+    super(prefix);
+  }
+
+  getItem(key) {
+    const data = window.sessionStorage.getItem(this.makeKey(key));
+    try {
+      if (data) {
+        return JSON.parse(data);
+      }
+    } catch (error) {}
+  }
+
+  setItem(key, data) {
+    window.sessionStorage.setItem(this.makeKey(key), JSON.stringify(data));
+  }
+}
+
 export class LocalStorageAdapter extends CacheStorageAdapterAbstract {
   constructor(prefix = "LocalStorageAdapter") {
     super(prefix);

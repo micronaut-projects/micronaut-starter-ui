@@ -1,14 +1,17 @@
 // RadioGroup.js
 import React from "react";
 
-const RadioGroup = ({ name, label, options, id, value, onChange }) => {
+const RadioGroup = ({ name, label, options, id, value, onChange, expected = 3, loading = false }) => {
+    const finalOpts  = loading ? new Array(expected).fill().map(i=>({value: "", label: "..."})) : options
+
     return (
-        <div className="radio-group">
+        <div className={["radio-group", loading ? "loading" : ""].join(' ')}>
             {typeof label === "string" && (
                 <label className="input-field">{label}</label>
             )}
-            {options.map((option, idx) => {
+            {finalOpts.map((option, idx) => {
                 return (
+                <div key={idx.toString()} className='radio-row'>
                     <label
                         key={`${idx}-${option.value}`}
                         className="radio-label"
@@ -20,10 +23,14 @@ const RadioGroup = ({ name, label, options, id, value, onChange }) => {
                             name={name}
                             value={option.value}
                             checked={value === option.value}
-                            onChange={onChange}
+                            onChange={loading ? null : onChange}
                         />
-                        <span>{option.label}</span>
+                        <span className='radio-text'>{option.label}</span>
                     </label>
+                    <div className='loading-wrapper'>
+                        <div className='loading-ghost' />
+                    </div>
+                </div>
                 );
             })}
         </div>

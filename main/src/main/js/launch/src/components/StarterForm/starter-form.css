@@ -14,23 +14,17 @@
     left: 0;
 }
 
-.mn-starter-form-main .mn-radio .radio-group {
-    padding-left: 0;
+.mn-starter-form-main .mn-radio {
     margin-bottom: 5px;
+}
+
+.mn-starter-form-main .mn-radio .radio-row {
+    position: relative;
 }
 
 .mn-starter-form-main .mn-radio label.input-field {
     display: block;
     margin-bottom: 5px;
-}
-
-[type="radio"] + span:before,
-[type="radio"] + span:after {
-    margin: 4px 0;
-}
-[type="radio"]:not(:checked) + span,
-[type="radio"]:checked + span {
-    padding-left: 2em;
 }
 
 /* Theme */

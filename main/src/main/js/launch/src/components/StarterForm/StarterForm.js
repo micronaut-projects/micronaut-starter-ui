@@ -1,5 +1,5 @@
 // StarterForm.js
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { TextInput } from "react-materialize";
 import Col from "react-materialize/lib/Col";
 import Row from "react-materialize/lib/Row";
@@ -7,19 +7,79 @@ import RadioGroup from "../RadioGroup";
 import Select from "../Select";
 
 import {
-    JAVA_OPTS,
-    LANG_OPTS,
-    BUILD_OPTS,
-    TEST_OPTS,
-} from "../../constants";
+  responseHandler,
+  takeAtLeast,
+} from "../../utility";
 
-const StarterForm = ({ handleChange, ...props }) => {
-    const applicationTypeOpts = useMemo(() => {
-        return props.types.map((t) => ({
-            value: t.name,
-            label: t.title.replace("Micronaut ", ""),
-        }));
-    }, [props.types]);
+import {CacheApi, SessionStorageAdapter} from "../../helpers/Cache";
+const Cache = new CacheApi(new SessionStorageAdapter())
+
+
+const StarterForm = ({ handleChange, onDefaults, form, versions, setMicronautApi, micronautApi, onReady, ...props }) => {
+    const [options, setOptions] = useState({});
+
+    //----------------------------------------------------------
+    // Load and Setup Options
+    //-------------------------------------------------------
+    useEffect(()=>{
+        async function load(apiUrl) {
+            const optsUrl = `${apiUrl}/select-options`;
+            const data = await Cache.cache(optsUrl, () =>
+                takeAtLeast(()=>
+                    fetch(optsUrl).then(responseHandler("json"))
+                , 700)
+            );
+            setOptions(data)
+            onReady(true)
+        }
+        if(micronautApi) {
+            load(micronautApi)
+        }
+    }, [micronautApi, onReady])
+
+
+    const APP_TYPES = options.types ? options.types.options : [{value: form.type, label: "Loading..." }]
+    const JAVA_OPTS = options.jdkVersions ? options.jdkVersions.options : [{value: form.javaVersion, label: "Loading..." }]
+    const LANG_OPTS = options.languages ? options.languages.options : []
+    const BUILD_OPTS = options.buildTools ? options.buildTools.options : []
+    const TEST_OPTS = options.testFrameworks ? options.testFrameworks.options : []
+
+    //----------------------------------------------------------
+    // Extract the Defaults
+    //-------------------------------------------------------
+    const defaults = useMemo(()=> options.types ? {
+            type: options.types.defaultOption.value,
+            javaVersion: options.jdkVersions.defaultOption.value,
+            lang: options.languages.defaultOption.value,
+            build: options.buildTools.defaultOption.value,
+            testFw: options.testFrameworks.defaultOption.value,
+    } : {}, [options])
+
+    //----------------------------------------------------------
+    // Emit changes for any non-exsiting default values
+    // on the initial form data
+    //-------------------------------------------------------
+
+    // Extract primitives for useEffect dep watching
+    const { type, javaVersion, lang, build, testFw } = form
+
+    useEffect(()=>{
+        if(!type) {
+            handleChange({target: {name:'type', value: defaults.type}})
+        }
+        if(!javaVersion) {
+            handleChange({target: {name:'javaVersion', value: defaults.javaVersion}})
+        }
+        if(!lang) {
+            handleChange({target: {name:'lang', value: defaults.lang}})
+        }
+        if(!build) {
+            handleChange({target: {name:'build', value: defaults.build}})
+        }
+        if(!testFw) {
+            handleChange({target: {name:'testFw', value: defaults.testFw}})
+        }
+    }, [ type, javaVersion, lang, build, testFw, defaults, handleChange])
 
     return (
         <Row className="mn-starter-form-main">
@@ -27,16 +87,16 @@ const StarterForm = ({ handleChange, ...props }) => {
                 <Select
                     className="mn-input"
                     label="Application Type"
-                    value={props.type}
+                    value={form.type}
                     name="type"
-                    options={applicationTypeOpts}
+                    options={APP_TYPES}
                     onChange={handleChange}
                 ></Select>
             </Col>
-            <Col s={4} m={6} l={3} className="mn-radio">
+            <Col s={4} m={6} l={3}>
                 <Select
                     label="Java Version"
-                    value={props.javaVersion.toString()}
+                    value={form.javaVersion}
                     name="javaVersion"
                     onChange={handleChange}
                     options={JAVA_OPTS}
@@ -49,7 +109,7 @@ const StarterForm = ({ handleChange, ...props }) => {
                     label="Base Package"
                     name="package"
                     placeholder="ex: com.mycompany"
-                    value={props.package}
+                    value={form.package}
                     onChange={handleChange}
                 />
             </Col>
@@ -60,18 +120,20 @@ const StarterForm = ({ handleChange, ...props }) => {
                     label="Name"
                     name="name"
                     placeholder="ex: myapp"
-                    value={props.name}
+                    value={form.name}
                     onChange={handleChange}
                 />
             </Col>
             <Col m={3} s={12} className="mn-radio">
                 <RadioGroup
                     label="Micronaut Version"
-                    id="micronautVersion"
-                    name="micronautVersion"
-                    value={props.micronautVersion}
-                    onChange={handleChange}
-                    options={props.versions}
+                    id="micronautApi"
+                    name="micronautApi"
+                    value={micronautApi}
+                    onChange={({target: {value}})=>setMicronautApi(value)}
+                    options={versions}
+                    loading={!APP_TYPES.length}
+                    expected={2}
                 />
             </Col>
             <Col m={3} s={12} className="mn-radio">
@@ -79,9 +141,10 @@ const StarterForm = ({ handleChange, ...props }) => {
                     label="Language"
                     id="lang"
                     name="lang"
-                    value={props.lang}
+                    value={form.lang}
                     onChange={handleChange}
                     options={LANG_OPTS}
+                    loading={!LANG_OPTS.length}
                 />
             </Col>
             <Col m={3} s={12} className="mn-radio">
@@ -89,9 +152,10 @@ const StarterForm = ({ handleChange, ...props }) => {
                     label="Build"
                     id="build"
                     name="build"
-                    value={props.build}
+                    value={form.build}
                     onChange={handleChange}
                     options={BUILD_OPTS}
+                    loading={!BUILD_OPTS.length}
                 />
             </Col>
             <Col m={3} s={12} className="mn-radio">
@@ -99,9 +163,10 @@ const StarterForm = ({ handleChange, ...props }) => {
                     label="Test Framework"
                     id="testFw"
                     name="testFw"
-                    value={props.testFw}
+                    value={form.testFw}
                     onChange={handleChange}
                     options={TEST_OPTS}
+                    loading={!TEST_OPTS.length}
                 />
             </Col>
         </Row>

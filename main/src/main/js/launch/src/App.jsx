@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
+import React, { Fragment, useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { ProgressBar } from "react-materialize";
 import Col from "react-materialize/lib/Col";
 import Icon from "react-materialize/lib/Icon";
@@ -23,12 +23,9 @@ import Footer from "./components/Footer";
 
 import {
   API_URL,
-  DEFAULT_JAVA_VERSION,
-  DEFAULT_LANG,
-  DEFAULT_BUILD,
-  DEFAULT_TEST_FW,
   SNAPSHOT_API_URL,
 } from "./constants";
+
 import messages from "./constants/messages.json";
 
 import useAppTheme from "./hooks/useAppTheme";
@@ -50,25 +47,24 @@ import "./styles/utility.css";
 import Cache from "./helpers/Cache";
 import { parseQuery } from './helpers/url'
 
-const initialForm = {
+const formResets = () => ({
     name: "demo",
     package: "com.example",
-    type: "DEFAULT",
-    lang: DEFAULT_LANG,
-    build: DEFAULT_BUILD,
-    testFw: DEFAULT_TEST_FW,
-    javaVersion: DEFAULT_JAVA_VERSION,
-    micronautVersion: false,
-  };
+})
+const initialForm =() => ({
+    ...formResets(),
+    type: "default",
+    javaVersion: ""
+});
 
 const emptyVersions = [];
 export default function App() {
 
-
-  const [form, setForm] = useLocalStorage("LATEST_FORM_DATA", initialForm);
+  const [form, setForm] = useLocalStorage("LATEST_FORM_DATA", initialForm());
 
   const [availableVersions, setAvailableVersions] = useState(emptyVersions);
-  const [types, setTypes] = useState([{ name: form.type, title: "" }]);
+  const [micronautApi, setMicronautApi] = useState(false)
+
   const [featuresAvailable, setFeaturesAvailable] = useState([]);
   const [featuresSelected, setFeaturesSelected] = useState({});
   const [initializationAttempted, setInitializationAttempted] = useState(false);
@@ -109,16 +105,20 @@ export default function App() {
     !initializationAttempted || downloading || loadingFeatures || !form.name || !form.package;
 
   const appType = form.type;
-  // creates a watchable primitive to include in the useEffect deps
-  const { micronautVersion } = form;
 
+  // creates a watchable primitive to include in the useEffect deps
   const apiUrl = useMemo(()=>{
-      const version =  availableVersions.find((v) => {
-        return micronautVersion === v.value;
+      const version = availableVersions.find((v) => {
+        return micronautApi === v.api;
       });
       return version ? version.api : null
-  }, [micronautVersion, availableVersions])
+  }, [micronautApi, availableVersions])
 
+  const [ready, setReady] = useState(()=>{
+      const [, query] = window.location.toString().split("?", 2)
+      const { error, htmlUrl, } = parseQuery(query)
+      return !!error || !!htmlUrl || false
+  })
 
   useEffect(()=> {
     const [baseUrl, query] = window.location.toString().split("?", 2)
@@ -148,7 +148,7 @@ export default function App() {
 
       return {
         label: ver,
-        value: ver,
+        value: baseUrl,
         api: baseUrl
       };
     };
@@ -156,58 +156,25 @@ export default function App() {
     const initializeForm = async () => {
       setDownloading(true);
       try {
-        const versions = await Promise.all([retrieveVersion(API_URL), retrieveVersion(SNAPSHOT_API_URL)]);
+        const all = await Promise.all([retrieveVersion(API_URL).catch(i=>null), retrieveVersion(SNAPSHOT_API_URL).catch(i=>null)]);
+        const versions = all.filter(i=>i)
         setAvailableVersions(versions ? versions : emptyVersions);
-
-        setForm((form)=>{
-          const micronautVersion = Array.isArray(versions) && versions.length > 0 ?
-          (versions.find((v)=>v.value === form.micronautVersion) || versions[0]).value : false;
-          return {
-            ...form,
-            micronautVersion,
-          }
-        });
+        setMicronautApi(micronautApi=>
+          Array.isArray(versions) && versions.length > 0 ?
+          (versions.find((v)=>v.value === micronautApi) || versions[0]).value : false
+        )
       } catch (error) {
         await handleResponseError(error);
-        setForm({
-          ...initialForm,
-          micronautVersion: false
-        });
       } finally {
         setInitializationAttempted(true);
         setDownloading(false);
       }
     };
-
     if (!initializationAttempted && !downloading) {
       initializeForm();
     }
+  }, [initializationAttempted, downloading, setMicronautApi]);
 
-  }, [initializationAttempted, downloading, setForm]);
-
-  useEffect(() => {
-    const load = async () => {
-      setDownloading(true);
-      try {
-        const url = `${apiUrl}/application-types`;
-        const data = await Cache.cache(url, () =>
-          fetch(url).then(responseHandler("json"))
-        );
-        const types = data.types.map((t) => {
-          return { name: t.name.toUpperCase(), title: t.title };
-        });
-        setTypes(types);
-      } catch (error) {
-        await handleResponseError(error);
-      } finally {
-        setDownloading(false);
-      }
-    };
-
-    if (initializationAttempted && apiUrl) {
-      load();
-    }
-  }, [apiUrl, initializationAttempted]);
 
   useEffect(() => {
     const loadFeatures = async () => {
@@ -252,7 +219,7 @@ export default function App() {
       build,
       testFw,
       javaVersion,
-      package: pkg,
+      package: pkg, // package is reserved keyword
     } = form;
     const features = buildFeaturesQuery();
     const fqpkg = `${pkg}.${name}`;
@@ -261,14 +228,13 @@ export default function App() {
       `lang=${lang}`,
       `build=${build}`,
       `test=${testFw}`,
-      `javaVersion=JDK_${javaVersion}`,
+      `javaVersion=${javaVersion}`,
     ];
     if (features) {
       query.push(features);
     }
     return encodeURI(`${base}?${query.join("&")}`);
   };
-
 
 
   const addFeature = (feature) => {
@@ -289,14 +255,15 @@ export default function App() {
     setFeaturesSelected({});
   };
 
-  const handleChange = (event) => {
+
+  const handleChange = useCallback((event) => {
     // Strip out any non alphanumeric characters (or ".","-","_") from the input.
     const { name: key, value } = event.target;
     setForm((draft) => ({
       ...draft,
       [key]: value.replace(/[^a-z\d.\-_]/gi, ""),
     }));
-  };
+  }, [setForm]);
 
   const requestPrep = (event) => {
     if (event && event.preventDefault instanceof Function) {
@@ -386,8 +353,7 @@ export default function App() {
   };
 
   const onStartOver = () => {
-      const replace = {name: initialForm.name, package: initialForm.package}
-      setForm(form=>({...form, ...replace}))
+      setForm(form=>({...form, ...formResets()}))
       setNextStepsInfo({})
   };
 
@@ -405,10 +371,12 @@ export default function App() {
             <form onSubmit={generateProject} autoComplete="off">
               <StarterForm
                 theme={theme}
-                handleChange={handleChange}
-                types={types}
                 versions={availableVersions}
-                {...form}
+                micronautApi={micronautApi}
+                setMicronautApi={setMicronautApi}
+                handleChange={handleChange}
+                form={form}
+                onReady={setReady}
               />
 
               <Row className="button-row">
