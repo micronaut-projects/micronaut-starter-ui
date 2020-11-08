@@ -7,10 +7,10 @@ import RadioGroup from "../RadioGroup";
 import Select from "../Select";
 
 import {
-  responseHandler,
-  takeAtLeast,
+    responseHandler,
+    takeAtLeast,
 } from "../../utility";
-import {CacheApi, SessionStorageAdapter} from "../../helpers/Cache";
+import { CacheApi, SessionStorageAdapter } from "../../helpers/Cache";
 
 import { recipeSpreader, LOCAL_RECIPES } from './StarterFormRecipes'
 const formDataBuilder = recipeSpreader(LOCAL_RECIPES)
@@ -24,77 +24,101 @@ const StarterForm = ({ setForm, onDefaults, form, versions, setMicronautApi, mic
     const handleChange = useCallback((event) => {
         // Strip out any non alphanumeric characters (or ".","-","_") from the input.
         const { name: key, value } = event.target;
-        if(!key || !value) return
+        if (!key || !value) return
 
         const spread = formDataBuilder(key, value, touched.current)
         return setForm((draft) => ({
-          ...draft,
-          ...spread
+            ...draft,
+            ...spread
         }));
     }, [setForm]);
     //----------------------------------------------------------
     // Load and Setup Options
     //-------------------------------------------------------
-    useEffect(()=>{
+    useEffect(() => {
         async function load(apiUrl) {
             const optsUrl = `${apiUrl}/select-options`;
             const data = await Cache.cache(optsUrl, () =>
-                takeAtLeast(()=>
-                    fetch(optsUrl).then(responseHandler("json"))
-                , 700)
+                takeAtLeast(() =>
+                    fetch(optsUrl).then(responseHandler("json")), 700)
             );
             setOptions(data)
             onReady(true)
         }
-        if(micronautApi) {
+        if (micronautApi) {
             load(micronautApi)
         }
     }, [micronautApi, onReady])
 
+    //----------------------------------------------------------
+    // Extract the Defaults
+    //-------------------------------------------------------
+    const defaults = useMemo(() => options.types ? {
+        type: options.types.defaultOption.value,
+        javaVersion: options.jdkVersions.defaultOption.value,
+        lang: options.languages.defaultOption.value,
+        build: options.buildTools.defaultOption.value,
+        test: options.testFrameworks.defaultOption.value,
+    } : {}, [options])
 
-    const APP_TYPES = options.types ? options.types.options : [{value: form.type, label: "Loading..." }]
-    const JAVA_OPTS = options.jdkVersions ? options.jdkVersions.options : [{value: form.javaVersion, label: "Loading..." }]
+    //----------------------------------------------------------
+    // Base the Options for any given type or set loading values
+    //-------------------------------------------------------
+    const APP_TYPES = options.types ? options.types.options : [{ value: form.type, label: "Loading..." }]
+    const JAVA_OPTS = options.jdkVersions ? options.jdkVersions.options : [{ value: form.javaVersion, label: "Loading..." }]
     const LANG_OPTS = options.languages ? options.languages.options : []
     const BUILD_OPTS = options.buildTools ? options.buildTools.options : []
     const TEST_OPTS = options.testFrameworks ? options.testFrameworks.options : []
 
-    //----------------------------------------------------------
-    // Extract the Defaults
-    //-------------------------------------------------------
-    const defaults = useMemo(()=> options.types ? {
-            type: options.types.defaultOption.value,
-            javaVersion: options.jdkVersions.defaultOption.value,
-            lang: options.languages.defaultOption.value,
-            build: options.buildTools.defaultOption.value,
-            testFw: options.testFrameworks.defaultOption.value,
-    } : {}, [options])
 
     //----------------------------------------------------------
-    // Emit changes for any non-exsiting default values
-    // on the initial form data
+    // handle changes for any non-exsiting default values
+    // on the initial form data or reset to defaults in event
+    // the newly selected api has different sets of values
+    // for any given type.
     //-------------------------------------------------------
 
     // Extract primitives for useEffect dep watching
-    const { type, javaVersion, lang, build, testFw } = form
+    const { type, javaVersion, lang, build, test } = form
 
-    useEffect(()=>{
-        if(!type) {
-            handleChange({target: {name:'type', value: defaults.type}})
+    // Application Type watcher
+    useEffect(() => {
+        if (!type || !(APP_TYPES).find(opt => opt.value === type)) {
+            handleChange({ target: { name: 'type', value: defaults.type } })
         }
-        if(!javaVersion) {
-            handleChange({target: {name:'javaVersion', value: defaults.javaVersion}})
-        }
-        if(!lang) {
-            handleChange({target: {name:'lang', value: defaults.lang}})
-        }
-        if(!build) {
-            handleChange({target: {name:'build', value: defaults.build}})
-        }
-        if(!testFw) {
-            handleChange({target: {name:'testFw', value: defaults.testFw}})
-        }
-    }, [ type, javaVersion, lang, build, testFw, defaults, handleChange])
+    }, [APP_TYPES, handleChange, defaults, type])
 
+    // Java Version watcher
+    useEffect(() => {
+        if (!javaVersion || !(JAVA_OPTS).find(opt => opt.value === javaVersion)) {
+            handleChange({ target: { name: 'javaVersion', value: defaults.javaVersion } })
+        }
+    }, [JAVA_OPTS, handleChange, defaults, javaVersion])
+
+    // Language watcher
+    useEffect(() => {
+        if (!lang || !(LANG_OPTS).find(opt => opt.value === lang)) {
+            handleChange({ target: { name: 'lang', value: defaults.lang } })
+        }
+    }, [LANG_OPTS, handleChange, defaults, lang])
+
+    // Build Tool watcher
+    useEffect(() => {
+        if (!build || !(BUILD_OPTS).find(opt => opt.value === build)) {
+            handleChange({ target: { name: 'build', value: defaults.build } })
+        }
+    }, [BUILD_OPTS, handleChange, defaults, build])
+
+    // Test Framework watcher
+    useEffect(() => {
+        if (!test || !(TEST_OPTS).find(opt => opt.value === test)) {
+            handleChange({ target: { name: 'test', value: defaults.test } })
+        }
+    }, [TEST_OPTS, handleChange, defaults, test])
+
+    //----------------------------------------------------------
+    // Render
+    //-------------------------------------------------------
     return (
         <Row className="mn-starter-form-main">
             <Col s={8} m={6} l={3}>
@@ -175,9 +199,9 @@ const StarterForm = ({ setForm, onDefaults, form, versions, setMicronautApi, mic
             <Col m={3} s={12} className="mn-radio">
                 <RadioGroup
                     label="Test Framework"
-                    id="testFw"
-                    name="testFw"
-                    value={form.testFw}
+                    id="test"
+                    name="test"
+                    value={form.test}
                     onChange={handleChange}
                     options={TEST_OPTS}
                     loading={!TEST_OPTS.length}

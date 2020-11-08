@@ -53,7 +53,7 @@ const formResets = () => ({
 })
 const initialForm =() => ({
     ...formResets(),
-    type: "default",
+    type: "DEFAULT",
     javaVersion: ""
 });
 
@@ -217,17 +217,17 @@ export default function App() {
       name,
       lang,
       build,
-      testFw,
+      test,
       javaVersion,
       package: pkg, // package is reserved keyword
     } = form;
     const features = buildFeaturesQuery();
     const fqpkg = `${pkg}.${name}`;
-    const base = `${apiUrl}/${prefix}/${type}/${fqpkg}`;
+    const base = `${apiUrl}/${prefix}/${type.toLowerCase()}/${fqpkg}`;
     const query = [
       `lang=${lang}`,
       `build=${build}`,
-      `test=${testFw}`,
+      `test=${test}`,
       `javaVersion=${javaVersion}`,
     ];
     if (features) {
@@ -254,9 +254,6 @@ export default function App() {
   const removeAllFeatures = () => {
     setFeaturesSelected({});
   };
-
-
-
 
   const requestPrep = (event) => {
     if (event && event.preventDefault instanceof Function) {
