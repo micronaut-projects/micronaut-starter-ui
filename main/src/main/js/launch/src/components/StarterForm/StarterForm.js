@@ -1,5 +1,5 @@
 // StarterForm.js
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { TextInput } from "react-materialize";
 import Col from "react-materialize/lib/Col";
 import Row from "react-materialize/lib/Row";
@@ -10,14 +10,28 @@ import {
   responseHandler,
   takeAtLeast,
 } from "../../utility";
-
 import {CacheApi, SessionStorageAdapter} from "../../helpers/Cache";
+
+import { recipeSpreader, LOCAL_RECIPES } from './StarterFormRecipes'
+const formDataBuilder = recipeSpreader(LOCAL_RECIPES)
+
 const Cache = new CacheApi(new SessionStorageAdapter())
 
-
-const StarterForm = ({ handleChange, onDefaults, form, versions, setMicronautApi, micronautApi, onReady, ...props }) => {
+const StarterForm = ({ setForm, onDefaults, form, versions, setMicronautApi, micronautApi, onReady, ...props }) => {
     const [options, setOptions] = useState({});
+    const touched = useRef({})
 
+    const handleChange = useCallback((event) => {
+        // Strip out any non alphanumeric characters (or ".","-","_") from the input.
+        const { name: key, value } = event.target;
+        if(!key || !value) return
+
+        const spread = formDataBuilder(key, value, touched.current)
+        return setForm((draft) => ({
+          ...draft,
+          ...spread
+        }));
+    }, [setForm]);
     //----------------------------------------------------------
     // Load and Setup Options
     //-------------------------------------------------------

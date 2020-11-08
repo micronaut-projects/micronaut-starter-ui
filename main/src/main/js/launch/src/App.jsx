@@ -256,14 +256,7 @@ export default function App() {
   };
 
 
-  const handleChange = useCallback((event) => {
-    // Strip out any non alphanumeric characters (or ".","-","_") from the input.
-    const { name: key, value } = event.target;
-    setForm((draft) => ({
-      ...draft,
-      [key]: value.replace(/[^a-z\d.\-_]/gi, ""),
-    }));
-  }, [setForm]);
+
 
   const requestPrep = (event) => {
     if (event && event.preventDefault instanceof Function) {
@@ -374,7 +367,7 @@ export default function App() {
                 versions={availableVersions}
                 micronautApi={micronautApi}
                 setMicronautApi={setMicronautApi}
-                handleChange={handleChange}
+                setForm={setForm}
                 form={form}
                 onReady={setReady}
               />
