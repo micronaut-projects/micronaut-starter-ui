@@ -15,6 +15,7 @@ import { CacheApi, SessionStorageAdapter } from "../../helpers/Cache";
 import { recipeSpreader, LOCAL_RECIPES } from './StarterFormRecipes'
 const formDataBuilder = recipeSpreader(LOCAL_RECIPES)
 
+
 const Cache = new CacheApi(new SessionStorageAdapter())
 
 const StarterForm = ({ setForm, onDefaults, form, versions, setMicronautApi, micronautApi, onReady, ...props }) => {
@@ -32,6 +33,7 @@ const StarterForm = ({ setForm, onDefaults, form, versions, setMicronautApi, mic
             ...spread
         }));
     }, [setForm]);
+
     //----------------------------------------------------------
     // Load and Setup Options
     //-------------------------------------------------------

@@ -14,7 +14,7 @@ export class CacheStorageAdapterAbstract {
 }
 
 export class SessionStorageAdapter extends CacheStorageAdapterAbstract {
-  constructor(prefix = "LocalStorageAdapter") {
+  constructor(prefix = "SessionStorageAdapter") {
     super(prefix);
   }
 
