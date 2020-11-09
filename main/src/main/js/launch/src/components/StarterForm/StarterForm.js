@@ -53,22 +53,22 @@ const StarterForm = ({ setForm, onDefaults, form, versions, setMicronautApi, mic
     //----------------------------------------------------------
     // Extract the Defaults
     //-------------------------------------------------------
-    const defaults = useMemo(() => options.types ? {
-        type: options.types.defaultOption.value,
-        javaVersion: options.jdkVersions.defaultOption.value,
-        lang: options.languages.defaultOption.value,
-        build: options.buildTools.defaultOption.value,
-        test: options.testFrameworks.defaultOption.value,
+    const defaults = useMemo(() => options.type ? {
+        type: options.type.defaultOption.value,
+        javaVersion: options.jdkVersion.defaultOption.value,
+        lang: options.lang.defaultOption.value,
+        build: options.build.defaultOption.value,
+        test: options.test.defaultOption.value,
     } : {}, [options])
 
     //----------------------------------------------------------
     // Base the Options for any given type or set loading values
     //-------------------------------------------------------
-    const APP_TYPES = options.types ? options.types.options : [{ value: form.type, label: "Loading..." }]
-    const JAVA_OPTS = options.jdkVersions ? options.jdkVersions.options : [{ value: form.javaVersion, label: "Loading..." }]
-    const LANG_OPTS = options.languages ? options.languages.options : []
-    const BUILD_OPTS = options.buildTools ? options.buildTools.options : []
-    const TEST_OPTS = options.testFrameworks ? options.testFrameworks.options : []
+    const APP_TYPES = options.type ? options.type.options : [{ value: form.type, label: "Loading..." }]
+    const JAVA_OPTS = options.jdkVersion ? options.jdkVersion.options : [{ value: form.javaVersion, label: "Loading..." }]
+    const LANG_OPTS = options.lang ? options.lang.options : []
+    const BUILD_OPTS = options.build ? options.build.options : []
+    const TEST_OPTS = options.test ? options.test.options : []
 
 
     //----------------------------------------------------------
