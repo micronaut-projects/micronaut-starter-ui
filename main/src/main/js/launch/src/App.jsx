@@ -114,6 +114,8 @@ export default function App() {
       return version ? version.api : null
   }, [micronautApi, availableVersions])
 
+  // TODO: ready may one day be used somewhere, when needed, remove the ignore...
+  // eslint-disable-next-line no-unused-vars
   const [ready, setReady] = useState(()=>{
       const [, query] = window.location.toString().split("?", 2)
       const { error, htmlUrl, } = parseQuery(query)
