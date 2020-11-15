@@ -1,4 +1,4 @@
-import Header from "./Header";
-import "./header.css";
+import Header from './Header'
+import './header.css'
 
-export default Header;
+export default Header

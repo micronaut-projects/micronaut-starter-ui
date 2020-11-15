@@ -11,7 +11,7 @@
     padding: 2px 4px;
     border-radius: 2px;
     opacity: 0;
-    transition: opacity .5s ease;
+    transition: opacity 0.5s ease;
 }
 
 .copy-to-clipboard .copied.active {

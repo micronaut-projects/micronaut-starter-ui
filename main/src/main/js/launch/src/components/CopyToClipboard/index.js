@@ -1,4 +1,4 @@
 import CopyToClipboard from './CopyToClipboard'
-import "./copy-to-clipboard.css"
+import './copy-to-clipboard.css'
 
 export default CopyToClipboard

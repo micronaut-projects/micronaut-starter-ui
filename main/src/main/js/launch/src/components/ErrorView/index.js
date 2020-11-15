@@ -1,12 +1,9 @@
-import ErrorView from "./ErrorView";
+import ErrorView from './ErrorView'
 import ErrorViewData from './ErrorViewData'
 import ErrorViewClipboard from './ErrorViewClipboard'
 
-import "./error-view.css";
+import './error-view.css'
 
-export default ErrorView;
+export default ErrorView
 
-export {
-    ErrorViewData,
-    ErrorViewClipboard
-}
+export { ErrorViewData, ErrorViewClipboard }

@@ -1,12 +1,12 @@
 // TwitterLink.js
-import React from "react";
+import React from 'react'
 
-import TwitterIcon from "@material-ui/icons/Twitter";
+import TwitterIcon from '@material-ui/icons/Twitter'
 
 export const TwitterLink = ({ className, theme }) => {
     const backgroundColor =
-        theme === "dark" ? "var(--theme-light)" : "var(--theme-dark)";
-    const color = theme === "dark" ? "var(--theme-dark)" : "white";
+        theme === 'dark' ? 'var(--theme-light)' : 'var(--theme-dark)'
+    const color = theme === 'dark' ? 'var(--theme-dark)' : 'white'
 
     return (
         <a
@@ -20,6 +20,6 @@ export const TwitterLink = ({ className, theme }) => {
         >
             <TwitterIcon className="twitter" style={{ color }} />
         </a>
-    );
-};
-export default TwitterLink;
+    )
+}
+export default TwitterLink

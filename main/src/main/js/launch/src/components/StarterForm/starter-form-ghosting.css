@@ -7,14 +7,13 @@
     left: 0;
     opacity: 0;
     visibility: hidden;
-    transition: .2s ease all;
+    transition: 0.2s ease all;
 }
 
 .mn-starter-form-main .mn-radio .loading .loading-wrapper {
     opacity: 1;
     visibility: visible;
 }
-
 
 .mn-starter-form-main .mn-radio .radio-label {
     opacity: 1;
@@ -24,33 +23,41 @@
     opacity: 0;
 }
 
-
 .mn-starter-form-main .mn-radio .loading .loading-wrapper .loading-ghost {
     opacity: 1;
     visibility: visible;
     animation: loading-bg 1s linear 1s infinite alternate;
 }
 
-
 .mn-starter-form-main .mn-radio .loading-wrapper .loading-ghost {
-    background-color: rgba(136,136,136,45%);
+    background-color: rgba(136, 136, 136, 45%);
     width: 50%;
     height: 100%;
     border-radius: 9999px;
-
 }
 
 @keyframes loading-bg {
-  from {background-color: rgba(136,136,136,65%);}
-  to {background-color: rgba(136,136,136,45%);}
+    from {
+        background-color: rgba(136, 136, 136, 65%);
+    }
+    to {
+        background-color: rgba(136, 136, 136, 45%);
+    }
 }
 
-
-.mn-starter-form-main .mn-radio .radio-row:nth-of-type(2) .loading-wrapper .loading-ghost {
-    animation-delay: .2s;
+.mn-starter-form-main
+    .mn-radio
+    .radio-row:nth-of-type(2)
+    .loading-wrapper
+    .loading-ghost {
+    animation-delay: 0.2s;
     width: 60%;
 }
-.mn-starter-form-main .mn-radio .radio-row:nth-of-type(3) .loading-wrapper .loading-ghost {
-    animation-delay: .3s;
+.mn-starter-form-main
+    .mn-radio
+    .radio-row:nth-of-type(3)
+    .loading-wrapper
+    .loading-ghost {
+    animation-delay: 0.3s;
     width: 40%;
 }

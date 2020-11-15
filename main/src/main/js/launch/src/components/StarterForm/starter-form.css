@@ -41,8 +41,8 @@ body.dark .mn-starter-form-main .mn-radio .radio-label {
     .mn-starter-form-main .mn-radio .radio-label {
         margin-right: 10px;
     }
-    [type="radio"]:not(:checked) + span,
-    [type="radio"]:checked + span {
+    [type='radio']:not(:checked) + span,
+    [type='radio']:checked + span {
         padding-left: 2em;
     }
 

@@ -29,5 +29,3 @@ $ npm install
 $ npm start
 
 ```
-
-

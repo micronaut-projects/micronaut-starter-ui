@@ -1,357 +1,313 @@
-import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
-import { ProgressBar } from "react-materialize";
-import Col from "react-materialize/lib/Col";
-import Icon from "react-materialize/lib/Icon";
-import Row from "react-materialize/lib/Row";
-import Dropdown from "react-materialize/lib/Dropdown";
-import Divider from "react-materialize/lib/Divider";
-import Button from "react-materialize/lib/Button";
-import GitHubIcon from "@material-ui/icons/GitHub";
+import React, { Fragment, useState, useEffect, useRef, useMemo } from 'react'
+import { ProgressBar } from 'react-materialize'
+import Col from 'react-materialize/lib/Col'
+import Icon from 'react-materialize/lib/Icon'
+import Row from 'react-materialize/lib/Row'
+import Dropdown from 'react-materialize/lib/Dropdown'
+import Divider from 'react-materialize/lib/Divider'
+import Button from 'react-materialize/lib/Button'
+import GitHubIcon from '@material-ui/icons/GitHub'
 
 import {
   FeatureSelectorModal,
   FeatureSelectedList,
-} from "./components/FeatureSelector";
-import CodePreview from "./components/CodePreview";
-import Diff from "./components/Diff";
-import ErrorView, {ErrorViewData} from "./components/ErrorView";
-import Header from "./components/Header";
+} from './components/FeatureSelector'
+import CodePreview from './components/CodePreview'
+import Diff from './components/Diff'
+import ErrorView, { ErrorViewData } from './components/ErrorView'
+import GenerateButtons from './components/GenerateButtons'
+import Header from './components/Header'
 import NextSteps from './components/NextSteps'
-import StarterForm from "./components/StarterForm";
-import {TooltipWrapper} from "./components/TooltipButton";
-import Footer from "./components/Footer";
+import StarterForm from './components/StarterForm'
+import { TooltipWrapper } from './components/TooltipButton'
+import Footer from './components/Footer'
 
-import {
-  API_URL,
-  SNAPSHOT_API_URL,
-} from "./constants";
+import { API_URL, SNAPSHOT_API_URL } from './constants'
 
-import messages from "./constants/messages.json";
+import messages from './constants/messages.json'
 
-import useAppTheme from "./hooks/useAppTheme";
+import useAppTheme from './hooks/useAppTheme'
 import useLocalStorage from './hooks/useLocalStorage'
+import useMicronautSdk from './hooks/useMicronautSdk'
+import { MicronautStarterSDK } from './micronaut'
 
-import {
-  downloadBlob,
-  makeNodeTree,
-  responseHandler,
-  debounceResponse,
-} from "./utility";
+import { downloadBlob, makeNodeTree } from './utility'
 
+import './style.css'
+import './styles/button-row.css'
+import './styles/modal-overrides.css'
+import './styles/utility.css'
 
-import "./style.css";
-import "./styles/button-row.css";
-import "./styles/modal-overrides.css";
-import "./styles/utility.css";
-
-import Cache from "./helpers/Cache";
 import { parseQuery } from './helpers/url'
 
 const formResets = () => ({
-    name: "demo",
-    package: "com.example",
+  name: 'demo',
+  package: 'com.example',
 })
-const initialForm =() => ({
-    ...formResets(),
-    type: "DEFAULT",
-    javaVersion: ""
-});
+const initialForm = () => ({
+  ...formResets(),
+  type: 'DEFAULT',
+  javaVersion: '',
+})
 
-const emptyVersions = [];
+const EMPTY_VERSIONS = []
 export default function App() {
+  const [form, setForm] = useLocalStorage('LATEST_FORM_DATA', initialForm())
 
-  const [form, setForm] = useLocalStorage("LATEST_FORM_DATA", initialForm());
-
-  const [availableVersions, setAvailableVersions] = useState(emptyVersions);
+  const [availableVersions, setAvailableVersions] = useState(EMPTY_VERSIONS)
   const [micronautApi, setMicronautApi] = useState(false)
+  const sdk = useMicronautSdk(micronautApi)
 
-  const [featuresAvailable, setFeaturesAvailable] = useState([]);
-  const [featuresSelected, setFeaturesSelected] = useState({});
-  const [initializationAttempted, setInitializationAttempted] = useState(false);
+  const [featuresAvailable, setFeaturesAvailable] = useState([])
+  const [featuresSelected, setFeaturesSelected] = useState({})
+  const [initializationAttempted, setInitializationAttempted] = useState(false)
 
-  const [loadingFeatures, setLoadingFeatures] = useState(false);
-  const [downloading, setDownloading] = useState(false);
-  const [preview, setPreview] = useState({});
-  const [diff, setDiff] = useState(null);
+  const [loadingFeatures, setLoadingFeatures] = useState(false)
+  const [downloading, setDownloading] = useState(false)
+  const [preview, setPreview] = useState({})
+  const [diff, setDiff] = useState(null)
 
-  const [nextStepsInfo, setNextStepsInfo] = useState({});
+  const [nextStepsInfo, setNextStepsInfo] = useState({})
 
   // Error Handling
-  const [error, setError] = useState(ErrorViewData.ofSuccess(""))
-  const hasError = Boolean(error.message);
+  const [error, setError] = useState(ErrorViewData.ofSuccess(''))
+  const hasError = Boolean(error.message)
   const handleResponseError = async (response) => {
-        if (response instanceof Error) {
-          return setError(new ErrorViewData(response));
-        }
-        const payload = ErrorViewData.ofError("something went wrong.")
-        if (!response.json instanceof Function) {
-          return setError(payload);
-        }
-        try {
-          const json = await response.json();
-          const message = json.message || payload.message
-          setError(ErrorViewData.ofError(message));
-        } catch (e) {
-          setError(payload);
-        }
-      }
+    if (response instanceof Error) {
+      return setError(new ErrorViewData(response))
+    }
+    const payload = ErrorViewData.ofError('something went wrong.')
+    if (!response.json instanceof Function) {
+      return setError(payload)
+    }
+    try {
+      const json = await response.json()
+      const message = json.message || payload.message
+      setError(ErrorViewData.ofError(message))
+    } catch (e) {
+      setError(payload)
+    }
+  }
 
-  const [theme, toggleTheme] = useAppTheme();
-  const previewButton = useRef();
-  const diffButton = useRef();
-
+  const [theme, toggleTheme] = useAppTheme()
+  const previewButton = useRef()
+  const diffButton = useRef()
 
   const disabled =
-    !initializationAttempted || downloading || loadingFeatures || !form.name || !form.package;
+    !initializationAttempted ||
+    downloading ||
+    loadingFeatures ||
+    !form.name ||
+    !form.package
 
-  const appType = form.type;
+  const appType = form.type
 
   // creates a watchable primitive to include in the useEffect deps
-  const apiUrl = useMemo(()=>{
-      const version = availableVersions.find((v) => {
-        return micronautApi === v.api;
-      });
-      return version ? version.api : null
+  const apiUrl = useMemo(() => {
+    const version = availableVersions.find((v) => {
+      return micronautApi === v.api
+    })
+    return version ? version.api : null
   }, [micronautApi, availableVersions])
 
   // TODO: ready may one day be used somewhere, when needed, remove the ignore...
   // eslint-disable-next-line no-unused-vars
-  const [ready, setReady] = useState(()=>{
-      const [, query] = window.location.toString().split("?", 2)
-      const { error, htmlUrl, } = parseQuery(query)
-      return !!error || !!htmlUrl || false
+  const [ready, setReady] = useState(() => {
+    const [, query] = window.location.toString().split('?', 2)
+    const { error, htmlUrl } = parseQuery(query)
+    return !!error || !!htmlUrl || false
   })
 
-  useEffect(()=> {
-    const [baseUrl, query] = window.location.toString().split("?", 2)
+  useEffect(() => {
+    const [baseUrl, query] = window.location.toString().split('?', 2)
     const { error, htmlUrl, cloneUrl } = parseQuery(query)
-    if(!error && !htmlUrl) {
+    if (!error && !htmlUrl) {
       return // nothing more to do
     }
-    window.history.replaceState({}, document.title, baseUrl );
-    setTimeout(()=>{
-      if(cloneUrl) {
-        setNextStepsInfo({cloneUrl, htmlUrl, show: true, type: 'clone'})
+    window.history.replaceState({}, document.title, baseUrl)
+    setTimeout(() => {
+      if (cloneUrl) {
+        setNextStepsInfo({
+          cloneUrl,
+          htmlUrl,
+          show: true,
+          type: 'clone',
+        })
       } else if (error) {
-          setError(ErrorViewData.ofError(error.replaceAll("+", " ")))
+        setError(ErrorViewData.ofError(error.replaceAll('+', ' ')))
       }
     }, 500)
   }, [])
 
-
   useEffect(() => {
     const retrieveVersion = async (baseUrl) => {
-      const url = `${baseUrl}/versions`;
-      const result = await Cache.cache(url, () =>
-        fetch(url).then(responseHandler("json"))
-      );
-
-      const ver = result.versions['micronaut.version'];
-
+      const mn = new MicronautStarterSDK({ baseUrl })
+      const result = await mn.versions()
+      const ver = result.versions['micronaut.version']
       return {
         label: ver,
         value: baseUrl,
-        api: baseUrl
-      };
-    };
+        api: baseUrl,
+      }
+    }
 
     const initializeForm = async () => {
-      setDownloading(true);
+      setDownloading(true)
       try {
-        const all = await Promise.all([retrieveVersion(API_URL).catch(i=>null), retrieveVersion(SNAPSHOT_API_URL).catch(i=>null)]);
-        const versions = all.filter(i=>i)
-        setAvailableVersions(versions ? versions : emptyVersions);
-        setMicronautApi(micronautApi=>
-          Array.isArray(versions) && versions.length > 0 ?
-          (versions.find((v)=>v.value === micronautApi) || versions[0]).value : false
+        const versions = (
+          await Promise.all([
+            retrieveVersion(API_URL).catch((i) => null),
+            retrieveVersion(SNAPSHOT_API_URL).catch((i) => null),
+          ])
+        ).filter((i) => i)
+
+        setAvailableVersions(versions ? versions : EMPTY_VERSIONS)
+        setMicronautApi((micronautApi) =>
+          Array.isArray(versions) && versions.length > 0
+            ? (versions.find((v) => v.value === micronautApi) || versions[0])
+                .value
+            : false
         )
       } catch (error) {
-        await handleResponseError(error);
+        await handleResponseError(error)
       } finally {
-        setInitializationAttempted(true);
-        setDownloading(false);
+        setInitializationAttempted(true)
+        setDownloading(false)
       }
-    };
-    if (!initializationAttempted && !downloading) {
-      initializeForm();
     }
-  }, [initializationAttempted, downloading, setMicronautApi]);
-
+    if (!initializationAttempted && !downloading) {
+      initializeForm()
+    }
+  }, [initializationAttempted, downloading, setMicronautApi])
 
   useEffect(() => {
     const loadFeatures = async () => {
-      setLoadingFeatures(true);
-      setError(ErrorViewData.ofNone());
+      setLoadingFeatures(true)
+      setError(ErrorViewData.ofNone())
       try {
-        const url = `${apiUrl}/application-types/${appType}/features`;
-        const data = await Cache.cache(url, () =>
-          fetch(url).then(responseHandler("json"))
-        );
-        setFeaturesAvailable(data.features);
+        const data = await sdk.features({ type: appType })
+        setFeaturesAvailable(data.features)
       } catch (error) {
-        await handleResponseError(error);
+        await handleResponseError(error)
       } finally {
-        setLoadingFeatures(false);
+        setLoadingFeatures(false)
       }
-    };
+    }
     if (initializationAttempted && apiUrl) {
-      loadFeatures();
+      loadFeatures()
     }
-  }, [appType, apiUrl, initializationAttempted]);
+  }, [sdk, appType, apiUrl, initializationAttempted])
 
-  const buildFeaturesQuery = () => {
-    return Object.keys(featuresSelected)
-      .reduce((array, feature) => {
-        array.push(`features=${feature}`);
-        return array;
-      }, [])
-      .join("&");
-  };
-
-  const buildFetchUrl = (prefix, form) => {
-    if (!prefix) {
-      console.error(
-        "A prefix is required, should be one of 'diff', 'preview', 'github', 'create'"
-      );
+  const supportsPushToGithub = useMemo(() => {
+    if (!apiUrl || !availableVersions) {
+      return false
     }
-    const {
-      type,
-      name,
-      lang,
-      build,
-      test,
-      javaVersion,
-      package: pkg, // package is reserved keyword
-    } = form;
-    const features = buildFeaturesQuery();
-    const fqpkg = `${pkg}.${name}`;
-    const base = `${apiUrl}/${prefix}/${type.toLowerCase()}/${fqpkg}`;
-    const query = [
-      `lang=${lang}`,
-      `build=${build}`,
-      `test=${test}`,
-      `javaVersion=${javaVersion}`,
-    ];
-    if (features) {
-      query.push(features);
-    }
-    return encodeURI(`${base}?${query.join("&")}`);
-  };
-
+    const version = availableVersions.find((v) => (v.apiUrl = apiUrl))
+    return MicronautStarterSDK.isSupported(version.label, 'PUSH_TO_GITHUB')
+  }, [availableVersions, apiUrl])
 
   const addFeature = (feature) => {
     setFeaturesSelected(({ ...draft }) => {
-      draft[feature.name] = feature;
-      return draft;
-    });
-  };
+      draft[feature.name] = feature
+      return draft
+    })
+  }
 
   const removeFeature = (feature) => {
     setFeaturesSelected(({ ...draft }) => {
-      delete draft[feature.name];
-      return draft;
-    });
-  };
+      delete draft[feature.name]
+      return draft
+    })
+  }
 
   const removeAllFeatures = () => {
-    setFeaturesSelected({});
-  };
+    setFeaturesSelected({})
+  }
 
   const requestPrep = (event) => {
     if (event && event.preventDefault instanceof Function) {
-      event.preventDefault();
+      event.preventDefault()
     }
-    setError(ErrorViewData.ofNone());
-    setDownloading(true);
-  };
+    setError(ErrorViewData.ofNone())
+    setDownloading(true)
+  }
 
- // GitHub Clone Feat
+  // GitHub Clone Feat
   const cloneProject = async (e) => {
     setDownloading(true)
   }
-  const gitHubCreateHref = (apiUrl) ? buildFetchUrl("github", form) : "#"
+
+  const createPayload = { ...form, features: featuresSelected }
+
+  // GitHub Create Ref
+  const gitHubCreateHref = MicronautStarterSDK.githubHrefForUrl(
+    apiUrl,
+    createPayload
+  )
 
   // Create Feat
   const generateProject = async (e) => {
-    requestPrep(e);
-    const url = buildFetchUrl("create", form);
-    // Debounce the download event so the UI is not jumpy
-    const debounced = debounceResponse(Date.now());
+    requestPrep(e)
     try {
-      const blob = await fetch(url)
-        .then(debounced)
-        .then(responseHandler("blob"));
-
-      downloadBlob(blob, `${form.name}.zip`);
-      setNextStepsInfo({show: true, type: 'zip'})
+      const blob = await sdk.create(createPayload)
+      downloadBlob(blob, `${form.name}.zip`)
+      setNextStepsInfo({ show: true, type: 'zip' })
     } catch (error) {
-      await handleResponseError(error);
+      await handleResponseError(error)
     } finally {
-      setDownloading(false);
+      setDownloading(false)
     }
-  };
+  }
 
   // Preview Feat
   const loadPreview = async (e) => {
-    requestPrep(e);
+    requestPrep(e)
     try {
-      let url = buildFetchUrl("preview", form);
-      // Debounce the preview gen event so the UI is not jumpy
-      const debounced = debounceResponse(Date.now());
-      const json = await fetch(url)
-        .then(debounced)
-        .then(responseHandler("json"));
-
-      const nodes = makeNodeTree(json.contents);
-      setPreview(nodes);
-      previewButton.current.props.onClick();
+      const json = await sdk.preview(createPayload)
+      const nodes = makeNodeTree(json.contents)
+      setPreview(nodes)
+      previewButton.current.props.onClick()
     } catch (error) {
-      await handleResponseError(error);
+      await handleResponseError(error)
     } finally {
-      setDownloading(false);
+      setDownloading(false)
     }
-  };
+  }
   const clearPreview = () => {
-    setPreview({});
-  };
-
+    setPreview({})
+  }
 
   // Diff Feat
   const loadDiff = async (e) => {
-    requestPrep(e);
+    requestPrep(e)
     try {
-      let url = buildFetchUrl("diff", form);
-      // Debounce the preview gen event so the UI is not jumpy
-      const debounced = debounceResponse(Date.now());
-      const text = await fetch(url)
-        .then(debounced)
-        .then(responseHandler("text"));
-      if (text === "") {
+      const text = await sdk.diff(createPayload)
+      if (text === '') {
         throw new Error(
-          "No features have been selected. Please choose one or more features and try again."
-        );
+          'No features have been selected. Please choose one or more features and try again.'
+        )
       }
-      setDiff(text);
-      diffButton.current.props.onClick();
+      setDiff(text)
+      diffButton.current.props.onClick()
     } catch (error) {
-      await handleResponseError(error);
+      await handleResponseError(error)
     } finally {
-      setDownloading(false);
+      setDownloading(false)
     }
-  };
+  }
 
   const clearDiff = () => {
-    setDiff(null);
-  };
+    setDiff(null)
+  }
 
   const onStartOver = () => {
-      setForm(form=>({...form, ...formResets()}))
-      setNextStepsInfo({})
-  };
+    setForm((form) => ({ ...form, ...formResets() }))
+    setNextStepsInfo({})
+  }
 
   const onCloseNextSteps = () => {
-      setNextStepsInfo({})
-  };
+    setNextStepsInfo({})
+  }
 
   return (
     <Fragment>
@@ -368,6 +324,7 @@ export default function App() {
                 setMicronautApi={setMicronautApi}
                 setForm={setForm}
                 form={form}
+                ready={ready}
                 onReady={setReady}
               />
 
@@ -408,67 +365,14 @@ export default function App() {
                   />
                 </Col>
                 <Col s={3} className="xs6">
-                  <Dropdown
-                    id="build_now_dropdown"
-                    trigger={
-                      <Button
-                        options={{
-                          alignment: 'left',
-                          autoTrigger: true,
-                          closeOnClick: true,
-                          constrainWidth: true,
-                          container: null,
-                          coverTrigger: true,
-                          hover: false,
-                          inDuration: 150,
-                          onCloseEnd: null,
-                          onCloseStart: null,
-                          onOpenEnd: null,
-                          onOpenStart: null,
-                          outDuration: 250
-                        }}
-                        disabled={disabled}
-                        style={{width: "100%"}}
-                        className={theme}
-                        node="button"
-                      >
-                      <Icon className="action-button-icon" left>build</Icon>
-                      Generate project
-                      </Button>
-                    }
-                  >
-                    <TooltipWrapper tooltip={messages.tooltips.createRepo}>
-                         <a
-                            href={gitHubCreateHref}
-                            disabled={disabled}
-                            waves="light"
-                            className={theme}
-                            style={{alignItems: "center", display: "flex"}}
-                            onClick={cloneProject}
-                          >
-                            <GitHubIcon style={{marginLeft: "4px", marginRight: "28px"}} fontSize="small" className="action-button-icon">clone_app</GitHubIcon>
-                            Push to GitHub
-                          </a>
-                    </TooltipWrapper>
-                    <Divider />
-                    <TooltipWrapper tooltip={messages.tooltips.generate}>
-                         <a
-                            role='button'
-                            href="/create"
-                            tooltip={messages.tooltips.generate}
-                            disabled={disabled}
-                            waves="light"
-                            className={theme}
-                            onClick={generateProject}
-                          >
-                            <Icon className="action-button-icon" left>
-                              get_app
-                            </Icon>
-                            Download Zip
-                          </a>
-                          </TooltipWrapper>
-                  </Dropdown>
-
+                  <GenerateButtons
+                    theme={theme}
+                    disabled={disabled}
+                    cloneProject={cloneProject}
+                    generateProject={generateProject}
+                    gitHubCreateHref={gitHubCreateHref}
+                    supportsPushToGithub={supportsPushToGithub}
+                  />
                 </Col>
               </Row>
             </form>
@@ -486,14 +390,16 @@ export default function App() {
         />
       </div>
       <Footer />
-      {nextStepsInfo.show && <NextSteps
-              onClose={onCloseNextSteps}
-              onStartOver={onStartOver}
-              info={nextStepsInfo}
-              theme={theme}
-              name={form.name}
-              buildTool={form.build}
-       />}
+      {nextStepsInfo.show && (
+        <NextSteps
+          onClose={onCloseNextSteps}
+          onStartOver={onStartOver}
+          info={nextStepsInfo}
+          theme={theme}
+          name={form.name}
+          buildTool={form.build}
+        />
+      )}
       <ErrorView
         hasError={hasError}
         severity={error.severity}
@@ -503,5 +409,5 @@ export default function App() {
         onClose={() => setError(ErrorViewData.ofNone())}
       />
     </Fragment>
-  );
+  )
 }

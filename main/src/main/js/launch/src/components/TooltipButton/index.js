@@ -1,5 +1,5 @@
-import TooltipButton, { TooltipWrapper } from "./TooltipButton";
-import "./tooltip-button.css";
+import TooltipButton, { TooltipWrapper } from './TooltipButton'
+import './tooltip-button.css'
 
-export default TooltipButton;
-export {TooltipWrapper}
+export default TooltipButton
+export { TooltipWrapper }
