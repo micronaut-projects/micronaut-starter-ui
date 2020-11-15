@@ -1,12 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo } from 'react'
 import { ProgressBar } from 'react-materialize'
 import Col from 'react-materialize/lib/Col'
-import Icon from 'react-materialize/lib/Icon'
+
 import Row from 'react-materialize/lib/Row'
-import Dropdown from 'react-materialize/lib/Dropdown'
-import Divider from 'react-materialize/lib/Divider'
-import Button from 'react-materialize/lib/Button'
-import GitHubIcon from '@material-ui/icons/GitHub'
 
 import {
   FeatureSelectorModal,
@@ -19,17 +15,14 @@ import GenerateButtons from './components/GenerateButtons'
 import Header from './components/Header'
 import NextSteps from './components/NextSteps'
 import StarterForm from './components/StarterForm'
-import { TooltipWrapper } from './components/TooltipButton'
 import Footer from './components/Footer'
 
 import { API_URL, SNAPSHOT_API_URL } from './constants'
 
-import messages from './constants/messages.json'
-
 import useAppTheme from './hooks/useAppTheme'
 import useLocalStorage from './hooks/useLocalStorage'
 import useMicronautSdk from './hooks/useMicronautSdk'
-import { MicronautStarterSDK } from './micronaut'
+import { MicronautStarterSDK, PUSH_TO_GITHUB } from './micronaut'
 
 import { downloadBlob, makeNodeTree } from './utility'
 
@@ -203,7 +196,7 @@ export default function App() {
       return false
     }
     const version = availableVersions.find((v) => (v.apiUrl = apiUrl))
-    return MicronautStarterSDK.isSupported(version.label, 'PUSH_TO_GITHUB')
+    return MicronautStarterSDK.versionSupports(version.label, PUSH_TO_GITHUB)
   }, [availableVersions, apiUrl])
 
   const addFeature = (feature) => {

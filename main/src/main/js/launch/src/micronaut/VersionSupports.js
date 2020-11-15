@@ -18,6 +18,7 @@ class Version {
       .split(/[.]/gi)
       .filter((i) => !isNaN(i))
       .map((i) => parseInt(i))
+      .slice(0, 2)
       .reduce(
         (acc, i, idx) => {
           acc[idx] = i
@@ -25,7 +26,6 @@ class Version {
         },
         [0, 0, 0]
       )
-
     return parts
   }
 
@@ -48,7 +48,7 @@ class Version {
   }
 }
 
-const isSupported = (currentVersion, feature) => {
+const versionSupports = (currentVersion, feature) => {
   const idx = Object.values(SUPPORTED_FEATURES).findIndex((i) =>
     i.includes(feature)
   )
@@ -60,6 +60,6 @@ const isSupported = (currentVersion, feature) => {
 }
 
 module.exports = {
-  isSupported,
+  versionSupports,
   PUSH_TO_GITHUB,
 }

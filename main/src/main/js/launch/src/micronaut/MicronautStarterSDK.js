@@ -1,6 +1,6 @@
 import { CacheApi, SessionStorageAdapter } from '../helpers/Cache'
 import { CreateCommand } from './CreateCommand'
-import { isSupported } from './Supports'
+import { versionSupports } from './VersionSupports'
 
 const responseHandler = (type = 'json') => (response) => {
   if (!response.ok) {
@@ -146,7 +146,7 @@ export class MicronautStarterSDK {
     }, {})
   }
 
-  static isSupported(currentVersion, supportedFeature) {
-    return isSupported(currentVersion, supportedFeature)
+  static versionSupports(currentVersion, supportedFeature) {
+    return versionSupports(currentVersion, supportedFeature)
   }
 }
