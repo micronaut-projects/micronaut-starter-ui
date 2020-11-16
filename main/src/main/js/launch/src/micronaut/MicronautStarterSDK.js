@@ -146,7 +146,7 @@ export class MicronautStarterSDK {
     }, {})
   }
 
-  static versionSupports(currentVersion, supportedFeature) {
-    return versionSupports(currentVersion, supportedFeature)
+  static versionSupports(currentVersion, capability) {
+    return versionSupports(currentVersion, capability)
   }
 }

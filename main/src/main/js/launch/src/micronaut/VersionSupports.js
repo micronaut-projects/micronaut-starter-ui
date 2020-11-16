@@ -1,8 +1,8 @@
 const STARTER_CORE = 'STARTER_CORE'
-const PUSH_TO_GITHUB = 'PUSH_TO_GITHUB'
-const SUPPORTED_FEATURES = {
+const CAN_PUSH_TO_GITHUB = 'CAN_PUSH_TO_GITHUB'
+const SUPPORTED_CAPABILITIES = {
   '1.0.0': [STARTER_CORE],
-  '2.2.0': [PUSH_TO_GITHUB],
+  '2.2.0': [CAN_PUSH_TO_GITHUB],
 }
 
 const REGEX = new RegExp('[^0-9.]', 'ig')
@@ -48,18 +48,18 @@ class Version {
   }
 }
 
-const versionSupports = (currentVersion, feature) => {
-  const idx = Object.values(SUPPORTED_FEATURES).findIndex((i) =>
-    i.includes(feature)
+const versionSupports = (currentVersion, capability) => {
+  const idx = Object.values(SUPPORTED_CAPABILITIES).findIndex((i) =>
+    i.includes(capability)
   )
   if (idx === -1) {
     return false
   }
-  const supportedVersion = Object.keys(SUPPORTED_FEATURES)[idx]
+  const supportedVersion = Object.keys(SUPPORTED_CAPABILITIES)[idx]
   return new Version(currentVersion).gte(supportedVersion)
 }
 
 module.exports = {
   versionSupports,
-  PUSH_TO_GITHUB,
+  CAN_PUSH_TO_GITHUB,
 }

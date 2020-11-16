@@ -22,7 +22,7 @@ import { API_URL, SNAPSHOT_API_URL } from './constants'
 import useAppTheme from './hooks/useAppTheme'
 import useLocalStorage from './hooks/useLocalStorage'
 import useMicronautSdk from './hooks/useMicronautSdk'
-import { MicronautStarterSDK, PUSH_TO_GITHUB } from './micronaut'
+import { MicronautStarterSDK, CAN_PUSH_TO_GITHUB } from './micronaut'
 
 import { downloadBlob, makeNodeTree } from './utility'
 
@@ -196,7 +196,10 @@ export default function App() {
       return false
     }
     const version = availableVersions.find((v) => (v.apiUrl = apiUrl))
-    return MicronautStarterSDK.versionSupports(version.label, PUSH_TO_GITHUB)
+    return MicronautStarterSDK.versionSupports(
+      version.label,
+      CAN_PUSH_TO_GITHUB
+    )
   }, [availableVersions, apiUrl])
 
   const addFeature = (feature) => {
