@@ -10,15 +10,14 @@ const REGEX = new RegExp('[^0-9.]', 'ig')
 class Version {
   constructor(version) {
     this.version = version
-  }
 
-  parts() {
-    const parts = this.version
+    this.__parts = `${version}`
+      .split('-')[0]
       .replace(REGEX, '')
       .split(/[.]/gi)
-      .filter((i) => !isNaN(i))
       .map((i) => parseInt(i))
-      .slice(0, 2)
+      .filter((i) => !isNaN(i))
+      .slice(0, 3)
       .reduce(
         (acc, i, idx) => {
           acc[idx] = i
@@ -26,12 +25,22 @@ class Version {
         },
         [0, 0, 0]
       )
-    return parts
+  }
+
+  parts() {
+    return this.__parts
+  }
+
+  basedVersion() {
+    return this.parts().join('.')
   }
 
   gte(otherVersion) {
     const v1 = this.parts()
-    const v2 = new Version(otherVersion).parts()
+    const v2 = (otherVersion instanceof Version
+      ? otherVersion
+      : new Version(`${otherVersion}`)
+    ).parts()
 
     for (var i = 0; i < v1.length; i++) {
       if (v1[i] > v2[i]) {
@@ -60,6 +69,7 @@ const versionSupports = (currentVersion, capability) => {
 }
 
 module.exports = {
+  Version,
   versionSupports,
   CAN_PUSH_TO_GITHUB,
 }
