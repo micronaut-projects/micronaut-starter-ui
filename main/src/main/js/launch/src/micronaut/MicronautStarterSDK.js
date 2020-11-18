@@ -29,8 +29,8 @@ export class MicronautStarterSDK {
    */
   get(url) {
     return fetch(this._urlBuilder(url), {
+      method: 'GET',
       headers: new Headers({
-        method: 'GET',
         'Content-Type': 'application/json',
       }),
     })
