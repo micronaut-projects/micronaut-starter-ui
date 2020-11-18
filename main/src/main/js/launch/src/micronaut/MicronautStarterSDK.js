@@ -1,6 +1,5 @@
 import { CacheApi, SessionStorageAdapter } from '../helpers/Cache'
 import { CreateCommand } from './CreateCommand'
-import { versionSupports } from './VersionSupports'
 
 const responseHandler = (type = 'json') => (response) => {
   if (!response.ok) {
@@ -26,72 +25,61 @@ export class MicronautStarterSDK {
   /**
    * Underlying GET Request
    * @param  {String} url the url
-   * @return {Response}   the unhandled fetch response
+   * @return {Promise<Response>}   the unhandled fetch response
    */
   get(url) {
     return fetch(this._urlBuilder(url), {
       headers: new Headers({
         method: 'GET',
-        'X-API-VERSION': this.version,
         'Content-Type': 'application/json',
       }),
     })
   }
 
   /**
-   * Create the Zip File of the Project
-   * @param  {Object} configuration The command data
-   * @return {[type]}        [description]
+   * Provides a description of the API.
+   * @return {Promise<Object>}  Select Options
    */
-  async create(configuration) {
-    const createCommand = new CreateCommand(configuration)
-    return this.get(createCommand.toUrl('create')).then(responseHandler('blob'))
+  async description() {
+    return this._cache('/', responseHandler('text'))
   }
 
   /**
-   * Get The HREF for the clone to github feature.
-   * @param  {Object} configuration [description]
-   * @return {[type]}        [description]
-   */
-  gitHubHref(configuration) {
-    const createCommand = new CreateCommand(configuration)
-    return this._urlBuilder(createCommand.toUrl('github'))
-  }
-
-  /**
-   * Get Generated Preview for a given configuration
-   * @param  {[type]} configuration [description]
-   * @return {[type]}         [description]
-   */
-  async preview(configuration) {
-    const createCommand = new CreateCommand(configuration)
-    return this.get(createCommand.toUrl('preview')).then(
-      responseHandler('json')
-    )
-  }
-
-  /**
-   * Get A Diff string for a given configuration
-   * @param  {[type]} configuration [description]
-   * @return {[type]}         [description]
-   */
-  async diff(configuration) {
-    const createCommand = new CreateCommand(configuration)
-    return this.get(createCommand.toUrl('diff')).then(responseHandler('text'))
-  }
-
-  /**
-   * Get Select Options / And defaults for starter
-   * @return {Object}  Select Options
+   * Get Select Options / and defaults for starter
+   * @return {Promise<Object>}  Select Options
    */
   async selectOptions() {
     return this._cache('/select-options', responseHandler('json'))
   }
 
   /**
+   * Information about feature versions provided by this instance.
+   * @return {Promise<Object>} version information
+   */
+  async versions() {
+    return this._cache(`/versions`, responseHandler('json'))
+  }
+
+  /**
+   * List the application types.
+   * @return {Promise<Object>} The types
+   */
+  async applicationTypes() {
+    return this._cache(`/application-types`, responseHandler('json'))
+  }
+
+  /**
+   * Get a specific application type.
+   * @return {Promise<Object>} The type
+   */
+  async applicationTypeInfo({ type }) {
+    return this._cache(`/application-types/${type}`, responseHandler('json'))
+  }
+
+  /**
    * Get a list of features for a given Application Type
    * @param  {String} options.type Application Type
-   * @return {Array}               List of features
+   * @return {Promise<Array>}               List of features
    */
   async features({ type }) {
     return this._cache(
@@ -101,27 +89,67 @@ export class MicronautStarterSDK {
   }
 
   /**
-   * Ger version info
-   * @return {[type]} [description]
+   * Diffs the whole application for all selected features.
+   * @param  {Object} configuration command parameters
+   * @return {Promise<String>}         A textual diff
    */
-  async versions() {
-    return this._cache(`/versions`, responseHandler('json'))
+  async diff(configuration) {
+    const createCommand = new CreateCommand(configuration)
+    return this.get(createCommand.toUrl('diff')).then(responseHandler('text'))
+  }
+
+  /**
+   * Previews the contents of a generated application.
+   * @param  {Object} configuration command parameters
+   * @return {Promise<Object>}         [description]
+   */
+  async preview(configuration) {
+    const createCommand = new CreateCommand(configuration)
+    return this.get(createCommand.toUrl('preview')).then(
+      responseHandler('json')
+    )
+  }
+
+  /**
+   * Creates an application, generating a ZIP file as the response.
+   * @param  {Object} configuration command parameters
+   * @return {Promise<Blob>} A ZIP file containing the generated application.
+   */
+  async create(configuration) {
+    const createCommand = new CreateCommand(configuration)
+    return this.get(createCommand.toUrl('create')).then(responseHandler('blob'))
   }
 
   /**
    * Get The HREF for the clone to github feature.
-   * @param {String}
-   * @param  {Object} configuration The create command data
-   * @return {String}               The Href string for the Push to GH action
+   * @param  {Object} configuration command parameters
+   * @return {String} The link will begin processing the github workflow with redirects
    */
-  static githubHrefForUrl(url, configuration) {
-    if (!url) {
+  gitHubHref(configuration) {
+    const createCommand = new CreateCommand(configuration)
+    return this._urlBuilder(createCommand.toUrl('github'))
+  }
+
+  /**
+   * Get The HREF for the clone to github feature.
+   * @param {String} the baseUrl
+   * @param  {Object} configuration The create command data
+   * @return {String} The link will begin processing the github workflow with redirects
+   */
+  static githubHrefForUrl(baseUrl, configuration) {
+    if (!baseUrl) {
       return '#'
     }
     const createCommand = new CreateCommand(configuration)
-    return `${url}${createCommand.toUrl('github')}`
+    return `${baseUrl}${createCommand.toUrl('github')}`
   }
 
+  /**
+   * Extract correlative defaults for given types
+   * These can be used to change the state of the UI
+   * @param  {Object} options Select Optons keyed by type
+   * @return {Object}         defaults keyed by type
+   */
   static extractDefaults(options) {
     return Object.keys(options).reduce((acc, key) => {
       const val = options[key].options.reduce((acc, opt) => {
@@ -139,14 +167,15 @@ export class MicronautStarterSDK {
     }, {})
   }
 
+  /**
+   * Extract The Default values of a given select option aray
+   * @param  {Object} options Select Options keyed by type
+   * @return {Object}         Select Option defaults keyed by type
+   */
   static extractDefaultOptions(options) {
     return Object.keys(options).reduce((acc, key) => {
       acc[key] = options[key].defaultOption.value
       return acc
     }, {})
-  }
-
-  static versionSupports(currentVersion, capability) {
-    return versionSupports(currentVersion, capability)
   }
 }

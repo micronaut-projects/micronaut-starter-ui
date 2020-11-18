@@ -22,7 +22,7 @@ import { API_URL, SNAPSHOT_API_URL } from './constants'
 import useAppTheme from './hooks/useAppTheme'
 import useLocalStorage from './hooks/useLocalStorage'
 import useMicronautSdk from './hooks/useMicronautSdk'
-import { MicronautStarterSDK, CAN_PUSH_TO_GITHUB } from './micronaut'
+import { MicronautStarterSDK } from './micronaut'
 
 import { downloadBlob, makeNodeTree } from './utility'
 
@@ -191,17 +191,6 @@ export default function App() {
     }
   }, [sdk, appType, apiUrl, initializationAttempted])
 
-  const supportsPushToGithub = useMemo(() => {
-    if (!apiUrl || !availableVersions) {
-      return false
-    }
-    const version = availableVersions.find((v) => (v.apiUrl = apiUrl))
-    return MicronautStarterSDK.versionSupports(
-      version.label,
-      CAN_PUSH_TO_GITHUB
-    )
-  }, [availableVersions, apiUrl])
-
   const addFeature = (feature) => {
     setFeaturesSelected(({ ...draft }) => {
       draft[feature.name] = feature
@@ -367,7 +356,6 @@ export default function App() {
                     cloneProject={cloneProject}
                     generateProject={generateProject}
                     gitHubCreateHref={gitHubCreateHref}
-                    supportsPushToGithub={supportsPushToGithub}
                   />
                 </Col>
               </Row>
