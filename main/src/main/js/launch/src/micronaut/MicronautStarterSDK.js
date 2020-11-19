@@ -38,7 +38,7 @@ export class MicronautStarterSDK {
 
   /**
    * Provides a description of the API.
-   * @return {Promise<Object>}  Select Options
+   * @return {Promise<String>}  description
    */
   async description() {
     return this._cache('/', responseHandler('text'))
