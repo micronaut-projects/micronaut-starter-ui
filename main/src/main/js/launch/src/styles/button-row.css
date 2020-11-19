@@ -1,53 +1,53 @@
 .button-row .action-button-icon {
-  display: block;
+    display: block;
 }
 /* Media */
 @media only screen and (max-width: 788px) {
-  .button-row .action-button-icon {
-    display: none;
-  }
+    .button-row .action-button-icon {
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 600px) {
-  .button-row .btn {
-    font-size: 0.9em;
-    padding: 0 10px;
-  }
+    .button-row .btn {
+        font-size: 0.9em;
+        padding: 0 10px;
+    }
 }
 
 @media only screen and (max-width: 500px) {
-  .button-row .btn {
-    font-size: 0.7em;
-    padding: 0 4px;
-  }
+    .button-row .btn {
+        font-size: 0.7em;
+        padding: 0 4px;
+    }
 }
 
 @media only screen and (max-width: 400px) {
-  .button-row .btn {
-    font-size: 0.7em;
-    padding: 0 10px;
-  }
+    .button-row .btn {
+        font-size: 0.7em;
+        padding: 0 10px;
+    }
 }
 
 @media only screen and (max-width: 225px) {
-  .button-row .btn {
-    padding: 0 2.5em;
-  }
+    .button-row .btn {
+        padding: 0 2.5em;
+    }
 
-  .button-row .btn {
-    font-size: 0;
-    margin: auto;
-  }
+    .button-row .btn {
+        font-size: 0;
+        margin: auto;
+    }
 
-  .button-row .btn i {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: auto;
-    font-size: 16px;
-  }
+    .button-row .btn i {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: auto;
+        font-size: 16px;
+    }
 
-  .button-row .action-button-icon {
-    display: block;
-  }
+    .button-row .action-button-icon {
+        display: block;
+    }
 }

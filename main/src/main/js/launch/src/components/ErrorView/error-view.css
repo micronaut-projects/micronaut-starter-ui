@@ -1,6 +1,20 @@
-.MuiSnackbar-root .MuiAlert-standardError {
+.clipboard {
+    margin-top: 1em;
+    display: flex;
+    align-items: center;
+}
+
+.clipboard:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.MuiSnackbar-root .MuiAlert-filledError {
     background-color: var(--theme-danger);
     color: white;
+}
+
+.MuiAlert-message {
+    font-size: 1.1em;
 }
 
 .MuiSnackbar-root .MuiAlert-standardError .MuiAlert-message {
@@ -20,7 +34,7 @@
     color: white;
 }
 
-.MuiSnackbar-root .MuiAlert-standardError {
+.MuiPaper-root.MuiAlert-root {
     width: 100%;
 }
 

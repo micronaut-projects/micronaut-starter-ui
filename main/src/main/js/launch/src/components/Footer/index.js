@@ -1,3 +1,3 @@
-import Footer from "./Footer";
-import "./footer.css";
-export default Footer;
+import Footer from './Footer'
+import './footer.css'
+export default Footer

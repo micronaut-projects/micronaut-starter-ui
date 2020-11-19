@@ -1,0 +1,115 @@
+.modal.modal-lg.next-steps {
+    max-height: 90%;
+}
+
+.next-steps .title {
+    font-size: 1.8em;
+    font-weight: 500;
+    margin-bottom: 1em;
+}
+
+.next-steps p.info {
+    max-width: 600px;
+    text-align: left;
+}
+
+.next-steps-wrapper {
+    margin-bottom: 2em;
+}
+
+.next-steps-code .heading,
+.next-steps-wrapper .heading {
+    margin-bottom: 0.6em;
+}
+
+.next-steps-code,
+.next-steps-row {
+    display: flex;
+    align-items: center;
+    border: solid 1px rgba(0, 0, 0, 0.3);
+}
+
+.next-steps-row {
+    padding: 6px;
+    height: 3em;
+    align-items: center;
+    display: flex;
+}
+
+.os-select-opt-row {
+    display: flex;
+}
+
+.os-select-opt-col {
+}
+
+span.os-select {
+    cursor: pointer;
+    position: relative;
+    margin-right: 1em;
+    letter-spacing: 1px;
+    color: grey;
+}
+
+span.os-select::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    bottom: -3px;
+    left: 0;
+    visibility: hidden;
+    transform: scaleX(0);
+    transition: all 0.3s ease-in-out 0s;
+}
+
+span.os-select:hover::before {
+    visibility: visible;
+    transform: scaleX(1);
+}
+
+.light span.os-select.active {
+    color: black;
+}
+.light span.os-select::before {
+    background-color: #000;
+}
+.dark span.os-select.active {
+    color: white;
+}
+.dark span.os-select::before {
+    background-color: white;
+}
+
+.next-steps-row .text {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.next-steps-row .icon {
+    flex-shrink: 1;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.next-steps-row .icon a {
+    display: flex;
+    align-items: center;
+}
+
+body.light .next-steps-row {
+    color: black;
+}
+body.light .next-steps-row a {
+    color: var(--theme-dark);
+}
+
+body.dark .next-steps-row {
+    color: rgb(169, 183, 198);
+}
+
+body.dark .next-steps-row a {
+    color: rgb(169, 183, 198);
+}

@@ -1,33 +1,53 @@
 // RadioGroup.js
-import React from "react";
+import React from 'react'
 
-const RadioGroup = ({ name, label, options, id, value, onChange }) => {
+const RadioGroup = ({
+    name,
+    label,
+    options,
+    id,
+    value,
+    onChange,
+    expected = 3,
+    loading = false,
+}) => {
+    const finalOpts = loading
+        ? new Array(expected).fill().map((i) => ({ value: '', label: '...' }))
+        : options
+
     return (
-        <div className="radio-group">
-            {typeof label === "string" && (
+        <div className={['radio-group', loading ? 'loading' : ''].join(' ')}>
+            {typeof label === 'string' && (
                 <label className="input-field">{label}</label>
             )}
-            {options.map((option, idx) => {
+            {finalOpts.map((option, idx) => {
                 return (
-                    <label
-                        key={`${idx}-${option.value}`}
-                        className="radio-label"
-                        htmlFor={`${id}-radio-${idx}`}
-                    >
-                        <input
-                            id={`${id}-radio-${idx}`}
-                            type="radio"
-                            name={name}
-                            value={option.value}
-                            checked={value === option.value}
-                            onChange={onChange}
-                        />
-                        <span>{option.label}</span>
-                    </label>
-                );
+                    <div key={idx.toString()} className="radio-row">
+                        <label
+                            key={`${idx}-${option.value}`}
+                            className="radio-label"
+                            htmlFor={`${id}-radio-${idx}`}
+                        >
+                            <input
+                                id={`${id}-radio-${idx}`}
+                                type="radio"
+                                name={name}
+                                value={option.value}
+                                checked={
+                                    loading ? undefined : value === option.value
+                                }
+                                onChange={loading ? undefined : onChange}
+                            />
+                            <span className="radio-text">{option.label}</span>
+                        </label>
+                        <div className="loading-wrapper">
+                            <div className="loading-ghost" />
+                        </div>
+                    </div>
+                )
             })}
         </div>
-    );
-};
+    )
+}
 
-export default RadioGroup;
+export default RadioGroup

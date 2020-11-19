@@ -1,13 +1,13 @@
 // FeatureSelected.js
-import React from "react";
+import React from 'react'
 
 const closeButtonStyle = {
-    cursor: "pointer",
-    float: "right",
-    fontSize: "16px",
-    lineHeight: "32px",
-    paddingLeft: "8px",
-};
+    cursor: 'pointer',
+    float: 'right',
+    fontSize: '16px',
+    lineHeight: '32px',
+    paddingLeft: '8px',
+}
 
 const FeatureSelected = ({ feature, onRemoveFeature }) => {
     return (
@@ -15,8 +15,8 @@ const FeatureSelected = ({ feature, onRemoveFeature }) => {
             {feature.name}
             <i
                 onClick={(e) => {
-                    e.preventDefault();
-                    onRemoveFeature(feature);
+                    e.preventDefault()
+                    onRemoveFeature(feature)
                 }}
                 className="material-icons"
                 style={closeButtonStyle}
@@ -24,7 +24,7 @@ const FeatureSelected = ({ feature, onRemoveFeature }) => {
                 close
             </i>
         </div>
-    );
-};
+    )
+}
 
-export default FeatureSelected;
+export default FeatureSelected
