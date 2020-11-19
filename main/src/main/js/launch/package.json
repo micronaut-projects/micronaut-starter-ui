@@ -8,6 +8,7 @@
         "@material-ui/icons": "^4.9.1",
         "@material-ui/lab": "^4.0.0-alpha.50",
         "materialize-css": "^1.0.0",
+        "micronaut-launch-sdk": "file:../../../../../micronaut-launch-sdk",
         "prettier": "^2.1.2",
         "react": "^16.8.6",
         "react-dom": "^16.8.6",

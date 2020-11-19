@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { MicronautStarterSDK } from '../micronaut'
+import MicronautLaunchSDK from "micronaut-launch-sdk"
 
 export default function useMicronautSdk(baseUrl) {
   return useMemo(() => {
-    return baseUrl && new MicronautStarterSDK({ baseUrl: baseUrl })
+    return baseUrl && new MicronautLaunchSDK({ baseUrl: baseUrl })
   }, [baseUrl])
 }

@@ -22,7 +22,7 @@ import { API_URL, SNAPSHOT_API_URL } from './constants'
 import useAppTheme from './hooks/useAppTheme'
 import useLocalStorage from './hooks/useLocalStorage'
 import useMicronautSdk from './hooks/useMicronautSdk'
-import { MicronautStarterSDK } from './micronaut'
+import MicronautLaunchSDK from 'micronaut-launch-sdk'
 
 import { downloadBlob, makeNodeTree } from './utility'
 
@@ -134,7 +134,7 @@ export default function App() {
 
   useEffect(() => {
     const retrieveVersion = async (baseUrl) => {
-      const mn = new MicronautStarterSDK({ baseUrl })
+      const mn = new MicronautLaunchSDK({ baseUrl })
       const result = await mn.versions()
       const ver = result.versions['micronaut.version']
       return {
@@ -225,7 +225,7 @@ export default function App() {
   const createPayload = { ...form, features: featuresSelected }
 
   // GitHub Create Ref
-  const gitHubCreateHref = MicronautStarterSDK.githubHrefForUrl(
+  const gitHubCreateHref = MicronautLaunchSDK.githubHrefForUrl(
     apiUrl,
     createPayload
   )

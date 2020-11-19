@@ -1,12 +1,12 @@
 export class CreateCommand {
   constructor({
+    name,
+    package: _package,
     type,
     javaVersion,
     build,
     lang,
     test,
-    name,
-    package: _package,
     features,
   }) {
     this.type = type
