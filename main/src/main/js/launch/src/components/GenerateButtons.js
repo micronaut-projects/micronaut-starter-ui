@@ -1,7 +1,6 @@
 import React from 'react'
 import Icon from 'react-materialize/lib/Icon'
 import Dropdown from 'react-materialize/lib/Dropdown'
-import Divider from 'react-materialize/lib/Divider'
 import Button from 'react-materialize/lib/Button'
 import GitHubIcon from '@material-ui/icons/GitHub'
 import { TooltipWrapper } from './TooltipButton'
