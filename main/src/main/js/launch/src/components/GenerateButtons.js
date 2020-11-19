@@ -72,7 +72,6 @@ const GenerateButtons = ({
         Push to GitHub
       </a>
     </TooltipWrapper>
-    <Divider />
     <TooltipWrapper tooltip={messages.tooltips.generate}>
       <a
         role="button"
