@@ -10,7 +10,32 @@ type CacheEntry<T> = {
     expiration: Number
 }
 
-type CachingFn<T> = () => T
+type StorageDriver = {
+    getItem: (key: string) => any
+    setItem: (key: string, data: any) => void
+}
+
+function driverFactory(resolver: () => StorageDriver): StorageDriver {
+    return typeof window !== 'undefined'
+        ? resolver()
+        : new MemoryStorageDriver()
+}
+
+export class MemoryStorageDriver implements StorageDriver {
+    _store: Record<string, any>
+
+    constructor() {
+        this._store = {} as Record<string, any>
+    }
+
+    getItem(key: string): any {
+        return this._store[key]
+    }
+
+    setItem(key: string, data: any): void {
+        this._store[key] = data
+    }
+}
 
 export abstract class CacheStorageAdapterAbstract {
     prefix: string
@@ -26,58 +51,58 @@ export abstract class CacheStorageAdapterAbstract {
     abstract setItem<T>(key: string, data: CacheEntry<T>): void
 }
 
-export class SessionStorageAdapter extends CacheStorageAdapterAbstract {
-    constructor(prefix = 'SessionStorageAdapter') {
-        super(prefix)
-    }
-
-    getItem<T>(key: string): CacheEntry<T> | undefined {
-        const data = window.sessionStorage.getItem(this.makeKey(key))
-        try {
-            if (data) {
-                return JSON.parse(data) as CacheEntry<T>
-            }
-        } catch (error) {}
-    }
-
-    setItem<T>(key: string, data: CacheEntry<T>) {
-        window.sessionStorage.setItem(this.makeKey(key), JSON.stringify(data))
-    }
-}
-
-export class LocalStorageAdapter extends CacheStorageAdapterAbstract {
-    constructor(prefix = 'LocalStorageAdapter') {
-        super(prefix)
-    }
-
-    getItem<T>(key: string): CacheEntry<T> | undefined {
-        const data = window.localStorage.getItem(this.makeKey(key))
-        try {
-            if (data) {
-                return JSON.parse(data) as CacheEntry<T>
-            }
-        } catch (error) {}
-    }
-
-    setItem<T>(key: string, data: CacheEntry<T>) {
-        window.localStorage.setItem(this.makeKey(key), JSON.stringify(data))
-    }
-}
-
 export class MemoryAdapter extends CacheStorageAdapterAbstract {
-    _store: Record<string, CacheEntry<any>>
+    _store: MemoryStorageDriver
 
     constructor(prefix = 'MemoryAdapter') {
         super(prefix)
-        this._store = {} as Record<string, any>
+        this._store = new MemoryStorageDriver()
     }
 
     getItem<T>(key: string): CacheEntry<T> {
-        return this._store[this.makeKey(key)] as CacheEntry<T>
+        return this._store.getItem(this.makeKey(key)) as CacheEntry<T>
     }
 
-    setItem<T>(key: string, data: CacheEntry<any>): void {
-        this._store[this.makeKey(key)] = data
+    setItem<T>(key: string, data: CacheEntry<T>): void {
+        this._store.setItem(this.makeKey(key), data)
+    }
+}
+
+class WebStorageAdapter extends CacheStorageAdapterAbstract {
+    driver: StorageDriver
+
+    constructor(prefix: string, driver: StorageDriver) {
+        super(prefix)
+        this.driver = driver
+    }
+    getItem<T>(key: string): CacheEntry<T> | undefined {
+        const data = this.driver.getItem(this.makeKey(key))
+        try {
+            if (data) {
+                return JSON.parse(data) as CacheEntry<T>
+            }
+        } catch (error) {}
+    }
+
+    setItem<T>(key: string, data: CacheEntry<T>) {
+        this.driver.setItem(this.makeKey(key), JSON.stringify(data))
+    }
+}
+export class SessionStorageAdapter extends WebStorageAdapter {
+    constructor(prefix = 'SessionStorageAdapter') {
+        super(
+            prefix,
+            driverFactory(() => window.sessionStorage)
+        )
+    }
+}
+
+export class LocalStorageAdapter extends WebStorageAdapter {
+    constructor(prefix = 'LocalStorageAdapter') {
+        super(
+            prefix,
+            driverFactory(() => window.localStorage)
+        )
     }
 }
 
