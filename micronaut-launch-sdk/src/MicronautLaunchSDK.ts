@@ -35,14 +35,10 @@ export class MicronautLaunchSDK {
 
     private async get<T>(url: string) {
         return this.adapter.get<T>(url).catch((error) => {
-            error.message = error.response.data.message
+            if (error.response) {
+                error.message = error.response.data.message
+            }
             throw error
-            // throw new MicronautLaunchError(error.message, -1)
-            // if (!error.response) {
-            //     throw new MicronautLaunchError(error.message, -1)
-            // }
-            // const { response } = error
-            // throw new MicronautLaunchError('ooopppsss', response.status)
         })
     }
 
@@ -53,28 +49,28 @@ export class MicronautLaunchSDK {
     /**
      * Provides a description of the API.
      */
-    description(): Promise<string> {
+    description() {
         return this.get<string>('/')
     }
 
     /**
      * Get Select Options / and defaults for starter
      */
-    selectOptions(): Promise<SelectOptions> {
+    selectOptions() {
         return this.cache<SelectOptions>('/select-options')
     }
 
     /**
      * Informationtion about feature versions provided by this instance.
      */
-    versions(): Promise<Versions> {
+    versions() {
         return this.cache<Versions>(`/versions`)
     }
 
     /**
      * List the application types.
      */
-    applicationTypes(): Promise<ApplicationTypeList> {
+    applicationTypes() {
         return this.get<ApplicationTypeList>(`/application-types`)
     }
 
@@ -82,9 +78,7 @@ export class MicronautLaunchSDK {
      * Get a specific application type.
      * @param params the Application Type request params
      */
-    applicationTypeInfo(
-        params: ApplicationTypeRequest
-    ): Promise<ApplicationTypeInfo> {
+    applicationTypeInfo(params: ApplicationTypeRequest) {
         return this.get<ApplicationTypeInfo>(
             `/application-types/${params.type}`
         )
@@ -94,7 +88,7 @@ export class MicronautLaunchSDK {
      * Get a list of features for a given Application Type
      * @param params the Application Type request params
      */
-    async features(params: ApplicationTypeRequest) {
+    features(params: ApplicationTypeRequest) {
         return this.get<FeatureList>(
             `/application-types/${params.type}/features`
         )
@@ -104,7 +98,7 @@ export class MicronautLaunchSDK {
      * Diffs the whole application for all selected features.
      * @param configuration
      */
-    async diff(configuration: CreateCommand) {
+    diff(configuration: CreateCommand) {
         const createCommand = new CreateCommand(configuration)
         return this.get<string>(createCommand.toUrl('diff'))
     }
@@ -113,7 +107,7 @@ export class MicronautLaunchSDK {
      * Previews the contents of a generated application.
      * @param configuration The create command data
      */
-    async preview(configuration: ActivityProps) {
+    preview(configuration: ActivityProps) {
         const createCommand = new CreateCommand(configuration)
         return this.get<Preview>(createCommand.toUrl('preview'))
     }
@@ -122,7 +116,7 @@ export class MicronautLaunchSDK {
      * Creates an application, generating a ZIP file as the response.
      * @param  {Object} configuration The create command data
      */
-    async create(configuration: ActivityProps) {
+    create(configuration: ActivityProps) {
         const createCommand = new CreateCommand(configuration)
         return this.get<Blob>(createCommand.toUrl('create'))
     }
