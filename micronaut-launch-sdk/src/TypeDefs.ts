@@ -3,42 +3,15 @@ export type HasDefaults = {
     build?: BuildTool
 }
 
-export enum ApplicationType {
-    DEFAULT = 'DEFAULT',
-    CLI = 'CLI',
-    FUNCTION = 'FUNCTION',
-    GRPC = 'GRPC',
-    MESSAGING = 'MESSAGING',
-}
+export type ApplicationType = string
 
-export enum BuildTool {
-    GRADLE = 'GRADLE',
-    GRADLE_KOTLIN = 'GRADLE_KOTLIN',
-    MAVEN = 'MAVEN',
-}
+export type BuildTool = string
 
-export enum TestFramework {
-    JUNIT = 'JUNIT',
-    SPOCK = 'SPOCK',
-    KOTEST = 'KOTEST',
-}
+export type TestFramework = string
 
-export enum Language {
-    JAVA = 'JAVA',
-    GROOVY = 'GROOVY',
-    KOTLIN = 'KOTLIN',
-}
+export type Language = string
 
-export enum JdkVersion {
-    JDK_8 = 'JDK_8',
-    JDK_9 = 'JDK_9',
-    JDK_10 = 'JDK_10',
-    JDK_11 = 'JDK_11',
-    JDK_12 = 'JDK_12',
-    JDK_13 = 'JDK_13',
-    JDK_14 = 'JDK_14',
-    JDK_15 = 'JDK_15',
-}
+export type JdkVersion = string
 
 export type ApplicationTypeRequest = {
     type: ApplicationType

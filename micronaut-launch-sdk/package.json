@@ -4,7 +4,7 @@
   "description": "Micronaut Launch Javascript SDK",
   "main": "build/index.js",
   "scripts": {
-    "test": "mocha --require ts-node/register src/**/*.test.ts",
+    "test": "mocha --delay --require ts-node/register src/**/*.test.ts",
     "build": "tsc"
   },
   "keywords": [

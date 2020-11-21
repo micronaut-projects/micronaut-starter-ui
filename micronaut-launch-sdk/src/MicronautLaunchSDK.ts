@@ -17,14 +17,25 @@ import { HttpAdapter, Config } from './http'
 import { CacheApi, CACHE_10_MIN, SessionStorageAdapter } from './Cache'
 import { MicronautLaunchError } from './MicronautLaunchError'
 
-export class MicronautLaunchSDK {
+type MicronautLaunchConfig = {
     baseUrl: string
-    adapter: HttpAdapter
-    _cache: CacheApi
-    constructor(config: Config) {
+    cacheTtl?: number
+}
+
+export class MicronautLaunchSDK {
+    private baseUrl: string
+    private adapter: HttpAdapter
+    private cacheDriver: CacheApi
+    private cacheTtl = CACHE_10_MIN
+
+    constructor(config: MicronautLaunchConfig) {
         this.baseUrl = config.baseUrl
+        if (config.cacheTtl) {
+            this.cacheTtl = config.cacheTtl
+        }
+
         this.adapter = new HttpAdapter(config)
-        this._cache = new CacheApi(
+        this.cacheDriver = new CacheApi(
             new SessionStorageAdapter(`micronaut-sdk:${config.baseUrl}`)
         )
     }
@@ -35,15 +46,22 @@ export class MicronautLaunchSDK {
 
     private async get<T>(url: string) {
         return this.adapter.get<T>(url).catch((error) => {
+            let message = error.message
+            let status = -1
             if (error.response) {
-                error.message = error.response.data.message
+                message = error.response.data.message
+                status = error.response.status
             }
-            throw error
+            throw new MicronautLaunchError(message, status)
         })
     }
 
     private cache<T>(url: string): Promise<T> {
-        return this._cache.cache<T>(url, () => this.get<T>(url), CACHE_10_MIN)
+        return this.cacheDriver.cache<T>(
+            url,
+            () => this.get<T>(url),
+            this.cacheTtl
+        )
     }
 
     /**

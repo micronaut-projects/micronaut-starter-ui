@@ -1,3 +1,4 @@
+import { MicronautLaunchError } from './MicronautLaunchError'
 import { MicronautLaunchSDK } from './MicronautLaunchSDK'
 
 export const LAUNCH_URL = 'https://launch.micronaut.io'

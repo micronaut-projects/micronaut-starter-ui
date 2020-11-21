@@ -17,7 +17,6 @@ export class HttpAdapter {
     }
 
     async get<T>(url: string) {
-        console.log({ url })
         const response = await this.instance.get<T>(url, {
             headers: { 'Content-Type': 'application/json' },
         })
