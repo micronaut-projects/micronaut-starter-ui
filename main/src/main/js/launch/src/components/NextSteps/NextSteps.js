@@ -42,11 +42,13 @@ const NextSteps = ({
     }, [info.type, cloneUrl, name])
 
     const cdCommand = useMemo(() => {
-        const win = `cd ${name}`
-        const nix = `./cd ${name}`
+        const cd = `cd ${name}`
         return {
             action: 'cd into the project',
-            cmd: { [OS_NIX]: nix, [OS_WINDOWS]: win },
+            cmd: {
+                [OS_NIX]: cd,
+                [OS_WINDOWS]: cd,
+            },
         }
     }, [name])
 
