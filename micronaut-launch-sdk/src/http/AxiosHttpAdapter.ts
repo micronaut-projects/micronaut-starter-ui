@@ -1,19 +1,23 @@
 import axios, { AxiosInstance } from 'axios'
+import {
+    HttpAdapter,
+    Config,
+    HttpAdapterConstructor,
+} from './HttpAdapter'
 
-export type HttpAdapterConfig = {
-    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
-    headers?: Record<string, string>
-}
+export const AxiosHttpAdapter: HttpAdapterConstructor = class AxiosHttpAdapter
+    implements HttpAdapter {
+    private id = Math.floor(Math.random() * Math.floor(9999))
 
-export type Config = {
-    baseUrl: string
-}
-
-export class HttpAdapter {
     private instance: AxiosInstance
 
     constructor(config: Config) {
         this.instance = axios.create({ baseURL: config.baseUrl })
+
+    }
+
+    private log(...args: any): void {
+        console.log(`[${this.id} HttpAdapter]`, ...args)
     }
 
     async get<T>(url: string) {

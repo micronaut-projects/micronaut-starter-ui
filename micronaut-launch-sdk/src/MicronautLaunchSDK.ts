@@ -13,9 +13,10 @@ import {
     Versions,
 } from './TypeDefs'
 
-import { HttpAdapter, Config } from './http'
+import { HttpAdapter } from './http/HttpAdapter'
 import { CacheApi, CACHE_10_MIN, SessionStorageAdapter } from './Cache'
 import { MicronautLaunchError } from './MicronautLaunchError'
+import { AxiosHttpAdapter } from './http/AxiosHttpAdapter'
 
 type MicronautLaunchConfig = {
     baseUrl: string
@@ -27,6 +28,7 @@ export class MicronautLaunchSDK {
     private adapter: HttpAdapter
     private cacheDriver: CacheApi
     private cacheTtl = CACHE_10_MIN
+    private tokenCounter = 0
 
     constructor(config: MicronautLaunchConfig) {
         this.baseUrl = config.baseUrl
@@ -34,11 +36,19 @@ export class MicronautLaunchSDK {
             this.cacheTtl = config.cacheTtl
         }
 
-        this.adapter = new HttpAdapter(config)
+        this.adapter = new AxiosHttpAdapter({
+            baseUrl: config.baseUrl,
+        })
+
         this.cacheDriver = new CacheApi(
             new SessionStorageAdapter(`micronaut-sdk:${config.baseUrl}`)
         )
     }
+
+    sdkBaseUrl() {
+        return this.baseUrl
+    }
+
 
     private urlBuilder(url: string): string {
         return `${this.baseUrl}${url}`
@@ -82,7 +92,7 @@ export class MicronautLaunchSDK {
      * Informationtion about feature versions provided by this instance.
      */
     versions() {
-        return this.cache<Versions>(`/versions`)
+        return this.get<Versions>(`/versions`)
     }
 
     /**
