@@ -141,7 +141,7 @@
                 "name": "junit",
                 "description": "junit",
                 "value": "JUNIT",
-                "label": "Junit"
+                "label": "JUnit"
             },
             {
                 "name": "spock",
@@ -160,7 +160,7 @@
             "name": "junit",
             "description": "junit",
             "value": "JUNIT",
-            "label": "Junit"
+            "label": "JUnit"
         }
     },
     "build": {
