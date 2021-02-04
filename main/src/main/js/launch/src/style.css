@@ -243,10 +243,16 @@ body.light svg.mn-logo path,
 body.light svg.oci-logo path {
   fill: var(--theme-dark);
 }
-
 body.dark svg.mn-logo path,
 body.dark svg.oci-logo path {
   fill: var(--theme-light);
+}
+
+svg.oci-logo path.st1 {
+  fill: #77c7d3 !important;
+}
+svg.oci-logo path.st2 {
+  fill: #f7b376 !important;
 }
 
 /*Theme Explicit*/
