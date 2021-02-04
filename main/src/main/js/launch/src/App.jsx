@@ -36,10 +36,11 @@ import { parseQuery } from './helpers/url'
 const formResets = () => ({
   name: 'demo',
   package: 'com.example',
+  type: 'DEFAULT',
 })
+
 const initialForm = () => ({
   ...formResets(),
-  type: 'DEFAULT',
   javaVersion: '',
 })
 
@@ -287,8 +288,9 @@ export default function App() {
 
   const onStartOver = () => {
     setForm((form) => ({ ...form, ...formResets() }))
+    removeAllFeatures()
     setNextStepsInfo({})
-  }
+}
 
   const onCloseNextSteps = () => {
     setNextStepsInfo({})
