@@ -1,5 +1,12 @@
 // CodePreview.js
-import React, { useState, forwardRef } from 'react'
+import React, {
+  useState,
+  forwardRef,
+  useEffect,
+  useMemo,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 
 import { Button } from 'react-materialize'
 
@@ -23,6 +30,16 @@ const CodePreview = (
   { preview, lang, build, theme = 'light', disabled, onLoad, onClose },
   ref
 ) => {
+  const triggerRef = useRef(null)
+  const [showing, setShowing] = useState(null)
+
+  useImperativeHandle(ref, () => ({
+    show: (showing) => {
+      setShowing(showing)
+      triggerRef.current.props.onClick()
+    },
+  }))
+
   const [currentFile, setCurrentFile] = useState({
     contents: null,
     language: null,
@@ -33,6 +50,7 @@ const CodePreview = (
       contents: null,
       language: null,
     })
+    setShowing(null)
     if (onClose instanceof Function) {
       onClose()
     }
@@ -60,7 +78,47 @@ const CodePreview = (
     }
   }
 
-  const renderTree = (nodes, rootKey = 'root') => {
+  function extractDefaults(path) {
+    if (!path || typeof path !== 'string') {
+      return {
+        defaultSelected: 'root',
+      }
+    }
+
+    const parts = path.split('/')
+    const defaultExpanded = []
+    while (parts.length) {
+      defaultExpanded.push(parts.join('/'))
+      parts.pop()
+    }
+    return {
+      defaultSelected: path,
+      defaultExpanded,
+    }
+  }
+
+  const { defaultSelected, defaultExpanded } = useMemo(
+    () => extractDefaults(showing),
+    [showing]
+  )
+
+  useEffect(() => {
+    if (typeof showing !== 'string') {
+      return
+    }
+    const parts = showing.split('/').filter((i) => i)
+    let contents = preview
+    let key = ''
+    while (contents && typeof match !== 'string' && parts.length) {
+      key = parts.shift()
+      contents = contents[key]
+    }
+    if (key && contents) {
+      handleFileSelection(key, contents)
+    }
+  }, [preview, showing])
+
+  const renderTree = (nodes, rootKey = '') => {
     if (nodes instanceof Object) {
       return Object.keys(nodes)
         .sort(function order(key1, key2) {
@@ -78,12 +136,12 @@ const CodePreview = (
         })
         .map((key) => {
           const children = nodes[key]
-          const nodeId = `${key}:${rootKey}`
+          const nodeId = `${rootKey}/${key}`
           return (
             <TreeItem
               key={nodeId}
               nodeId={nodeId}
-              label={key}
+              label={nodeId}
               onClick={() => handleFileSelection(key, children)}
             >
               {renderTree(children, nodeId)}
@@ -129,7 +187,7 @@ const CodePreview = (
         }
         trigger={
           <Button
-            ref={ref}
+            ref={triggerRef}
             disabled={disabled}
             waves="light"
             className={theme}
@@ -149,10 +207,12 @@ const CodePreview = (
             style={{ borderRight: '1px solid' }}
           >
             <TreeView
+              key={defaultSelected}
               defaultCollapseIcon={<Icon>folder_open</Icon>}
               defaultExpandIcon={<Icon>folder</Icon>}
               defaultEndIcon={<Icon>description</Icon>}
-              defaultExpanded={['src', 'main']}
+              defaultExpanded={defaultExpanded}
+              defaultSelected={defaultSelected}
             >
               {renderTree(preview)}
             </TreeView>

@@ -179,10 +179,17 @@ export class MicronautStarterSDK {
     }, {})
   }
 
+  /**
+   * Rebuild features array of string into an object suitable for select options
+   * @note This is mostly for reconstruction from query parameter data.
+   *
+   * @param {Array<String>} features  An Array of Strings
+   * @return {Object<String,Object>}  Select Option keyed by feature name
+   */
   static reconstructFeatures(features) {
     return features
-      ? features.reduce((acc, f) => {
-          acc[f] = { name: f }
+      ? features.reduce((acc, feature) => {
+          acc[feature] = { name: feature }
           return acc
         }, {})
       : {}

@@ -33,40 +33,45 @@ import { MicronautStarterSDK } from './micronaut'
 
 import { downloadBlob, makeNodeTree } from './utility'
 
-import './style.css'
-import './styles/button-row.css'
-import './styles/modal-overrides.css'
-import './styles/font-overrides.css'
-import './styles/utility.css'
+import {
+  resetRoute,
+  updateRoute,
+  resolveActionRoute,
+  isDeepLinkReferral,
+  parseAndConsumeQuery,
+} from './helpers/Routing'
 
-import { parseQuery } from './helpers/url'
-
-const formResets = () => ({
-  name: 'demo',
-  package: 'com.example',
-  type: 'DEFAULT',
-})
-
-const initialForm = (queryData) => {
-  const { type, javaVersion, lang, build, test } = queryData
+function formResets(fallbacks = {}) {
+  const { name, package: pkg, type } = fallbacks
   return {
-    ...formResets(),
-    type: type || 'DEFAULT',
-    javaVersion: javaVersion || '',
-    lang,
-    build,
-    test,
+    name: typeof name === 'string' ? name : 'demo',
+    package: typeof pkg === 'string' ? pkg : 'com.example',
+    type: typeof type === 'string' ? type : 'DEFAULT',
+  }
+}
+
+const initialForm = (shareData) => {
+  const { javaVersion, lang, build, test } = shareData
+  const parsed = {
+    javaVersion: typeof javaVersion === 'string' ? javaVersion : '', // This is specifically "" to work with the SelectOption component
+    lang: typeof lang === 'string' ? lang : null,
+    build: typeof build === 'string' ? build : null,
+    test: typeof test === 'string' ? test : null,
+  }
+  return {
+    ...formResets(shareData),
+    ...parsed,
   }
 }
 
 const EMPTY_VERSIONS = []
 export default function App() {
-  const queryData = useRef(parseQuery(window.location.search))
+  const shareData = useRef(parseAndConsumeQuery())
 
   const [form, setForm] = useLocalStorage(
     'INITIAL_FORM_DATA',
-    initialForm(queryData.current),
-    !!queryData.current.type
+    initialForm(shareData.current),
+    isDeepLinkReferral(shareData.current) // This will cause useLocalStorage to ignore on the first pass, since we're loading from a deepLink
   )
 
   const [availableVersions, setAvailableVersions] = useState(EMPTY_VERSIONS)
@@ -75,7 +80,7 @@ export default function App() {
 
   const [featuresAvailable, setFeaturesAvailable] = useState([])
   const [featuresSelected, setFeaturesSelected] = useState(
-    MicronautStarterSDK.reconstructFeatures(queryData.current.features)
+    MicronautStarterSDK.reconstructFeatures(shareData.current.features)
   )
   const [initializationAttempted, setInitializationAttempted] = useState(false)
 
@@ -107,7 +112,7 @@ export default function App() {
   }
 
   const [theme, toggleTheme] = useAppTheme()
-  const previewButton = useRef()
+  const previewView = useRef()
   const diffButton = useRef()
 
   const disabled =
@@ -128,17 +133,18 @@ export default function App() {
   }, [micronautApi, availableVersions])
 
   const [ready, setReady] = useState(() => {
-    const { error, htmlUrl } = queryData.current
+    const { error, htmlUrl } = shareData.current
     return !!error || !!htmlUrl || false
   })
 
   useEffect(() => {
-    const [baseUrl] = window.location.toString().split('?', 2)
-    const { error, htmlUrl, cloneUrl } = queryData.current
+    const { error, htmlUrl, cloneUrl } = shareData.current
     if (!error && !htmlUrl) {
       return // nothing more to do
     }
-    window.history.replaceState({}, document.title, baseUrl)
+
+    resetRoute()
+
     setTimeout(() => {
       if (cloneUrl) {
         setNextStepsInfo({
@@ -265,18 +271,22 @@ export default function App() {
     }
   }
 
-  const routePreview = useCallback(async (payload, mnSdk) => {
-    try {
-      const json = await mnSdk.preview(payload)
-      const nodes = makeNodeTree(json.contents)
-      setPreview(nodes)
-      previewButton.current.props.onClick()
-    } catch (error) {
-      await handleResponseError(error)
-    } finally {
-      setDownloading(false)
-    }
-  }, [])
+  const routePreview = useCallback(
+    async (payload, mnSdk, opts = { showing: null }) => {
+      try {
+        const json = await mnSdk.preview(payload)
+        const nodes = makeNodeTree(json.contents)
+        setPreview(nodes)
+        updateRoute('preview')
+        previewView.current.show(opts.showing)
+      } catch (error) {
+        await handleResponseError(error)
+      } finally {
+        setDownloading(false)
+      }
+    },
+    []
+  )
 
   const routeDiff = useCallback(async (payload, mnSdk) => {
     try {
@@ -287,6 +297,7 @@ export default function App() {
         )
       }
       setDiff(text)
+      updateRoute('diff')
       diffButton.current.props.onClick()
     } catch (error) {
       await handleResponseError(error)
@@ -297,32 +308,44 @@ export default function App() {
 
   useEffect(() => {
     function handleDeepLink() {
-      const route = queryData.current.route || ''
-      if (!route) return
+      const handlers = {
+        preview: routePreview,
+        diff: routeDiff,
+      }
 
+      const route = resolveActionRoute()
+      if (!route) {
+        return
+      }
+
+      // If we're not able to handle the route,
+      // discard and reset the history state
+      if (
+        !isDeepLinkReferral(shareData.current) ||
+        !Object.keys(handlers).includes(route)
+      ) {
+        // Push back and return
+        resetRoute()
+        return
+      }
+
+      const { showing } = shareData.current
       // Remove the route
-      delete queryData.current.route
+      delete shareData.current.route
+      delete shareData.current.showing
 
       // This is a common react problem
       // Since we have to wait for the SDK to get initialized
       // but can't watch the create / features objects,
       // we need to rebuild at routing time.
-      const features = MicronautStarterSDK.reconstructFeatures(
-        queryData.current.features
-      )
-      const create = {
-        ...initialForm(queryData.current),
-        features,
+      const payload = {
+        ...initialForm(shareData.current),
+        features: MicronautStarterSDK.reconstructFeatures(
+          shareData.current.features
+        ),
       }
 
-      switch (route.toUpperCase()) {
-        case 'PREVIEW':
-          return routePreview(create, sdk)
-        case 'DIFF':
-          return routeDiff(create, sdk)
-        default:
-          break
-      }
+      handlers[route](payload, sdk, { showing })
     }
     if (sdk) {
       handleDeepLink()
@@ -337,6 +360,7 @@ export default function App() {
 
   const clearPreview = () => {
     setPreview({})
+    resetRoute()
   }
 
   // Diff Feat
@@ -347,6 +371,7 @@ export default function App() {
 
   const clearDiff = () => {
     setDiff(null)
+    resetRoute()
   }
 
   const onStartOver = () => {
@@ -397,21 +422,21 @@ export default function App() {
                     diff={diff}
                     lang={form.lang}
                     build={form.build}
+                    disabled={disabled}
                     onLoad={loadDiff}
                     onClose={clearDiff}
-                    disabled={disabled}
                   />
                 </Col>
                 <Col s={3} className="xs6">
                   <CodePreview
-                    ref={previewButton}
+                    ref={previewView}
                     theme={theme}
                     preview={preview}
                     lang={form.lang}
                     build={form.build}
+                    disabled={disabled}
                     onLoad={loadPreview}
                     onClose={clearPreview}
-                    disabled={disabled}
                   />
                 </Col>
                 <Col s={3} className="xs6">
