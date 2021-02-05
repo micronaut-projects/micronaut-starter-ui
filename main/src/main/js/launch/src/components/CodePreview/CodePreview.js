@@ -24,10 +24,20 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 import { capitalize } from '../../utility'
 import messages from '../../constants/messages.json'
-import TooltipButton from '../TooltipButton'
+import TooltipButton, { TooltipWrapper } from '../TooltipButton'
+import CopyToClipboard from '../CopyToClipboard'
 
 const CodePreview = (
-  { preview, lang, build, theme = 'light', disabled, onLoad, onClose },
+  {
+    preview,
+    lang,
+    build,
+    theme = 'light',
+    disabled,
+    onLoad,
+    onClose,
+    sharable,
+  },
   ref
 ) => {
   const triggerRef = useRef(null)
@@ -43,12 +53,23 @@ const CodePreview = (
   const [currentFile, setCurrentFile] = useState({
     contents: null,
     language: null,
+    path: null,
   })
+
+  const shareLink = useMemo(() => {
+    const { origin, pathname } = window.location
+    let url = `${origin}${pathname}?${sharable}&route=preview`
+    if (currentFile.path) {
+      url += `&showing=${currentFile.path}`
+    }
+    return url
+  }, [sharable, currentFile.path])
 
   const onModalClose = () => {
     setCurrentFile({
       contents: null,
       language: null,
+      path: null,
     })
     setShowing(null)
     if (onClose instanceof Function) {
@@ -56,7 +77,7 @@ const CodePreview = (
     }
   }
 
-  const handleFileSelection = (key, contents) => {
+  const handleFileSelection = (key, contents, path) => {
     if (typeof contents === 'string') {
       let idx = key.lastIndexOf('.')
       let language
@@ -74,7 +95,7 @@ const CodePreview = (
       } else {
         language = 'bash'
       }
-      setCurrentFile({ contents, language })
+      setCurrentFile({ contents, language, path })
     }
   }
 
@@ -114,7 +135,7 @@ const CodePreview = (
       contents = contents[key]
     }
     if (key && contents) {
-      handleFileSelection(key, contents)
+      handleFileSelection(key, contents, showing)
     }
   }, [preview, showing])
 
@@ -141,8 +162,8 @@ const CodePreview = (
             <TreeItem
               key={nodeId}
               nodeId={nodeId}
-              label={nodeId}
-              onClick={() => handleFileSelection(key, children)}
+              label={key}
+              onClick={() => handleFileSelection(key, children, nodeId)}
             >
               {renderTree(children, nodeId)}
             </TreeItem>
@@ -181,9 +202,25 @@ const CodePreview = (
           endingTop: '5%',
         }}
         actions={
-          <Button waves="light" modal="close" flat>
-            Close
-          </Button>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <TooltipWrapper tooltip="Share This Configuraiton">
+                <CopyToClipboard value={shareLink}>
+                  Share link for this configuration
+                </CopyToClipboard>
+              </TooltipWrapper>
+            </div>
+            <Button waves="light" modal="close" flat>
+              Close
+            </Button>
+          </div>
         }
         trigger={
           <Button

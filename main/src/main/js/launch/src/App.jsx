@@ -39,6 +39,8 @@ import {
   resolveActionRoute,
   isDeepLinkReferral,
   parseAndConsumeQuery,
+  sharableLink,
+  updateParams,
 } from './helpers/Routing'
 
 function formResets(fallbacks = {}) {
@@ -59,8 +61,8 @@ const initialForm = (shareData) => {
     test: typeof test === 'string' ? test : null,
   }
   return {
-    ...formResets(shareData),
     ...parsed,
+    ...formResets(shareData),
   }
 }
 
@@ -271,13 +273,17 @@ export default function App() {
     }
   }
 
+  const sharable = useMemo(() => sharableLink(form, featuresSelected), [
+    featuresSelected,
+    form,
+  ])
+
   const routePreview = useCallback(
     async (payload, mnSdk, opts = { showing: null }) => {
       try {
         const json = await mnSdk.preview(payload)
         const nodes = makeNodeTree(json.contents)
         setPreview(nodes)
-        updateRoute('preview')
         previewView.current.show(opts.showing)
       } catch (error) {
         await handleResponseError(error)
@@ -297,7 +303,6 @@ export default function App() {
         )
       }
       setDiff(text)
-      updateRoute('diff')
       diffButton.current.props.onClick()
     } catch (error) {
       await handleResponseError(error)
@@ -313,7 +318,7 @@ export default function App() {
         diff: routeDiff,
       }
 
-      const route = resolveActionRoute()
+      const route = resolveActionRoute(shareData.current)
       if (!route) {
         return
       }
@@ -423,6 +428,7 @@ export default function App() {
                     lang={form.lang}
                     build={form.build}
                     disabled={disabled}
+                    sharable={sharable}
                     onLoad={loadDiff}
                     onClose={clearDiff}
                   />
@@ -434,6 +440,7 @@ export default function App() {
                     preview={preview}
                     lang={form.lang}
                     build={form.build}
+                    sharable={sharable}
                     disabled={disabled}
                     onLoad={loadPreview}
                     onClose={clearPreview}
