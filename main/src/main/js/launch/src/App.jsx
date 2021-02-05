@@ -1,4 +1,11 @@
-import React, { Fragment, useState, useEffect, useRef, useMemo } from 'react'
+import React, {
+  Fragment,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from 'react'
 import { ProgressBar } from 'react-materialize'
 import Col from 'react-materialize/lib/Col'
 
@@ -40,21 +47,36 @@ const formResets = () => ({
   type: 'DEFAULT',
 })
 
-const initialForm = () => ({
-  ...formResets(),
-  javaVersion: '',
-})
+const initialForm = (queryData) => {
+  const { type, javaVersion, lang, build, test } = queryData
+  return {
+    ...formResets(),
+    type: type || 'DEFAULT',
+    javaVersion: javaVersion || '',
+    lang,
+    build,
+    test,
+  }
+}
 
 const EMPTY_VERSIONS = []
 export default function App() {
-  const [form, setForm] = useLocalStorage('LATEST_FORM_DATA', initialForm())
+  const queryData = useRef(parseQuery(window.location.search))
+
+  const [form, setForm] = useLocalStorage(
+    'INITIAL_FORM_DATA',
+    initialForm(queryData.current),
+    !!queryData.current.type
+  )
 
   const [availableVersions, setAvailableVersions] = useState(EMPTY_VERSIONS)
   const [micronautApi, setMicronautApi] = useState(false)
   const sdk = useMicronautSdk(micronautApi)
 
   const [featuresAvailable, setFeaturesAvailable] = useState([])
-  const [featuresSelected, setFeaturesSelected] = useState({})
+  const [featuresSelected, setFeaturesSelected] = useState(
+    MicronautStarterSDK.reconstructFeatures(queryData.current.features)
+  )
   const [initializationAttempted, setInitializationAttempted] = useState(false)
 
   const [loadingFeatures, setLoadingFeatures] = useState(false)
@@ -105,17 +127,14 @@ export default function App() {
     return version ? version.api : null
   }, [micronautApi, availableVersions])
 
-  // TODO: ready may one day be used somewhere, when needed, remove the ignore...
-  // eslint-disable-next-line no-unused-vars
   const [ready, setReady] = useState(() => {
-    const [, query] = window.location.toString().split('?', 2)
-    const { error, htmlUrl } = parseQuery(query)
+    const { error, htmlUrl } = queryData.current
     return !!error || !!htmlUrl || false
   })
 
   useEffect(() => {
-    const [baseUrl, query] = window.location.toString().split('?', 2)
-    const { error, htmlUrl, cloneUrl } = parseQuery(query)
+    const [baseUrl] = window.location.toString().split('?', 2)
+    const { error, htmlUrl, cloneUrl } = queryData.current
     if (!error && !htmlUrl) {
       return // nothing more to do
     }
@@ -246,11 +265,9 @@ export default function App() {
     }
   }
 
-  // Preview Feat
-  const loadPreview = async (e) => {
-    requestPrep(e)
+  const routePreview = useCallback(async (payload, mnSdk) => {
     try {
-      const json = await sdk.preview(createPayload)
+      const json = await mnSdk.preview(payload)
       const nodes = makeNodeTree(json.contents)
       setPreview(nodes)
       previewButton.current.props.onClick()
@@ -259,16 +276,11 @@ export default function App() {
     } finally {
       setDownloading(false)
     }
-  }
-  const clearPreview = () => {
-    setPreview({})
-  }
+  }, [])
 
-  // Diff Feat
-  const loadDiff = async (e) => {
-    requestPrep(e)
+  const routeDiff = useCallback(async (payload, mnSdk) => {
     try {
-      const text = await sdk.diff(createPayload)
+      const text = await mnSdk.diff(payload)
       if (text === '') {
         throw new Error(
           'No features have been selected. Please choose one or more features and try again.'
@@ -281,6 +293,56 @@ export default function App() {
     } finally {
       setDownloading(false)
     }
+  }, [])
+
+  useEffect(() => {
+    function handleDeepLink() {
+      const route = queryData.current.route || ''
+      if (!route) return
+
+      // Remove the route
+      delete queryData.current.route
+
+      // This is a common react problem
+      // Since we have to wait for the SDK to get initialized
+      // but can't watch the create / features objects,
+      // we need to rebuild at routing time.
+      const features = MicronautStarterSDK.reconstructFeatures(
+        queryData.current.features
+      )
+      const create = {
+        ...initialForm(queryData.current),
+        features,
+      }
+
+      switch (route.toUpperCase()) {
+        case 'PREVIEW':
+          return routePreview(create, sdk)
+        case 'DIFF':
+          return routeDiff(create, sdk)
+        default:
+          break
+      }
+    }
+    if (sdk) {
+      handleDeepLink()
+    }
+  }, [sdk, routePreview, routeDiff])
+
+  // Preview Feat
+  const loadPreview = (e) => {
+    requestPrep(e)
+    routePreview(createPayload, sdk)
+  }
+
+  const clearPreview = () => {
+    setPreview({})
+  }
+
+  // Diff Feat
+  const loadDiff = async (e) => {
+    requestPrep(e)
+    routeDiff(createPayload, sdk)
   }
 
   const clearDiff = () => {
@@ -291,7 +353,7 @@ export default function App() {
     setForm((form) => ({ ...form, ...formResets() }))
     removeAllFeatures()
     setNextStepsInfo({})
-}
+  }
 
   const onCloseNextSteps = () => {
     setNextStepsInfo({})

@@ -178,4 +178,13 @@ export class MicronautStarterSDK {
       return acc
     }, {})
   }
+
+  static reconstructFeatures(features) {
+    return features
+      ? features.reduce((acc, f) => {
+          acc[f] = { name: f }
+          return acc
+        }, {})
+      : {}
+  }
 }
