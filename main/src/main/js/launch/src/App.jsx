@@ -31,17 +31,15 @@ import useLocalStorage from './hooks/useLocalStorage'
 import useMicronautSdk from './hooks/useMicronautSdk'
 import { MicronautStarterSDK } from './micronaut'
 
-import { downloadBlob, makeNodeTree } from './utility'
-
 import {
   resetRoute,
-  updateRoute,
   resolveActionRoute,
   isDeepLinkReferral,
   parseAndConsumeQuery,
   sharableLink,
-  updateParams,
 } from './helpers/Routing'
+
+import { downloadBlob } from './utility'
 
 function formResets(fallbacks = {}) {
   const { name, package: pkg, type } = fallbacks
@@ -88,7 +86,6 @@ export default function App() {
 
   const [loadingFeatures, setLoadingFeatures] = useState(false)
   const [downloading, setDownloading] = useState(false)
-  const [preview, setPreview] = useState({})
   const [diff, setDiff] = useState(null)
 
   const [nextStepsInfo, setNextStepsInfo] = useState({})
@@ -282,9 +279,7 @@ export default function App() {
     async (payload, mnSdk, opts = { showing: null }) => {
       try {
         const json = await mnSdk.preview(payload)
-        const nodes = makeNodeTree(json.contents)
-        setPreview(nodes)
-        previewView.current.show(opts.showing)
+        previewView.current.show(opts.showing, json)
       } catch (error) {
         await handleResponseError(error)
       } finally {
@@ -364,7 +359,6 @@ export default function App() {
   }
 
   const clearPreview = () => {
-    setPreview({})
     resetRoute()
   }
 
@@ -437,7 +431,6 @@ export default function App() {
                   <CodePreview
                     ref={previewView}
                     theme={theme}
-                    preview={preview}
                     lang={form.lang}
                     build={form.build}
                     sharable={sharable}
