@@ -40,11 +40,22 @@
 .modal.dark,
 .modal.dark .modal-footer {
   background-color: var(--theme-dark);
+  border-top: 1px solid rgb(241 240 240 / 30%);
 }
 
 .modal.light,
 .modal.light .modal-footer {
   background-color: var(--theme-light);
+  border-top: 1px solid rgb(103 103 103 / 10%);
+}
+
+.modal-overlay {
+  backdrop-filter: blur(20px);
+}
+
+.dark .modal-overlay {
+  background: rgb(38 38 38);
+  opacity: 0.8 !important;
 }
 
 /* Modal Media */
