@@ -74,19 +74,17 @@ export default function App() {
     isDeepLinkReferral(shareData.current) // This will cause useLocalStorage to ignore on the first pass, since we're loading from a deepLink
   )
 
-  const [availableVersions, setAvailableVersions] = useState(EMPTY_VERSIONS)
+  const [downloading, setDownloading] = useState(false)
+  const [initializationAttempted, setInitializationAttempted] = useState(false)
   const [micronautApi, setMicronautApi] = useState(false)
   const sdk = useMicronautSdk(micronautApi)
 
+  const [availableVersions, setAvailableVersions] = useState(EMPTY_VERSIONS)
   const [featuresAvailable, setFeaturesAvailable] = useState([])
   const [featuresSelected, setFeaturesSelected] = useState(
     MicronautStarterSDK.reconstructFeatures(shareData.current.features)
   )
-  const [initializationAttempted, setInitializationAttempted] = useState(false)
-
   const [loadingFeatures, setLoadingFeatures] = useState(false)
-  const [downloading, setDownloading] = useState(false)
-  const [diff, setDiff] = useState(null)
 
   const [nextStepsInfo, setNextStepsInfo] = useState({})
 
@@ -112,7 +110,7 @@ export default function App() {
 
   const [theme, toggleTheme] = useAppTheme()
   const previewView = useRef()
-  const diffButton = useRef()
+  const diffView = useRef()
 
   const disabled =
     !initializationAttempted ||
@@ -277,7 +275,7 @@ export default function App() {
     async (payload, mnSdk, opts = { showing: null }) => {
       try {
         const json = await mnSdk.preview(payload)
-        previewView.current.show(opts.showing, json)
+        previewView.current.show(json, opts.showing)
       } catch (error) {
         await handleResponseError(error)
       } finally {
@@ -295,8 +293,7 @@ export default function App() {
           'No features have been selected. Please choose one or more features and try again.'
         )
       }
-      setDiff(text)
-      diffButton.current.props.onClick()
+      diffView.current.show(text)
     } catch (error) {
       await handleResponseError(error)
     } finally {
@@ -374,7 +371,6 @@ export default function App() {
   }
 
   const clearDiff = () => {
-    setDiff(null)
     resetRoute()
   }
 
@@ -421,9 +417,8 @@ export default function App() {
                 </Col>
                 <Col s={3} className="xs6">
                   <Diff
-                    ref={diffButton}
+                    ref={diffView}
                     theme={theme}
-                    diff={diff}
                     lang={form.lang}
                     build={form.build}
                     disabled={disabled}

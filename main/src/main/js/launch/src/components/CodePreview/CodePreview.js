@@ -37,7 +37,7 @@ const CodePreview = (
   const [preview, setPreview] = useState({})
 
   useImperativeHandle(ref, () => ({
-    show: async (showing, json) => {
+    show: async (json, showing) => {
       setShowing(showing || 'README.md')
       const nodes = makeNodeTree(json.contents)
       setPreview(nodes)
