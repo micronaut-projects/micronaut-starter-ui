@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300,400;500&display=swap');
 
 html {
   height: 100%;
@@ -15,6 +15,7 @@ body {
   --theme-light: white;
   --theme-danger: rgb(148, 16, 0);
   --label-grey: #9e9e9e;
+  --label-darkgrey: #686868;
 }
 
 #root {
@@ -89,6 +90,10 @@ body {
   color: var(--label-grey) !important;
 }
 
+.light .grey-text {
+  color: var(--label-darkgrey) !important;
+}
+
 .error-link {
   color: white !important;
   text-decoration: underline;
@@ -96,8 +101,15 @@ body {
 }
 
 label.MuiFormLabel-root,
+.light label.input-field,
 .input-field > label {
   color: var(--label-grey);
+}
+
+.light label.MuiFormLabel-root,
+.light label.input-field,
+.light .input-field > label {
+  color: var(--label-darkgrey) !important;
 }
 
 .progress {
