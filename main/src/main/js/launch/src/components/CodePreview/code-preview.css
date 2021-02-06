@@ -1,15 +1,22 @@
 .codePreview {
-    min-height: 100%;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: unset !important;
-    min-width: max-content;
+  min-height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: unset !important;
+  min-width: max-content;
+}
+
+.code-preview.footer-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .lineNumbers {
-    margin-right: 10px;
-    padding-right: 5px !important;
-    border-right: 1px dashed;
-    height: 100%;
-    min-width: 24px;
+  margin-right: 10px;
+  padding-right: 5px !important;
+  border-right: 1px dashed;
+  height: 100%;
+  min-width: 24px;
 }

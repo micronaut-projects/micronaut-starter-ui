@@ -4,6 +4,14 @@
         "features": "Choose the features you would like included in the application",
         "generate": "Download a zip file of the application",
         "createRepo": "Create a repo on GitHub with this configuration.",
-        "preview": "Explore the application source files with the selected options and features to see what will be generated"
+        "preview": "Explore the application source files with the selected options and features to see what will be generated",
+        "share": "Share this application configuration"
+    },
+    "share": {
+        "header": "Share out this project",
+        "config": "You can share the link to the configured application",
+        "preview": "or to the preview",
+        "diff": "or view a diff from a baseline application",
+        "zip": "You can also directly download a zip"
     }
 }

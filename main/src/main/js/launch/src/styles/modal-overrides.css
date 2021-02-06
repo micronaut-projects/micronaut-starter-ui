@@ -12,6 +12,7 @@
   position: fixed;
 }
 
+.modal.share h4,
 .modal.next-steps h5 {
   font-size: 1.3rem;
 }
@@ -25,13 +26,9 @@
 }
 
 .modal.mn-feature-modal,
+.modal.share,
+.modal.diff,
 .modal.preview {
-  width: 75%;
-  max-height: 90%;
-  height: 90%;
-}
-
-.modal.diff {
   width: 75%;
   max-height: 90%;
   height: 90%;

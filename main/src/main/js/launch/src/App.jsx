@@ -18,7 +18,7 @@ import {
 import CodePreview from './components/CodePreview'
 import Diff from './components/Diff'
 import ErrorView, { ErrorViewData } from './components/ErrorView'
-import GenerateButtons from './components/GenerateButtons'
+import GenerateButtons from './components/GenerateButtons/GenerateButtons'
 import Header from './components/Header'
 import NextSteps from './components/NextSteps'
 import StarterForm from './components/StarterForm'
@@ -443,6 +443,7 @@ export default function App() {
                   <GenerateButtons
                     theme={theme}
                     disabled={disabled}
+                    sharable={sharable}
                     cloneProject={cloneProject}
                     generateProject={generateProject}
                     gitHubCreateHref={gitHubCreateHref}

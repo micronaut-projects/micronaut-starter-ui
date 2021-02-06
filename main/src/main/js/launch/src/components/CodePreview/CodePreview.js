@@ -24,6 +24,7 @@ import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 import { capitalize, makeNodeTree } from '../../utility'
 import messages from '../../constants/messages.json'
+
 import TooltipButton, { TooltipWrapper } from '../TooltipButton'
 import CopyToClipboard from '../CopyToClipboard'
 
@@ -197,19 +198,12 @@ const CodePreview = (
           endingTop: '5%',
         }}
         actions={
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-            }}
-          >
+          <div class="code-preview footer-wrapper">
             <div>
-              <TooltipWrapper tooltip="Share This Configuraiton">
-                <CopyToClipboard value={shareLink}>
-                  Share link for this configuration
-                </CopyToClipboard>
+              <TooltipWrapper tooltip="Share link back to this configuration">
+                <div>
+                  <CopyToClipboard value={shareLink}></CopyToClipboard>
+                </div>
               </TooltipWrapper>
             </div>
             <Button waves="light" modal="close" flat>

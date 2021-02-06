@@ -13,6 +13,16 @@ export function sharableLink(form, features, action) {
   ].join('&')
 }
 
+export function fullyQualifySharableLink(sharable, options = {}) {
+  const { origin, pathname } = window.location
+  const { action } = options
+  let url = `${origin}${pathname}?${sharable}`
+  if (action) {
+    url += `&route=${action}`
+  }
+  return url
+}
+
 export function parseAndConsumeQuery() {
   const { search } = window.location
   const results = parseQuery(search)

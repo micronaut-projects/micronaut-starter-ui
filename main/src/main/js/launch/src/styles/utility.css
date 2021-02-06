@@ -1,38 +1,44 @@
 .d-flex {
-    display: flex;
+  display: flex;
 }
 
 .flex-row {
-    flex-direction: row;
+  flex-direction: row;
 }
 .flex-col {
-    flex-direction: column;
+  flex-direction: column;
 }
 .flex {
-    flex: 1;
+  flex: 1;
 }
 
 .flex-grow {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 .flex-shrink {
-    flex-shrink: 1;
+  flex-shrink: 1;
 }
 
 .sticky {
-    position: -webkit-sticky;
-    position: sticky;
-    z-index: 1001;
+  position: -webkit-sticky;
+  position: sticky;
+  z-index: 1001;
 }
 
 .clickable {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .jcc {
-    justify-content: center;
+  justify-content: center;
 }
 
 .aic {
-    align-items: center;
+  align-items: center;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.o-scroll {
+  overflow: scroll;
 }
