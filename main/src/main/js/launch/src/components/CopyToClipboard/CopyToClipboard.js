@@ -3,9 +3,8 @@ import AssignmentIcon from '@material-ui/icons/Assignment'
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn'
 
 import { copyToClipboard } from '../../utility'
-import { Children } from 'react'
 
-const CopyToClipboard = ({ value, children }) => {
+const CopyToClipboard = ({ value, copiedMessage = 'Copied!', children }) => {
   const [copied, setCopied] = useState(false)
   const onClick = () => {
     setCopied(true)
@@ -26,7 +25,7 @@ const CopyToClipboard = ({ value, children }) => {
       onClick={onClick}
       role="button"
     >
-      <span className={copyClass.join(' ')}>Copied!</span>
+      <span className={copyClass.join(' ')}>{copiedMessage}</span>
       {children}
       <Icon />
     </div>

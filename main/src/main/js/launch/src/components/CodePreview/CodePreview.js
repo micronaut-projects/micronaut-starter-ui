@@ -198,9 +198,9 @@ const CodePreview = (
           endingTop: '5%',
         }}
         actions={
-          <div class="code-preview footer-wrapper">
-            <div>
-              <TooltipWrapper tooltip="Share link back to this configuration">
+          <div className="code-preview footer-wrapper">
+            <div className={currentFile.contents ? '' : 'hidden'}>
+              <TooltipWrapper tooltip="Copy a link back to current file">
                 <div>
                   <CopyToClipboard value={shareLink}></CopyToClipboard>
                 </div>

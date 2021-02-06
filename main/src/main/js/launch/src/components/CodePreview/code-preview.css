@@ -13,6 +13,15 @@
   align-items: center;
 }
 
+.code-preview.footer-wrapper div {
+  opacity: 1;
+  transition: 0.4s all;
+}
+
+.code-preview.footer-wrapper div.hidden {
+  opacity: 0;
+}
+
 .lineNumbers {
   margin-right: 10px;
   padding-right: 5px !important;
