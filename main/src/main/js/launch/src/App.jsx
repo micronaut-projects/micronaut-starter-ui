@@ -24,8 +24,6 @@ import NextSteps from './components/NextSteps'
 import StarterForm from './components/StarterForm'
 import Footer from './components/Footer'
 
-import { API_URL, SNAPSHOT_API_URL } from './constants'
-
 import useAppTheme from './hooks/useAppTheme'
 import useLocalStorage from './hooks/useLocalStorage'
 import useMicronautSdk from './hooks/useMicronautSdk'
@@ -76,7 +74,14 @@ export default function App() {
 
   const [downloading, setDownloading] = useState(false)
   const [initializationAttempted, setInitializationAttempted] = useState(false)
-  const [micronautApi, setMicronautApi] = useState(false)
+
+  const [micronautApi, setMicronautApi] = useState(() => {
+    const match = MicronautStarterSDK.DEFAULT_APIS[shareData.current.api]
+    return match
+      ? match.baseUrl
+      : MicronautStarterSDK.DEFAULT_APIS.RELEASE.baseUrl
+  })
+
   const sdk = useMicronautSdk(micronautApi)
 
   const [availableVersions, setAvailableVersions] = useState(EMPTY_VERSIONS)
@@ -157,14 +162,16 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const retrieveVersion = async (baseUrl) => {
+    const retrieveVersion = async ({ baseUrl, key, order }) => {
       const mn = new MicronautStarterSDK({ baseUrl })
       const result = await mn.versions()
       const ver = result.versions['micronaut.version']
       return {
+        key: key,
         label: ver,
         value: baseUrl,
         api: baseUrl,
+        order,
       }
     }
 
@@ -172,10 +179,11 @@ export default function App() {
       setDownloading(true)
       try {
         const versions = (
-          await Promise.all([
-            retrieveVersion(API_URL).catch((i) => null),
-            retrieveVersion(SNAPSHOT_API_URL).catch((i) => null),
-          ])
+          await Promise.all(
+            Object.values(MicronautStarterSDK.DEFAULT_APIS)
+              .sort((a, b) => a.order - b.order)
+              .map((api) => retrieveVersion(api).catch((i) => null))
+          )
         ).filter((i) => i)
 
         setAvailableVersions(versions ? versions : EMPTY_VERSIONS)
@@ -195,7 +203,7 @@ export default function App() {
     if (!initializationAttempted && !downloading) {
       initializeForm()
     }
-  }, [initializationAttempted, downloading, setMicronautApi])
+  }, [initializationAttempted, downloading])
 
   useEffect(() => {
     const loadFeatures = async () => {
@@ -254,10 +262,12 @@ export default function App() {
     createPayload
   )
 
-  const sharable = useMemo(() => sharableLink(form, featuresSelected), [
-    featuresSelected,
-    form,
-  ])
+  const sharable = useMemo(() => {
+    const api = Object.values(MicronautStarterSDK.DEFAULT_APIS).find(
+      (api) => api.baseUrl === apiUrl
+    )
+    return sharableLink(form, featuresSelected, api && api.key)
+  }, [featuresSelected, form, apiUrl])
 
   const routeCreate = useCallback(async (payload, mnSdk) => {
     try {

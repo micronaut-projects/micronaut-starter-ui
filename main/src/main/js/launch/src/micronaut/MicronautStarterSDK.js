@@ -1,4 +1,5 @@
 import { CacheApi, SessionStorageAdapter } from '../helpers/Cache'
+import { DEFAULT_APIS } from './constants'
 import { CreateCommand } from './CreateCommand'
 
 const responseHandler = (type = 'json') => (response) => {
@@ -9,6 +10,8 @@ const responseHandler = (type = 'json') => (response) => {
 }
 
 export class MicronautStarterSDK {
+  static DEFAULT_APIS = DEFAULT_APIS
+
   constructor({ baseUrl }) {
     this.cacheApi = new CacheApi(new SessionStorageAdapter(`${baseUrl}`))
     this.baseUrl = baseUrl
