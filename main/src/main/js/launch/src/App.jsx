@@ -63,25 +63,20 @@ const initialForm = (shareData) => {
 }
 
 export default function App() {
+  // Refs
+  const previewView = useRef()
+  const diffView = useRef()
   const shareData = useRef(parseAndConsumeQuery())
 
+  // UI
+  const [theme, toggleTheme] = useAppTheme()
+
+  // Form Data
   const [form, setForm] = useLocalStorage(
     'INITIAL_FORM_DATA',
     initialForm(shareData.current),
     isDeepLinkReferral(shareData.current) // This will cause useLocalStorage to ignore on the first pass, since we're loading from a deepLink
   )
-
-  // Processing State
-  const [downloading, setDownloading] = useState(false)
-  const [initializationAttempted, setInitializationAttempted] = useState(false)
-  const [nextStepsInfo, setNextStepsInfo] = useState({})
-
-  // Version & SDK State
-  const [availableVersions, setAvailableVersions] = useState([])
-  const [selectedVersion, setSelectedVersion] = useState(null)
-  // creates a watchable primitive to include in the useEffect deps
-  const apiUrl = selectedVersion?.api
-  const sdk = useMicronautSdk(apiUrl)
 
   // Available Features State
   const [featuresAvailable, setFeaturesAvailable] = useState([])
@@ -89,6 +84,26 @@ export default function App() {
     MicronautStarterSDK.reconstructFeatures(shareData.current.features)
   )
   const [loadingFeatures, setLoadingFeatures] = useState(false)
+  const [nextStepsInfo, setNextStepsInfo] = useState({})
+
+  // Processing State
+  const [downloading, setDownloading] = useState(false)
+  const [initializationAttempted, setInitializationAttempted] = useState(false)
+  const [ready, setReady] = useState(() => {
+    const { error, htmlUrl } = shareData.current
+    return !!error || !!htmlUrl || false
+  })
+
+  // Version & SDK State
+  const [availableVersions, setAvailableVersions] = useState([])
+  const [selectedVersion, setSelectedVersion] = useLocalStorage(
+    'SELECTED_MN_VERSION',
+    null,
+    isDeepLinkReferral(shareData.current)
+  )
+
+  const apiUrl = selectedVersion?.api // creates a watchable primitive to include in the useEffect deps
+  const sdk = useMicronautSdk(apiUrl)
 
   // Error Handling
   const [error, setError] = useState(ErrorViewData.ofSuccess(''))
@@ -110,23 +125,14 @@ export default function App() {
     }
   }
 
-  const [theme, toggleTheme] = useAppTheme()
-  const previewView = useRef()
-  const diffView = useRef()
-
-  const [ready, setReady] = useState(() => {
-    const { error, htmlUrl } = shareData.current
-    return !!error || !!htmlUrl || false
-  })
-
+  // Use Effect Hook For Error Handling and
+  // GitHub on complete callback
   useEffect(() => {
     const { error, htmlUrl, cloneUrl } = shareData.current
     if (!error && !htmlUrl) {
       return // nothing more to do
     }
-
     resetRoute()
-
     setTimeout(() => {
       if (cloneUrl) {
         setNextStepsInfo({
@@ -141,6 +147,8 @@ export default function App() {
     }, 500)
   }, [])
 
+  // Use Effect to Load the Micrionaut Version data
+  // From each remote source
   useEffect(() => {
     const initializeForm = async () => {
       setDownloading(true)
@@ -148,13 +156,15 @@ export default function App() {
         const versions = await MicronautStarterSDK.loadVersions()
 
         setAvailableVersions(versions)
-
-        setSelectedVersion((version) =>
-          Array.isArray(versions) && versions.length > 0
-            ? versions.find((v) => v.version === shareData.current.version) ||
-              versions[0]
-            : false
-        )
+        const hasVersions = Array.isArray(versions) && versions.length > 0
+        setSelectedVersion((version) => {
+          if (!hasVersions) return false
+          return (
+            versions.find((v) => v.version === version?.version) ||
+            versions.find((v) => v.version === shareData.current.version) ||
+            versions[0]
+          )
+        })
       } catch (error) {
         await handleResponseError(error)
       } finally {
@@ -165,8 +175,10 @@ export default function App() {
     if (!initializationAttempted && !downloading) {
       initializeForm()
     }
-  }, [initializationAttempted, downloading])
+  }, [initializationAttempted, downloading, setSelectedVersion])
 
+  // Use Effect to load the features based on the form.type [DEFAULT, CLI, etc...]
+  // And the baseUrl of the sdk. Only trying if initialized
   useEffect(() => {
     const loadFeatures = async () => {
       setLoadingFeatures(true)
@@ -180,10 +192,10 @@ export default function App() {
         setLoadingFeatures(false)
       }
     }
-    if (initializationAttempted && apiUrl) {
+    if (initializationAttempted && sdk?.baseUrl) {
       loadFeatures()
     }
-  }, [sdk, form.type, apiUrl, initializationAttempted])
+  }, [sdk, form.type, initializationAttempted])
 
   const addFeature = (feature) => {
     setFeaturesSelected(({ ...draft }) => {
@@ -203,14 +215,6 @@ export default function App() {
     setFeaturesSelected({})
   }
 
-  const requestPrep = (event) => {
-    if (event && event.preventDefault instanceof Function) {
-      event.preventDefault()
-    }
-    setError(ErrorViewData.ofNone())
-    setDownloading(true)
-  }
-
   // GitHub Clone Feat
   const cloneProject = async (e) => {
     setDownloading(true)
@@ -223,7 +227,6 @@ export default function App() {
     apiUrl,
     createPayload
   )
-
   const sharable = useMemo(() => {
     const version = availableVersions.find((version) => version.api === apiUrl)
     return sharableLink(form, featuresSelected, version && version.version)
@@ -315,15 +318,24 @@ export default function App() {
 
       handlers[route](payload, sdk, { showing })
     }
-    if (sdk) {
+    if (sdk?.baseUrl) {
       handleDeepLink()
     }
   }, [sdk, routePreview, routeDiff, routeCreate])
 
+  // Preflight for any async activity
+  const requestPrep = (event) => {
+    if (event && event.preventDefault instanceof Function) {
+      event.preventDefault()
+    }
+    setError(ErrorViewData.ofNone())
+    setDownloading(true)
+  }
+
   // Create Feat
   const generateProject = (e) => {
-    routeCreate(createPayload, sdk)
     requestPrep(e)
+    routeCreate(createPayload, sdk)
   }
 
   // Preview Feat
@@ -331,31 +343,24 @@ export default function App() {
     requestPrep(e)
     routePreview(createPayload, sdk)
   }
-
-  const clearPreview = () => {
-    resetRoute()
-  }
+  const clearPreview = () => resetRoute()
 
   // Diff Feat
   const loadDiff = async (e) => {
     requestPrep(e)
     routeDiff(createPayload, sdk)
   }
-
-  const clearDiff = () => {
-    resetRoute()
-  }
+  const clearDiff = () => resetRoute()
 
   // Start Over
   const onStartOver = () => {
     setForm((form) => ({ ...form, ...formResets() }))
     removeAllFeatures()
-    setNextStepsInfo({})
+    onCloseNextSteps()
   }
 
-  const onCloseNextSteps = () => {
-    setNextStepsInfo({})
-  }
+  // Next Steps
+  const onCloseNextSteps = () => setNextStepsInfo({})
 
   const disabled =
     !initializationAttempted ||
