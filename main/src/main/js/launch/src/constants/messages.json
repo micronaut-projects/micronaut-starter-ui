@@ -8,7 +8,7 @@
         "share": "Share this application configuration"
     },
     "share": {
-        "header": "Share out this project",
+        "header": "Copy one of the following links to share this project",
         "config": "You can share the link to the configured application",
         "preview": "or to the preview",
         "diff": "or view a diff from a baseline application",

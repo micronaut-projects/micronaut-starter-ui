@@ -1,7 +1,7 @@
 import { parseQuery } from './url'
 
 const BASE_PATH = 'launch'
-const HANDLED_ROUTES = ['diff', 'preview']
+const HANDLED_ROUTES = ['diff', 'preview', 'create']
 
 export function sharableLink(form, features, action) {
   return [

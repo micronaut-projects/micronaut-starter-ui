@@ -256,24 +256,22 @@ export default function App() {
     createPayload
   )
 
-  // Create Feat
-  const generateProject = async (e) => {
-    requestPrep(e)
+  const sharable = useMemo(() => sharableLink(form, featuresSelected), [
+    featuresSelected,
+    form,
+  ])
+
+  const routeCreate = useCallback(async (payload, mnSdk) => {
     try {
-      const blob = await sdk.create(createPayload)
-      downloadBlob(blob, `${form.name}.zip`)
+      const blob = await mnSdk.create(payload)
+      downloadBlob(blob, `${payload.name}.zip`)
       setNextStepsInfo({ show: true, type: 'zip' })
     } catch (error) {
       await handleResponseError(error)
     } finally {
       setDownloading(false)
     }
-  }
-
-  const sharable = useMemo(() => sharableLink(form, featuresSelected), [
-    featuresSelected,
-    form,
-  ])
+  }, [])
 
   const routePreview = useCallback(
     async (payload, mnSdk, opts = { showing: null }) => {
@@ -308,14 +306,15 @@ export default function App() {
 
   useEffect(() => {
     function handleDeepLink() {
-      const handlers = {
-        preview: routePreview,
-        diff: routeDiff,
-      }
-
       const route = resolveActionRoute(shareData.current)
       if (!route) {
         return
+      }
+
+      const handlers = {
+        preview: routePreview,
+        diff: routeDiff,
+        create: routeCreate,
       }
 
       // If we're not able to handle the route,
@@ -350,7 +349,13 @@ export default function App() {
     if (sdk) {
       handleDeepLink()
     }
-  }, [sdk, routePreview, routeDiff])
+  }, [sdk, routePreview, routeDiff, routeCreate])
+
+  // Create Feat
+  const generateProject = (e) => {
+    routeCreate(createPayload, sdk)
+    requestPrep(e)
+  }
 
   // Preview Feat
   const loadPreview = (e) => {
