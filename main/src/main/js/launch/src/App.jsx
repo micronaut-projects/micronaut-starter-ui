@@ -72,26 +72,24 @@ export default function App() {
     isDeepLinkReferral(shareData.current) // This will cause useLocalStorage to ignore on the first pass, since we're loading from a deepLink
   )
 
+  // Processing State
   const [downloading, setDownloading] = useState(false)
   const [initializationAttempted, setInitializationAttempted] = useState(false)
+  const [nextStepsInfo, setNextStepsInfo] = useState({})
 
-  const [micronautApi, setMicronautApi] = useState(() => {
-    const match = MicronautStarterSDK.DEFAULT_APIS[shareData.current.api]
-    return match
-      ? match.baseUrl
-      : MicronautStarterSDK.DEFAULT_APIS.RELEASE.baseUrl
-  })
-
-  const sdk = useMicronautSdk(micronautApi)
-
+  // Version & SDK State
   const [availableVersions, setAvailableVersions] = useState(EMPTY_VERSIONS)
+  const [selectedVersion, setSelectedVersion] = useState(null)
+  // creates a watchable primitive to include in the useEffect deps
+  const apiUrl = selectedVersion?.api
+  const sdk = useMicronautSdk(apiUrl)
+
+  // Available Features State
   const [featuresAvailable, setFeaturesAvailable] = useState([])
   const [featuresSelected, setFeaturesSelected] = useState(
     MicronautStarterSDK.reconstructFeatures(shareData.current.features)
   )
   const [loadingFeatures, setLoadingFeatures] = useState(false)
-
-  const [nextStepsInfo, setNextStepsInfo] = useState({})
 
   // Error Handling
   const [error, setError] = useState(ErrorViewData.ofSuccess(''))
@@ -116,23 +114,6 @@ export default function App() {
   const [theme, toggleTheme] = useAppTheme()
   const previewView = useRef()
   const diffView = useRef()
-
-  const disabled =
-    !initializationAttempted ||
-    downloading ||
-    loadingFeatures ||
-    !form.name ||
-    !form.package
-
-  const appType = form.type
-
-  // creates a watchable primitive to include in the useEffect deps
-  const apiUrl = useMemo(() => {
-    const version = availableVersions.find((v) => {
-      return micronautApi === v.api
-    })
-    return version ? version.api : null
-  }, [micronautApi, availableVersions])
 
   const [ready, setReady] = useState(() => {
     const { error, htmlUrl } = shareData.current
@@ -165,10 +146,11 @@ export default function App() {
     const retrieveVersion = async ({ baseUrl, key, order }) => {
       const mn = new MicronautStarterSDK({ baseUrl })
       const result = await mn.versions()
-      const ver = result.versions['micronaut.version']
+      const version = result.versions['micronaut.version']
       return {
         key: key,
-        label: ver,
+        label: version,
+        version: version,
         value: baseUrl,
         api: baseUrl,
         order,
@@ -187,10 +169,10 @@ export default function App() {
         ).filter((i) => i)
 
         setAvailableVersions(versions ? versions : EMPTY_VERSIONS)
-        setMicronautApi((micronautApi) =>
+        setSelectedVersion((version) =>
           Array.isArray(versions) && versions.length > 0
-            ? (versions.find((v) => v.value === micronautApi) || versions[0])
-                .value
+            ? versions.find((v) => v.version === shareData.current.version) ||
+              versions[0]
             : false
         )
       } catch (error) {
@@ -210,7 +192,7 @@ export default function App() {
       setLoadingFeatures(true)
       setError(ErrorViewData.ofNone())
       try {
-        const data = await sdk.features({ type: appType })
+        const data = await sdk.features({ type: form.type })
         setFeaturesAvailable(data.features)
       } catch (error) {
         await handleResponseError(error)
@@ -221,7 +203,7 @@ export default function App() {
     if (initializationAttempted && apiUrl) {
       loadFeatures()
     }
-  }, [sdk, appType, apiUrl, initializationAttempted])
+  }, [sdk, form.type, apiUrl, initializationAttempted])
 
   const addFeature = (feature) => {
     setFeaturesSelected(({ ...draft }) => {
@@ -263,12 +245,11 @@ export default function App() {
   )
 
   const sharable = useMemo(() => {
-    const api = Object.values(MicronautStarterSDK.DEFAULT_APIS).find(
-      (api) => api.baseUrl === apiUrl
-    )
-    return sharableLink(form, featuresSelected, api && api.key)
-  }, [featuresSelected, form, apiUrl])
+    const version = availableVersions.find((version) => version.api === apiUrl)
+    return sharableLink(form, featuresSelected, version && version.version)
+  }, [featuresSelected, form, apiUrl, availableVersions])
 
+  // Routing
   const routeCreate = useCallback(async (payload, mnSdk) => {
     try {
       const blob = await mnSdk.create(payload)
@@ -311,6 +292,7 @@ export default function App() {
     }
   }, [])
 
+  // Deep Linking
   useEffect(() => {
     function handleDeepLink() {
       const route = resolveActionRoute(shareData.current)
@@ -384,6 +366,7 @@ export default function App() {
     resetRoute()
   }
 
+  // Start Over
   const onStartOver = () => {
     setForm((form) => ({ ...form, ...formResets() }))
     removeAllFeatures()
@@ -393,6 +376,13 @@ export default function App() {
   const onCloseNextSteps = () => {
     setNextStepsInfo({})
   }
+
+  const disabled =
+    !initializationAttempted ||
+    downloading ||
+    loadingFeatures ||
+    !form.name ||
+    !form.package
 
   return (
     <Fragment>
@@ -405,8 +395,8 @@ export default function App() {
               <StarterForm
                 theme={theme}
                 versions={availableVersions}
-                micronautApi={micronautApi}
-                setMicronautApi={setMicronautApi}
+                selectedVersion={selectedVersion}
+                setSelectedVersion={setSelectedVersion}
                 setForm={setForm}
                 form={form}
                 ready={ready}

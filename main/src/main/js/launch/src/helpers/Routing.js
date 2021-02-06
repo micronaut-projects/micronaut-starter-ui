@@ -3,7 +3,7 @@ import { parseQuery } from './url'
 const BASE_PATH = 'launch'
 const HANDLED_ROUTES = ['diff', 'preview', 'create']
 
-export function sharableLink(form, features, api) {
+export function sharableLink(form, features, version) {
   const parts = [
     ...Object.keys(form).reduce((acc, key) => {
       acc.push(`${key}=${form[key]}`)
@@ -11,8 +11,8 @@ export function sharableLink(form, features, api) {
     }, []),
     ...Object.keys(features).map((feature) => `features=${feature}`),
   ]
-  if (api) {
-    parts.push(`api=${api}`)
+  if (version) {
+    parts.push(`version=${version}`)
   }
   return parts.join('&')
 }
