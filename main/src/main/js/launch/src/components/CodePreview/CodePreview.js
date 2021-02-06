@@ -22,8 +22,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-import { capitalize, makeNodeTree } from '../../utility'
 import messages from '../../constants/messages.json'
+import { capitalize, makeNodeTree } from '../../utility'
 
 import TooltipButton, { TooltipWrapper } from '../TooltipButton'
 import CopyToClipboard from '../CopyToClipboard'
@@ -38,7 +38,7 @@ const CodePreview = (
 
   useImperativeHandle(ref, () => ({
     show: async (showing, json) => {
-      setShowing(showing)
+      setShowing(showing || 'README.md')
       const nodes = makeNodeTree(json.contents)
       setPreview(nodes)
       triggerRef.current.props.onClick()
