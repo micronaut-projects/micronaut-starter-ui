@@ -9,13 +9,10 @@ import React, {
 } from 'react'
 
 import { Button } from 'react-materialize'
-
 import Icon from 'react-materialize/lib/Icon'
 import Modal from 'react-materialize/lib/Modal'
-
 import TreeView from '@material-ui/lab/TreeView'
 import TreeItem from '@material-ui/lab/TreeItem'
-
 import { Grid } from '@material-ui/core'
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -27,6 +24,11 @@ import { capitalize, makeNodeTree } from '../../utility'
 
 import TooltipButton, { TooltipWrapper } from '../TooltipButton'
 import CopyToClipboard from '../CopyToClipboard'
+import {
+  fullyQualifySharableLink,
+  ACTIVITY_KEY,
+  PREVIEW_ACTIVITY,
+} from '../../helpers/Routing'
 
 const CodePreview = (
   { lang, build, theme = 'light', disabled, onLoad, onClose, sharable },
@@ -52,12 +54,13 @@ const CodePreview = (
   })
 
   const shareLink = useMemo(() => {
-    const { origin, pathname } = window.location
-    let url = `${origin}${pathname}?${sharable}&route=preview`
+    let link = fullyQualifySharableLink(sharable, {
+      [ACTIVITY_KEY]: PREVIEW_ACTIVITY,
+    })
     if (currentFile.path) {
-      url += `&showing=${currentFile.path}`
+      link += `&showing=${currentFile.path}`
     }
-    return url
+    return link
   }, [sharable, currentFile.path])
 
   const onModalClose = () => {

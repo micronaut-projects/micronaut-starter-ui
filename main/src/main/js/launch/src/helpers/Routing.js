@@ -1,7 +1,19 @@
 import { parseQuery } from './url'
 
-const BASE_PATH = 'launch'
-const HANDLED_ROUTES = ['diff', 'preview', 'create']
+export const BASE_PATH = 'launch'
+export const ACTIVITY_KEY = 'activity'
+export const VERSION_KEY = 'version'
+export const FEATURES_KEY = 'features'
+
+export const PREVIEW_ACTIVITY = 'preview'
+export const DIFF_ACTIVITY = 'diff'
+export const CREATE_ACTIVITY = 'create'
+
+export const HANDLED_ACTIVITIES = [
+  PREVIEW_ACTIVITY,
+  DIFF_ACTIVITY,
+  CREATE_ACTIVITY,
+]
 
 export function sharableLink(form, features, version) {
   const parts = [
@@ -9,20 +21,20 @@ export function sharableLink(form, features, version) {
       acc.push(`${key}=${form[key]}`)
       return acc
     }, []),
-    ...Object.keys(features).map((feature) => `features=${feature}`),
+    ...Object.keys(features).map((feature) => `${FEATURES_KEY}=${feature}`),
   ]
   if (version) {
-    parts.push(`version=${version}`)
+    parts.push(`${VERSION_KEY}=${version}`)
   }
   return parts.join('&')
 }
 
 export function fullyQualifySharableLink(sharable, options = {}) {
   const { origin, pathname } = window.location
-  const { action } = options
+  const { activity } = options
   let url = `${origin}${pathname}?${sharable}`
-  if (action) {
-    url += `&route=${action}`
+  if (activity) {
+    url += `&${ACTIVITY_KEY}=${activity}`
   }
   return url
 }
@@ -44,9 +56,9 @@ export function resolveActionRoute(queryData) {
   if (!queryData instanceof Object) {
     return
   }
-  const { route } = queryData
-  if (route && HANDLED_ROUTES.includes(route)) {
-    return route
+  const { activity } = queryData
+  if (activity && HANDLED_ACTIVITIES.includes(activity)) {
+    return activity
   }
 }
 

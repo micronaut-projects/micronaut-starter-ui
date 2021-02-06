@@ -278,8 +278,8 @@ export default function App() {
   // Deep Linking
   useEffect(() => {
     function handleDeepLink() {
-      const route = resolveActionRoute(shareData.current)
-      if (!route) {
+      const activity = resolveActionRoute(shareData.current)
+      if (!activity) {
         return
       }
 
@@ -293,7 +293,7 @@ export default function App() {
       // discard and reset the history state
       if (
         !isDeepLinkReferral(shareData.current) ||
-        !Object.keys(handlers).includes(route)
+        !Object.keys(handlers).includes(activity)
       ) {
         // Push back and return
         resetRoute()
@@ -316,7 +316,7 @@ export default function App() {
         ),
       }
 
-      handlers[route](payload, sdk, { showing })
+      handlers[activity](payload, sdk, { showing })
     }
     if (sdk?.baseUrl) {
       handleDeepLink()

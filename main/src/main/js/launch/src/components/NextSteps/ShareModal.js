@@ -6,7 +6,14 @@ import Col from 'react-materialize/lib/Col'
 import Modal from 'react-materialize/lib/Modal'
 import Row from 'react-materialize/lib/Row'
 import messages from '../../constants/messages.json'
-import { fullyQualifySharableLink } from '../../helpers/Routing'
+import {
+  fullyQualifySharableLink,
+  ACTIVITY_KEY,
+  FEATURES_KEY,
+  PREVIEW_ACTIVITY,
+  DIFF_ACTIVITY,
+  CREATE_ACTIVITY,
+} from '../../helpers/Routing'
 import CopyToClipboard from '../CopyToClipboard'
 
 const ShareModal = ({ sharable, theme, trigger, onClose }, ref) => {
@@ -18,16 +25,22 @@ const ShareModal = ({ sharable, theme, trigger, onClose }, ref) => {
       },
       {
         title: messages.share.preview,
-        link: fullyQualifySharableLink(sharable, { action: 'preview' }),
+        link: fullyQualifySharableLink(sharable, {
+          [ACTIVITY_KEY]: PREVIEW_ACTIVITY,
+        }),
       },
       {
         title: messages.share.diff,
-        link: fullyQualifySharableLink(sharable, { action: 'diff' }),
-        exclude: !`${sharable}`.includes('features'),
+        link: fullyQualifySharableLink(sharable, {
+          [ACTIVITY_KEY]: DIFF_ACTIVITY,
+        }),
+        exclude: !`${sharable}`.includes(FEATURES_KEY),
       },
       {
         title: messages.share.zip,
-        link: fullyQualifySharableLink(sharable, { action: 'create' }),
+        link: fullyQualifySharableLink(sharable, {
+          [ACTIVITY_KEY]: CREATE_ACTIVITY,
+        }),
       },
     ].filter((i) => !i.exclude)
   }, [sharable])
