@@ -197,4 +197,28 @@ export class MicronautStarterSDK {
         }, {})
       : {}
   }
+
+  static async loadVersion({ baseUrl, key, order }) {
+    const mn = new this({ baseUrl })
+    const result = await mn.versions()
+    const version = result.versions['micronaut.version']
+    return {
+      key: key,
+      label: version,
+      version: version,
+      value: baseUrl,
+      api: baseUrl,
+      order,
+    }
+  }
+
+  static async loadVersions() {
+    return (
+      await Promise.all(
+        Object.values(MicronautStarterSDK.DEFAULT_APIS)
+          .sort((a, b) => a.order - b.order)
+          .map((api) => this.loadVersion(api).catch((i) => null))
+      )
+    ).filter((i) => i)
+  }
 }

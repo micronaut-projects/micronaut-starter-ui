@@ -62,7 +62,6 @@ const initialForm = (shareData) => {
   }
 }
 
-const EMPTY_VERSIONS = []
 export default function App() {
   const shareData = useRef(parseAndConsumeQuery())
 
@@ -78,7 +77,7 @@ export default function App() {
   const [nextStepsInfo, setNextStepsInfo] = useState({})
 
   // Version & SDK State
-  const [availableVersions, setAvailableVersions] = useState(EMPTY_VERSIONS)
+  const [availableVersions, setAvailableVersions] = useState([])
   const [selectedVersion, setSelectedVersion] = useState(null)
   // creates a watchable primitive to include in the useEffect deps
   const apiUrl = selectedVersion?.api
@@ -143,32 +142,13 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const retrieveVersion = async ({ baseUrl, key, order }) => {
-      const mn = new MicronautStarterSDK({ baseUrl })
-      const result = await mn.versions()
-      const version = result.versions['micronaut.version']
-      return {
-        key: key,
-        label: version,
-        version: version,
-        value: baseUrl,
-        api: baseUrl,
-        order,
-      }
-    }
-
     const initializeForm = async () => {
       setDownloading(true)
       try {
-        const versions = (
-          await Promise.all(
-            Object.values(MicronautStarterSDK.DEFAULT_APIS)
-              .sort((a, b) => a.order - b.order)
-              .map((api) => retrieveVersion(api).catch((i) => null))
-          )
-        ).filter((i) => i)
+        const versions = await MicronautStarterSDK.loadVersions()
 
-        setAvailableVersions(versions ? versions : EMPTY_VERSIONS)
+        setAvailableVersions(versions)
+
         setSelectedVersion((version) =>
           Array.isArray(versions) && versions.length > 0
             ? versions.find((v) => v.version === shareData.current.version) ||
@@ -318,7 +298,7 @@ export default function App() {
       }
 
       const { showing } = shareData.current
-      // Remove the route
+
       delete shareData.current.route
       delete shareData.current.showing
 
