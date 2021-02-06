@@ -6,7 +6,7 @@ import GitHubIcon from '@material-ui/icons/GitHub'
 import { TooltipWrapper } from '../TooltipButton'
 
 import messages from '../../constants/messages.json'
-import ShareModal from '../ShareView/ShareModal'
+import ShareModal from '../NextSteps/ShareModal'
 
 const GenerateButtons = ({
   disabled,

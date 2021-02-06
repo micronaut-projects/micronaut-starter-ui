@@ -35,12 +35,10 @@ const ShareModal = ({ sharable, theme, trigger, onClose }, ref) => {
   return (
     <Modal
       header={messages.share.header}
-      className={'share ' + theme}
+      className={`modal-lg ${theme} next-steps share`}
       fixedFooter
       options={{
         onCloseStart: onClose,
-        startingTop: '5%',
-        endingTop: '5%',
       }}
       actions={
         <Button waves="light" modal="close" flat>
@@ -62,6 +60,12 @@ const ShareModal = ({ sharable, theme, trigger, onClose }, ref) => {
           </div>
         )
       })}
+      <p className="info">
+        Once you’ve gotten your new project started, you can continue your
+        journey by reviewing our{' '}
+        <a href="https://micronaut.io/documentation.html">documentation</a> and{' '}
+        <a href="https://micronaut.io/learn.html">learning resources</a>
+      </p>
     </Modal>
   )
 }
