@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300,400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500&display=swap');
 
 html {
   height: 100%;
@@ -12,6 +12,9 @@ body {
   position: relative;
   min-height: 100%;
   --theme-dark: #000000;
+  --theme-dark-secondary: #3a3a3a;
+  --theme-dark-card-bg: #161616;
+  --theme-dark-card-hover-bg: #252525;
   --theme-light: white;
   --theme-danger: rgb(148, 16, 0);
   --label-grey: #9e9e9e;
