@@ -35,6 +35,7 @@ import {
   isDeepLinkReferral,
   parseAndConsumeQuery,
   sharableLink,
+  ACTIVITY_KEY,
 } from './helpers/Routing'
 
 import { downloadBlob } from './utility'
@@ -302,7 +303,7 @@ export default function App() {
 
       const { showing } = shareData.current
 
-      delete shareData.current.route
+      delete shareData.current[ACTIVITY_KEY]
       delete shareData.current.showing
 
       // This is a common react problem
