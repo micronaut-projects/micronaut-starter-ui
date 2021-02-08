@@ -39,6 +39,7 @@ import {
 } from './helpers/Routing'
 
 import { downloadBlob } from './utility'
+import Lang from './helpers/Lang'
 
 function formResets(fallbacks = {}) {
   const { name, package: pkg, type } = fallbacks
@@ -151,21 +152,37 @@ export default function App() {
   // Use Effect to Load the Micrionaut Version data
   // From each remote source
   useEffect(() => {
+    const checkRequestedVersion = (hasVersions, versions) => {
+      const requestedVersion = shareData.current.version
+      if (hasVersions && requestedVersion) {
+        const match = versions.find((v) => v.version === requestedVersion)
+        if (!match) {
+          const message = Lang.trans('error.versionNoLongerSupported', {
+            requestedVersion,
+            currentVersion: versions[0].version,
+          })
+          setError(ErrorViewData.ofWarn(message))
+        }
+      }
+    }
+
     const initializeForm = async () => {
       setDownloading(true)
       try {
         const versions = await MicronautStarterSDK.loadVersions()
+        const hasVersions = Array.isArray(versions) && versions.length > 0
 
         setAvailableVersions(versions)
-        const hasVersions = Array.isArray(versions) && versions.length > 0
-        setSelectedVersion((version) => {
-          if (!hasVersions) return false
-          return (
-            versions.find((v) => v.version === version?.version) ||
-            versions.find((v) => v.version === shareData.current.version) ||
-            versions[0]
-          )
-        })
+        checkRequestedVersion(hasVersions, versions)
+
+        hasVersions &&
+          setSelectedVersion((version) => {
+            return (
+              versions.find((v) => v.version === version?.version) ||
+              versions.find((v) => v.version === shareData.current.version) ||
+              versions[0]
+            )
+          })
       } catch (error) {
         await handleResponseError(error)
       } finally {
@@ -183,7 +200,6 @@ export default function App() {
   useEffect(() => {
     const loadFeatures = async () => {
       setLoadingFeatures(true)
-      setError(ErrorViewData.ofNone())
       try {
         const data = await sdk.features({ type: form.type })
         setFeaturesAvailable(data.features)

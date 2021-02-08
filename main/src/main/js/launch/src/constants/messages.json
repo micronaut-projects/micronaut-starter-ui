@@ -1,4 +1,7 @@
 {
+    "error": {
+        "versionNoLongerSupported": "Micronaut Launch no longer supports version {{requestedVersion}} we're setting the configuration to the most recent release version {{currentVersion}}"
+    },
     "tooltips": {
         "diff": "Show the changes that the selected features have on an application generated without any features selected",
         "features": "Choose the features you would like included in the application",
