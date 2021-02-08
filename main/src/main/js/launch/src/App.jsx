@@ -239,11 +239,6 @@ export default function App() {
 
   const createPayload = { ...form, features: featuresSelected }
 
-  // GitHub Create Ref
-  const gitHubCreateHref = MicronautStarterSDK.githubHrefForUrl(
-    apiUrl,
-    createPayload
-  )
   const sharable = useMemo(() => {
     const version = availableVersions.find((version) => version.api === apiUrl)
     return sharableLink(form, featuresSelected, version && version.version)
@@ -448,7 +443,8 @@ export default function App() {
                     sharable={sharable}
                     cloneProject={cloneProject}
                     generateProject={generateProject}
-                    gitHubCreateHref={gitHubCreateHref}
+                    createPayload={createPayload}
+                    baseUrl={apiUrl}
                   />
                 </Col>
               </Row>
