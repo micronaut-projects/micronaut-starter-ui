@@ -11,7 +11,7 @@ import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
 
 const useOptHandler = (name, value, opts, handleChange) => {
   return useCallback(() => {
-    if (opts.length <= 1) return // One or less opt, nothing to do here
+    if (opts.length <= 1 || !value) return // One or less opt, nothing to do here
 
     const idx = opts.findIndex((l) => l.value === value)
     if (idx === opts.length - 1) {
@@ -31,7 +31,7 @@ export function useStarterVersionKeyboardEvents(
 ) {
   const nextVersion = useOptHandler(
     'version',
-    version.value,
+    version?.value,
     versions,
     handleVersionChange
   )
