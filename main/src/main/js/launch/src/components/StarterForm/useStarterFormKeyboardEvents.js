@@ -11,8 +11,9 @@ import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
 
 const useOptHandler = (name, value, opts, handleChange) => {
   return useCallback(() => {
+    if (opts.length <= 1) return // One or less opt, nothing to do here
+
     const idx = opts.findIndex((l) => l.value === value)
-    console.log('Found Index', name, idx)
     if (idx === opts.length - 1) {
       handleChange({ target: { name, value: opts[0].value } })
     } else {
