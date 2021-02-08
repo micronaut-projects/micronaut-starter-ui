@@ -19,6 +19,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
+import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
+
 import messages from '../../constants/messages.json'
 import { capitalize, makeNodeTree } from '../../utility'
 
@@ -29,6 +31,7 @@ import {
   ACTIVITY_KEY,
   PREVIEW_ACTIVITY,
 } from '../../helpers/Routing'
+import { PREVIEW_SHORTCUT } from '../../constants/shortcuts'
 
 const CodePreview = (
   { lang, build, theme = 'light', disabled, onLoad, onClose, sharable },
@@ -37,6 +40,8 @@ const CodePreview = (
   const triggerRef = useRef(null)
   const [showing, setShowing] = useState(null)
   const [preview, setPreview] = useState({})
+
+  useKeyboardShortcuts(PREVIEW_SHORTCUT.keys, onLoad, disabled)
 
   useImperativeHandle(ref, () => ({
     show: async (json, showing) => {

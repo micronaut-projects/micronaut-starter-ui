@@ -10,6 +10,9 @@ import ShareModal from '../NextSteps/ShareModal'
 import OtherCommands from '../OtherCommands'
 import { MicronautStarterSDK } from '../../micronaut'
 
+import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
+import { GENERATE_SHORTCUT } from '../../constants/shortcuts'
+
 const GenerateButtons = ({
   disabled,
   theme,
@@ -23,6 +26,8 @@ const GenerateButtons = ({
     () => MicronautStarterSDK.githubHrefForUrl(baseUrl, createPayload),
     [createPayload, baseUrl]
   )
+
+  useKeyboardShortcuts(GENERATE_SHORTCUT.keys, generateProject, disabled)
 
   return (
     <Dropdown

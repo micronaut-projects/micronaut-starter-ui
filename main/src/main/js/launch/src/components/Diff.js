@@ -16,12 +16,16 @@ import TooltipButton from './TooltipButton'
 import messages from '../constants/messages.json'
 import { capitalize } from '../utility'
 
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
+import { DIFF_SHORTCUT } from '../constants/shortcuts'
+
 const Diff = (
   { lang, build, theme = 'light', disabled, onLoad, onClose },
   ref
 ) => {
   const triggerRef = useRef()
   const [diff, setDiff] = useState(null)
+  useKeyboardShortcuts(DIFF_SHORTCUT.keys, onLoad, disabled)
 
   useImperativeHandle(ref, () => ({
     show: async (text) => {
