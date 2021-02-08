@@ -3,7 +3,7 @@
  */
 
 .button-row button {
-  text-transform: capitalize;
+  text-transform: uppercase;
 }
 
 /* Label above the Text input */
