@@ -21,15 +21,15 @@ const StarterForm = ({
   onDefaults,
   form,
   versions,
-  setMicronautApi,
-  micronautApi,
+  setSelectedVersion,
+  selectedVersion,
   onReady,
   ...props
 }) => {
   const [options, setOptions] = useState(LOCAL_SELECT_OPTIONS)
   const touched = useRef({})
 
-  const sdk = useMicronautSdk(micronautApi)
+  const sdk = useMicronautSdk(selectedVersion?.api)
 
   const formDataBuilder = useMemo(() => {
     const remoteDefaults = MicronautStarterSDK.extractDefaults(options)
@@ -54,6 +54,14 @@ const StarterForm = ({
     [setForm, formDataBuilder]
   )
 
+  const handleVersionChange = useCallback(
+    (event) => {
+      const { value } = event.target
+      if (!value) return
+      setSelectedVersion(versions.find((v) => v.value === value))
+    },
+    [versions, setSelectedVersion]
+  )
   //----------------------------------------------------------
   // Load and Setup Options
   //-------------------------------------------------------
@@ -190,8 +198,8 @@ const StarterForm = ({
           label="Micronaut Version"
           id="micronautApi"
           name="micronautApi"
-          value={micronautApi}
-          onChange={({ target: { value } }) => setMicronautApi(value)}
+          value={selectedVersion?.value}
+          onChange={handleVersionChange}
           options={versions}
           loading={!APP_TYPES.length}
           expected={2}

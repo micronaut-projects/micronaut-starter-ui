@@ -1,44 +1,82 @@
 // CodePreview.js
-import React, { useState, forwardRef } from 'react'
+import React, {
+  useState,
+  forwardRef,
+  useEffect,
+  useMemo,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 
 import { Button } from 'react-materialize'
-
 import Icon from 'react-materialize/lib/Icon'
 import Modal from 'react-materialize/lib/Modal'
-
 import TreeView from '@material-ui/lab/TreeView'
 import TreeItem from '@material-ui/lab/TreeItem'
-
 import { Grid } from '@material-ui/core'
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-import { capitalize } from '../../utility'
 import messages from '../../constants/messages.json'
-import TooltipButton from '../TooltipButton'
+import { capitalize, makeNodeTree } from '../../utility'
+
+import TooltipButton, { TooltipWrapper } from '../TooltipButton'
+import CopyToClipboard from '../CopyToClipboard'
+import {
+  fullyQualifySharableLink,
+  ACTIVITY_KEY,
+  PREVIEW_ACTIVITY,
+} from '../../helpers/Routing'
 
 const CodePreview = (
-  { preview, lang, build, theme = 'light', disabled, onLoad, onClose },
+  { lang, build, theme = 'light', disabled, onLoad, onClose, sharable },
   ref
 ) => {
+  const triggerRef = useRef(null)
+  const [showing, setShowing] = useState(null)
+  const [preview, setPreview] = useState({})
+
+  useImperativeHandle(ref, () => ({
+    show: async (json, showing) => {
+      setShowing(showing || 'README.md')
+      const nodes = makeNodeTree(json.contents)
+      setPreview(nodes)
+      triggerRef.current.props.onClick()
+    },
+  }))
+
   const [currentFile, setCurrentFile] = useState({
     contents: null,
     language: null,
+    path: null,
   })
 
+  const shareLink = useMemo(() => {
+    let link = fullyQualifySharableLink(sharable, {
+      [ACTIVITY_KEY]: PREVIEW_ACTIVITY,
+    })
+    if (currentFile.path) {
+      link += `&showing=${currentFile.path}`
+    }
+    return link
+  }, [sharable, currentFile.path])
+
   const onModalClose = () => {
+    setPreview({})
     setCurrentFile({
       contents: null,
       language: null,
+      path: null,
     })
+    setShowing(null)
     if (onClose instanceof Function) {
       onClose()
     }
   }
 
-  const handleFileSelection = (key, contents) => {
+  const handleFileSelection = (key, contents, path) => {
     if (typeof contents === 'string') {
       let idx = key.lastIndexOf('.')
       let language
@@ -56,11 +94,51 @@ const CodePreview = (
       } else {
         language = 'bash'
       }
-      setCurrentFile({ contents, language })
+      setCurrentFile({ contents, language, path })
     }
   }
 
-  const renderTree = (nodes, rootKey = 'root') => {
+  function extractDefaults(path) {
+    if (!path || typeof path !== 'string') {
+      return {
+        defaultSelected: 'root',
+      }
+    }
+
+    const parts = path.split('/')
+    const defaultExpanded = []
+    while (parts.length) {
+      defaultExpanded.push(parts.join('/'))
+      parts.pop()
+    }
+    return {
+      defaultSelected: path,
+      defaultExpanded,
+    }
+  }
+
+  const { defaultSelected, defaultExpanded } = useMemo(
+    () => extractDefaults(showing),
+    [showing]
+  )
+
+  useEffect(() => {
+    if (typeof showing !== 'string') {
+      return
+    }
+    const parts = showing.split('/').filter((i) => i)
+    let contents = preview
+    let key = ''
+    while (contents && typeof match !== 'string' && parts.length) {
+      key = parts.shift()
+      contents = contents[key]
+    }
+    if (key && contents) {
+      handleFileSelection(key, contents, showing)
+    }
+  }, [preview, showing])
+
+  const renderTree = (nodes, rootKey = '') => {
     if (nodes instanceof Object) {
       return Object.keys(nodes)
         .sort(function order(key1, key2) {
@@ -78,13 +156,13 @@ const CodePreview = (
         })
         .map((key) => {
           const children = nodes[key]
-          const nodeId = `${key}:${rootKey}`
+          const nodeId = `${rootKey}/${key}`
           return (
             <TreeItem
               key={nodeId}
               nodeId={nodeId}
               label={key}
-              onClick={() => handleFileSelection(key, children)}
+              onClick={() => handleFileSelection(key, children, nodeId)}
             >
               {renderTree(children, nodeId)}
             </TreeItem>
@@ -123,13 +201,22 @@ const CodePreview = (
           endingTop: '5%',
         }}
         actions={
-          <Button waves="light" modal="close" flat>
-            Close
-          </Button>
+          <div className="code-preview footer-wrapper">
+            <div className={currentFile.contents ? '' : 'hidden'}>
+              <TooltipWrapper tooltip="Copy a link back to current file">
+                <div>
+                  <CopyToClipboard value={shareLink}></CopyToClipboard>
+                </div>
+              </TooltipWrapper>
+            </div>
+            <Button waves="light" modal="close" flat>
+              Close
+            </Button>
+          </div>
         }
         trigger={
           <Button
-            ref={ref}
+            ref={triggerRef}
             disabled={disabled}
             waves="light"
             className={theme}
@@ -149,10 +236,12 @@ const CodePreview = (
             style={{ borderRight: '1px solid' }}
           >
             <TreeView
+              key={defaultSelected}
               defaultCollapseIcon={<Icon>folder_open</Icon>}
               defaultExpandIcon={<Icon>folder</Icon>}
               defaultEndIcon={<Icon>description</Icon>}
-              defaultExpanded={['src', 'main']}
+              defaultExpanded={defaultExpanded}
+              defaultSelected={defaultSelected}
             >
               {renderTree(preview)}
             </TreeView>

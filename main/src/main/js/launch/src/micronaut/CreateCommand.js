@@ -49,11 +49,11 @@ export class CreateCommand {
     const base = `/${prefix}/${type.toLowerCase()}/${fqpkg}`
 
     const query = [
-      `lang=${lang}`,
-      `build=${build}`,
-      `test=${test}`,
-      `javaVersion=${javaVersion}`,
-    ]
+      lang && `lang=${lang}`,
+      build && `build=${build}`,
+      test && `test=${test}`,
+      javaVersion && `javaVersion=${javaVersion}`,
+    ].filter((i) => i)
 
     const featuresQuery = this.buildFeaturesQuery(features)
     if (featuresQuery) {

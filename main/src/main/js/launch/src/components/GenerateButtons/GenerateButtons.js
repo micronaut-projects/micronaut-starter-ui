@@ -3,16 +3,17 @@ import Icon from 'react-materialize/lib/Icon'
 import Dropdown from 'react-materialize/lib/Dropdown'
 import Button from 'react-materialize/lib/Button'
 import GitHubIcon from '@material-ui/icons/GitHub'
-import { TooltipWrapper } from './TooltipButton'
+import { TooltipWrapper } from '../TooltipButton'
 
-import messages from '../constants/messages.json'
+import messages from '../../constants/messages.json'
+import ShareModal from '../NextSteps/ShareModal'
 
 const GenerateButtons = ({
   disabled,
   theme,
   generateProject,
   cloneProject,
-  apiUrl,
+  sharable,
   gitHubCreateHref,
 }) => (
   <Dropdown
@@ -71,6 +72,7 @@ const GenerateButtons = ({
         Push to GitHub
       </a>
     </TooltipWrapper>
+
     <TooltipWrapper tooltip={messages.tooltips.generate}>
       <a
         role="button"
@@ -87,6 +89,19 @@ const GenerateButtons = ({
         Download Zip
       </a>
     </TooltipWrapper>
+
+    <ShareModal
+      sharable={sharable}
+      theme={theme}
+      trigger={
+        <a role="button" href="/create" waves="light">
+          <Icon className="action-button-icon" left>
+            share
+          </Icon>
+          Share
+        </a>
+      }
+    />
   </Dropdown>
 )
 

@@ -36,6 +36,11 @@
   display: flex;
 }
 
+.next-steps-row .text {
+  overflow: scroll;
+  white-space: nowrap;
+}
+
 .os-select-opt-row {
   display: flex;
 }
