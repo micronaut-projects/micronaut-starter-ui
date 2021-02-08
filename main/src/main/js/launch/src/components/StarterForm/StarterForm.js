@@ -15,6 +15,10 @@ import RadioGroup from '../RadioGroup'
 import Select from '../Select'
 
 import { defaultsSpreader } from './StarterFormRecipes'
+import {
+  useStarterFormKeyboardEvents,
+  useStarterVersionKeyboardEvents,
+} from './useStarterFormKeyboardEvents'
 
 const StarterForm = ({
   setForm,
@@ -99,6 +103,20 @@ const StarterForm = ({
   const LANG_OPTS = options.lang ? options.lang.options : []
   const BUILD_OPTS = options.build ? options.build.options : []
   const TEST_OPTS = options.test ? options.test.options : []
+
+  useStarterVersionKeyboardEvents(
+    handleVersionChange,
+    selectedVersion,
+    versions
+  )
+
+  useStarterFormKeyboardEvents(handleChange, form, {
+    APP_TYPES,
+    LANG_OPTS,
+    BUILD_OPTS,
+    TEST_OPTS,
+    JAVA_OPTS,
+  })
 
   //----------------------------------------------------------
   // handle changes for any non-exsiting default values

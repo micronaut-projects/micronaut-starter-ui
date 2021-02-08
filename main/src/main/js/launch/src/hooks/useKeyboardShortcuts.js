@@ -16,7 +16,6 @@ export default function useKeyboardShortcuts(
     (event) => {
       const { repeat, keyCode } = event
       if (repeat) return
-
       activeKeys.current.add(keyCode)
       // If more keys are pressed than requested return
       if (activeKeys.current.size !== shortcutKeys.length) return

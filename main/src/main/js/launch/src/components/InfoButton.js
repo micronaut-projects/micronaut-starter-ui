@@ -42,9 +42,9 @@ const InfoButton = ({ className = '', theme, style }) => {
         and the features you need to develop your software.
       </p>
       <div>
-        <lable>
+        <label>
           <b>Keyboard Shortcuts</b>
-        </lable>
+        </label>
         <ul style={{ marginTop: 0 }}>
           {SHORTCUT_REGISTRY.map((sc) => (
             <li key={sc.textValue}>
