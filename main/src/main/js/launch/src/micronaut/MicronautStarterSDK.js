@@ -18,6 +18,9 @@ export class MicronautStarterSDK {
   }
 
   _urlBuilder(url) {
+    if (url.startsWith('http')) {
+      return url
+    }
     return `${this.baseUrl}${url}`
   }
 
@@ -97,7 +100,7 @@ export class MicronautStarterSDK {
    * @return {Promise<String>}         A textual diff
    */
   async diff(configuration) {
-    const createCommand = new CreateCommand(configuration)
+    const createCommand = new CreateCommand(configuration, this.baseUrl)
     return this.get(createCommand.toUrl('diff')).then(responseHandler('text'))
   }
 
@@ -107,7 +110,7 @@ export class MicronautStarterSDK {
    * @return {Promise<Object>}         [description]
    */
   async preview(configuration) {
-    const createCommand = new CreateCommand(configuration)
+    const createCommand = new CreateCommand(configuration, this.baseUrl)
     return this.get(createCommand.toUrl('preview')).then(
       responseHandler('json')
     )
@@ -119,7 +122,7 @@ export class MicronautStarterSDK {
    * @return {Promise<Blob>} A ZIP file containing the generated application.
    */
   async create(configuration) {
-    const createCommand = new CreateCommand(configuration)
+    const createCommand = new CreateCommand(configuration, this.baseUrl)
     return this.get(createCommand.toUrl('create')).then(responseHandler('blob'))
   }
 
@@ -129,8 +132,12 @@ export class MicronautStarterSDK {
    * @return {String} The link will begin processing the github workflow with redirects
    */
   gitHubHref(configuration) {
-    const createCommand = new CreateCommand(configuration)
-    return this._urlBuilder(createCommand.toUrl('github'))
+    const createCommand = new CreateCommand(configuration, this.baseUrl)
+    return createCommand.toUrl('github')
+  }
+
+  static createCommand(configuration, baseUrl) {
+    return new CreateCommand(configuration, baseUrl)
   }
 
   /**
@@ -143,8 +150,22 @@ export class MicronautStarterSDK {
     if (!baseUrl) {
       return '#'
     }
+    const createCommand = new CreateCommand(configuration, baseUrl)
+    return createCommand.toUrl('github')
+  }
+
+  static curlCommand(baseUrl, configuration) {
+    if (!baseUrl) {
+      console.warn('No URL provided for curlCommand')
+      return ''
+    }
+    const createCommand = new CreateCommand(configuration, baseUrl)
+    return createCommand.toCurl()
+  }
+
+  static cliCommand(configuration) {
     const createCommand = new CreateCommand(configuration)
-    return `${baseUrl}${createCommand.toUrl('github')}`
+    return createCommand.toCli()
   }
 
   /**

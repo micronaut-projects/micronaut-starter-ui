@@ -3,9 +3,9 @@
 }
 
 .next-steps .title {
-  font-size: 1.8em;
+  font-size: 1.3rem;
   font-weight: 500;
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
 }
 
 .next-steps p.info {
@@ -14,12 +14,13 @@
 }
 
 .next-steps-wrapper {
-  margin-bottom: 2em;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .next-steps-code .heading,
 .next-steps-wrapper .heading {
-  margin-bottom: 0.6em;
+  margin-bottom: 0.6rem;
 }
 
 .next-steps-code,
@@ -31,7 +32,7 @@
 
 .next-steps-row {
   padding: 6px;
-  height: 3em;
+  height: 3rem;
   align-items: center;
   display: flex;
 }
@@ -39,6 +40,14 @@
 .next-steps-row .text {
   overflow: scroll;
   white-space: nowrap;
+}
+
+.next-steps-row.multi-line {
+  height: auto;
+}
+
+.next-steps-row.multi-line .text {
+  white-space: initial;
 }
 
 .os-select-opt-row {
@@ -51,7 +60,7 @@
 span.os-select {
   cursor: pointer;
   position: relative;
-  margin-right: 1em;
+  margin-right: 1rem;
   letter-spacing: 1px;
   color: grey;
 }

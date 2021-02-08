@@ -43,7 +43,7 @@ const StarterForm = ({
     (event) => {
       // Strip out any non alphanumeric characters (or ".","-","_") from the input.
       const { name: key, value } = event.target
-      if (!key || !value) return
+      if (!key || typeof value !== 'string') return
 
       const spread = formDataBuilder(key, value, touched.current)
       return setForm((draft) => ({

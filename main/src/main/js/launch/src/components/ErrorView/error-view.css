@@ -1,50 +1,55 @@
+.MuiSnackbar-root.error-view {
+  z-index: 3000;
+}
+
 .clipboard {
-    margin-top: 1em;
-    display: flex;
-    align-items: center;
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
 }
 
 .clipboard:hover {
-    text-decoration: underline;
-    cursor: pointer;
+  text-decoration: underline;
+  cursor: pointer;
 }
+
 .MuiSnackbar-root .MuiAlert-filledError {
-    background-color: var(--theme-danger);
-    color: white;
+  background-color: var(--theme-danger);
+  color: white;
 }
 
 .MuiAlert-message {
-    font-size: 1.1em;
+  font-size: 1.1em;
 }
 
 .MuiSnackbar-root .MuiAlert-standardError .MuiAlert-message {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .MuiSnackbar-root.error-view.MuiSnackbar-anchorOriginTopCenter {
-    top: 24px;
-    left: 50%;
-    right: auto;
-    width: 70%;
-    transform: translateX(-50%);
+  top: 24px;
+  left: 50%;
+  right: auto;
+  width: 70%;
+  transform: translateX(-50%);
 }
 
 .MuiSnackbar-root.error-view .MuiAlert-standardError .MuiAlert-icon {
-    color: white;
+  color: white;
 }
 
 .MuiPaper-root.MuiAlert-root {
-    width: 100%;
+  width: 100%;
 }
 
 /* Media */
 @media screen and (max-width: 768px) {
-    .MuiSnackbar-root.error-view.MuiSnackbar-anchorOriginTopCenter {
-        left: 0;
-        top: 0;
-        right: 0;
-        width: 100%;
-        transform: translateX(0);
-    }
+  .MuiSnackbar-root.error-view.MuiSnackbar-anchorOriginTopCenter {
+    left: 0;
+    top: 0;
+    right: 0;
+    width: 100%;
+    transform: translateX(0);
+  }
 }
