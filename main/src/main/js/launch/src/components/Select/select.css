@@ -1,75 +1,75 @@
 .select-wrapper {
-    width: 100%;
-    margin-top: 3px;
+  width: 100%;
+  margin-top: 3px;
 }
 
 .MuiSelect-root.MuiSelect-select.MuiSelect-selectMenu.MuiInputBase-input.MuiInput-input {
-    padding-bottom: 13px !important;
+  padding-bottom: 12px !important;
 }
 
 .select-wrapper label + .MuiInput-formControl {
-    margin-top: 19px;
+  margin-top: 19px;
 }
 
 .MuiFormControl-root {
-    width: 100%;
+  width: 100%;
 }
 
 .MuiFormLabel-root.MuiInputLabel-root {
-    left: 0 !important;
-    font-size: 1rem;
+  left: 0 !important;
+  font-size: 1rem;
 }
 
 .MuiSelect-select:focus {
-    background-color: transparent !important;
+  background-color: transparent !important;
 }
 
 .MuiFormControl-root .MuiFormLabel-root.Mui-focused {
-    color: grey;
+  color: grey;
 }
 
 .MuiInput-underline:after {
-    border-bottom: 1px solid black !important;
+  border-bottom: 1px solid black !important;
 }
 
 body.light .MuiPaper-root.MuiMenu-paper.MuiPopover-paper {
-    background-color: var(--theme-light);
-    color: #000;
+  background-color: var(--theme-light);
+  color: #000;
 }
 
 body.dark .MuiInput-underline:after {
-    border-bottom: 1px solid white !important;
+  border-bottom: 1px solid white !important;
 }
 
 body.dark .MuiSelect-select:focus {
-    background-color: transparent !important;
+  background-color: transparent !important;
 }
 
 body.dark .MuiSvgIcon-root.MuiSelect-icon,
 body.dark .MuiInputBase-root {
-    color: white;
+  color: white;
 }
 
 body.dark .MuiFormControl-root .MuiFormLabel-root {
-    color: var(--label-grey);
+  color: var(--label-grey);
 }
 
 body.dark .MuiFormControl-root .MuiFormLabel-root.Mui-focused {
-    color: #fff;
+  color: #fff;
 }
 
 body.dark .MuiPaper-root.MuiMenu-paper.MuiPopover-paper {
-    background-color: #3a3a3a;
-    color: #fff;
+  background-color: #3a3a3a;
+  color: #fff;
 }
 
 body.dark .MuiListItem-root:hover,
 body.dark .MuiListItem-root.Mui-selected,
 body.dark .MuiListItem-root.Mui-selected:hover {
-    background-color: var(--theme-dark);
+  background-color: var(--theme-dark);
 }
 
 body.dark .MuiInput-underline,
 body.dark .MuiInput-underline:after {
-    border-bottom: 1px solid white !important;
+  border-bottom: 1px solid white !important;
 }
