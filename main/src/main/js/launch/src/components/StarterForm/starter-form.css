@@ -5,6 +5,10 @@
     min-height: 1px;
 }
 
+.mn-starter-form-main .input-field .mn-input {
+    height: 2.7rem;
+}
+
 .mn-starter-form-main .input-field.col {
     padding: 0 0;
     width: 100%;
