@@ -185,6 +185,7 @@ const CodePreview = (
         className={theme}
         style={{ marginRight: '5px', width: '100%' }}
         onClick={onLoad}
+        tabIndex={1}
       >
         <Icon className="action-button-icon" left>
           search
@@ -209,7 +210,8 @@ const CodePreview = (
           <div className="code-preview footer-wrapper">
             <div className={currentFile.contents ? '' : 'hidden'}>
               <TooltipWrapper tooltip="Copy a link back to current file">
-                <div>
+                <div style={{ display: 'inline-flex' }}>
+                  Link to This{' '}
                   <CopyToClipboard value={shareLink}></CopyToClipboard>
                 </div>
               </TooltipWrapper>
