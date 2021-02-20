@@ -53,6 +53,7 @@ const GenerateButtons = ({
           style={{ width: '100%' }}
           className={theme}
           node="button"
+          tabIndex={1}
         >
           <Icon className="action-button-icon" left>
             build

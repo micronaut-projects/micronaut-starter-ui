@@ -172,6 +172,7 @@ const StarterForm = ({
     <Row className="mn-starter-form-main">
       <Col s={8} m={6} l={3}>
         <Select
+          tabIndex={1}
           className="mn-input"
           label="Application Type"
           value={form.type}
@@ -182,6 +183,7 @@ const StarterForm = ({
       </Col>
       <Col s={4} m={6} l={3}>
         <Select
+          tabIndex={1}
           label="Java Version"
           value={form.javaVersion}
           name="javaVersion"
@@ -191,6 +193,7 @@ const StarterForm = ({
       </Col>
       <Col s={8} m={6} l={3}>
         <TextInput
+          tabIndex={1}
           required
           className="mn-input"
           label="Base Package"
@@ -203,6 +206,7 @@ const StarterForm = ({
       <Col s={4} m={6} l={3}>
         <TextInput
           required
+          tabIndex={1}
           className="mn-input"
           label="Name"
           name="name"
@@ -213,6 +217,7 @@ const StarterForm = ({
       </Col>
       <Col m={3} s={12} className="mn-radio">
         <RadioGroup
+          tabIndex={1}
           label="Micronaut Version"
           id="micronautApi"
           name="micronautApi"
@@ -225,6 +230,7 @@ const StarterForm = ({
       </Col>
       <Col m={3} s={12} className="mn-radio">
         <RadioGroup
+          tabIndex={1}
           label="Language"
           id="lang"
           name="lang"
@@ -236,6 +242,7 @@ const StarterForm = ({
       </Col>
       <Col m={3} s={12} className="mn-radio">
         <RadioGroup
+          tabIndex={1}
           label="Build"
           id="build"
           name="build"
@@ -247,6 +254,7 @@ const StarterForm = ({
       </Col>
       <Col m={3} s={12} className="mn-radio">
         <RadioGroup
+          tabIndex={1}
           label="Test Framework"
           id="test"
           name="test"

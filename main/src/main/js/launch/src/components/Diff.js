@@ -48,6 +48,7 @@ const Diff = (
         className={theme}
         style={{ marginRight: '5px', width: '100%' }}
         onClick={onLoad}
+        tabIndex={1}
       >
         <Icon className="action-button-icon" left>
           compare_arrows
