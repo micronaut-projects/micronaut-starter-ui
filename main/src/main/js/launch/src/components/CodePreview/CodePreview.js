@@ -210,9 +210,16 @@ const CodePreview = (
           <div className="code-preview footer-wrapper">
             <div className={currentFile.contents ? '' : 'hidden'}>
               <TooltipWrapper tooltip="Copy a link back to current file">
-                <div style={{ display: 'inline-flex' }}>
-                  Link to This{' '}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: '1em',
+                  }}
+                >
                   <CopyToClipboard value={shareLink}></CopyToClipboard>
+                  Link to This
                 </div>
               </TooltipWrapper>
             </div>
