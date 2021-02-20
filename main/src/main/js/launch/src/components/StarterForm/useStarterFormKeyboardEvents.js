@@ -7,6 +7,7 @@ import {
   NEXT_TEST_SHORTCUT,
   NEXT_VERSION_SHORTCUT,
 } from '../../constants/shortcuts'
+
 import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
 
 const useOptHandler = (name, value, opts, handleChange) => {

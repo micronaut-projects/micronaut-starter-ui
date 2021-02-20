@@ -17,7 +17,7 @@ const InfoButton = ({ className = '', theme, style }) => {
   return (
     <Modal
       header="What's this?"
-      className={`${theme} info-modal`}
+      className={`${theme} modal modal-fixed-footer modal-lg info-modal`}
       actions={
         <Button waves="light" modal="close" flat>
           Close
@@ -34,24 +34,27 @@ const InfoButton = ({ className = '', theme, style }) => {
         </Button>
       }
     >
-      <p>
-        Micronaut Launch is a web application that allows you to create
-        Micronaut projects through an interface instead of using the console
-        CLI. You can set the application type, the project name, the language
-        (Java, Kotlin, Groovy), the build tool (Maven, Gradle), the Java version
-        and the features you need to develop your software.
-      </p>
-      <div>
-        <label>
-          <b>Keyboard Shortcuts</b>
-        </label>
-        <ul style={{ marginTop: 0 }}>
-          {SHORTCUT_REGISTRY.map((sc) => (
-            <li key={sc.textValue}>
-              {sc.label} = {sc.textValue}
-            </li>
-          ))}
-        </ul>
+      <div class="info-contents">
+        <p>
+          Micronaut Launch is a web application that allows you to create
+          Micronaut projects through an interface instead of using the console
+          CLI. You can set the application type, the project name, the language
+          (Java, Kotlin, Groovy), the build tool (Maven, Gradle), the Java
+          version and the features you need to develop your software.
+        </p>
+        <div className="shortcut-legend">
+          <label>
+            <b>Keyboard Shortcuts</b>
+          </label>
+          <ul style={{ marginTop: 0 }}>
+            {SHORTCUT_REGISTRY.map((sc) => (
+              <li key={sc.textValue}>
+                <span className={`${theme} pill`}>{sc.textValue}</span>{' '}
+                {sc.label}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </Modal>
   )

@@ -102,6 +102,10 @@ body {
   font-weight: bolder;
 }
 
+.shortcut-legend ul li {
+  font-size: 0.9rem;
+}
+
 label.MuiFormLabel-root,
 .light label.input-field,
 .input-field > label {
@@ -226,6 +230,21 @@ body.light .mn-input:focus + label {
 
 body.dark .mn-input:focus + label {
   color: #fff !important;
+}
+
+.pill {
+  padding: 1px 8px;
+  border-radius: 9999px;
+}
+
+body .dark.pill {
+  color: #000 !important;
+  background-color: white !important;
+}
+
+body .light.pill {
+  color: white !important;
+  background-color: black !important;
 }
 
 body.dark .mn-input::placeholder {

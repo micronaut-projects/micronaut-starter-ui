@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react'
 
+const IGNORE_TAGS = ['INPUT', 'TEXTAREA']
+
+function shouldIgnore(target) {
+  return IGNORE_TAGS.includes(target.tagName)
+}
+
 const DISABLED_FN = () => {}
 export default function useKeyboardShortcuts(
   shortcutKeys = [],
@@ -14,11 +20,17 @@ export default function useKeyboardShortcuts(
 
   const onKeyDown = useCallback(
     (event) => {
-      const { repeat, keyCode } = event
-      if (repeat) return
+      const { repeat, keyCode, target } = event
+
+      if (repeat || shouldIgnore(target)) {
+        return
+      }
       activeKeys.current.add(keyCode)
+
       // If more keys are pressed than requested return
-      if (activeKeys.current.size !== shortcutKeys.length) return
+      if (activeKeys.current.size !== shortcutKeys.length) {
+        return
+      }
 
       const difference = new Set(
         [...shortcutKeys].filter((x) => !activeKeys.current.has(x))
@@ -33,8 +45,11 @@ export default function useKeyboardShortcuts(
 
   const onKeyUp = useCallback(
     (event) => {
-      const { keyCode, repeat } = event
-      if (repeat || !activeKeys.current.has(keyCode)) return
+      const { keyCode, repeat, target } = event
+
+      if (repeat || shouldIgnore(target) || !activeKeys.current.has(keyCode)) {
+        return
+      }
       activeKeys.current.delete(keyCode)
     },
     [activeKeys]
@@ -42,7 +57,7 @@ export default function useKeyboardShortcuts(
 
   useEffect(() => {
     activeKeys.current.clear()
-  }, [shortcutKeys])
+  }, [shortcutKeys, activeKeys])
 
   useEffect(() => {
     window.addEventListener('keydown', onKeyDown, true)
