@@ -385,7 +385,11 @@ export default function App() {
     <Fragment>
       <div id="mn-main-container" className="mn-main-container sticky">
         <div className="container">
-          <Header theme={theme} onToggleTheme={toggleTheme} />
+          <Header
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            sharable={sharable}
+          />
 
           <div className="mn-container">
             <form onSubmit={generateProject} autoComplete="off">

@@ -6,7 +6,6 @@ import GitHubIcon from '@material-ui/icons/GitHub'
 import { TooltipWrapper } from '../TooltipButton'
 
 import messages from '../../constants/messages.json'
-import ShareModal from '../NextSteps/ShareModal'
 import OtherCommands from '../OtherCommands'
 import { MicronautStarterSDK } from '../../micronaut'
 
@@ -18,7 +17,6 @@ const GenerateButtons = ({
   theme,
   generateProject,
   cloneProject,
-  sharable,
   createPayload,
   baseUrl,
 }) => {
@@ -104,19 +102,6 @@ const GenerateButtons = ({
           Download Zip
         </a>
       </TooltipWrapper>
-
-      <ShareModal
-        sharable={sharable}
-        theme={theme}
-        trigger={
-          <a role="button" href="#share" waves="light">
-            <Icon className="action-button-icon" left>
-              share
-            </Icon>
-            Share
-          </a>
-        }
-      />
 
       <OtherCommands
         baseUrl={baseUrl}

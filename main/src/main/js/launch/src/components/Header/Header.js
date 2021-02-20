@@ -5,10 +5,11 @@ import Icon from 'react-materialize/lib/Icon'
 import GitHub from '../GitHubLink'
 import Twitter from '../TwitterLink'
 import InfoButton from '../InfoButton'
+import ShareModal from '../NextSteps/ShareModal'
 
 import { ReactComponent as MicronautLaunchLogo } from '../../images/micronaut-launch.svg'
 
-const Header = ({ info, theme, onToggleTheme, onShowInfo }) => {
+const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
   const [active, setActive] = useState(false)
   const toggle = (e) => {
     e.preventDefault()
@@ -48,6 +49,21 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo }) => {
         <div>
           <InfoButton theme={theme} className="header-icon" />
         </div>
+        <ShareModal
+          sharable={sharable}
+          theme={theme}
+          trigger={
+            <div>
+              <Button
+                floating
+                className={`${theme} header-icon`}
+                style={{ marginLeft: '5px' }}
+              >
+                <Icon className="header-icon">share</Icon>
+              </Button>
+            </div>
+          }
+        />
         <div>
           <Button
             floating
