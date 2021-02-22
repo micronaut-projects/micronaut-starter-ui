@@ -1,7 +1,0 @@
-{
-  "lang": {
-    "KOTLIN": { "test": "JUNIT", "build": "GRADLE_KOTLIN" },
-    "JAVA": { "test": "JUNIT", "build": "GRADLE" },
-    "GROOVY": { "test": "SPOCK", "build": "GRADLE" }
-  }
-}

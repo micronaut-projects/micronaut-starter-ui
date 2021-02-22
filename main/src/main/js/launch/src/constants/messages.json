@@ -1,9 +1,0 @@
-{
-    "tooltips": {
-        "diff": "Show the changes that the selected features have on an application generated without any features selected",
-        "features": "Choose the features you would like included in the application",
-        "generate": "Download a zip file of the application",
-        "createRepo": "Create a repo on GitHub with this configuration.",
-        "preview": "Explore the application source files with the selected options and features to see what will be generated"
-    }
-}
