@@ -2,7 +2,6 @@
 import React, { useMemo } from 'react'
 import { Button } from 'react-materialize'
 import Modal from 'react-materialize/lib/Modal'
-import Icon from 'react-materialize/lib/Icon'
 import { MicronautStarterSDK } from '../../micronaut'
 import Row from 'react-materialize/lib/Row'
 import Col from 'react-materialize/lib/Col'
