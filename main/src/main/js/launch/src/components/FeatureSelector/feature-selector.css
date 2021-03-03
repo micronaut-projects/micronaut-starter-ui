@@ -11,7 +11,13 @@
 }
 
 .mn-feature-modal .modal-content {
-  padding-top: 7em;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  height: calc(100% - 130px);
+  margin-top: 74px;
+  margin-bottom: 56px;
+  padding-bottom: 56px;
 }
 
 .mn-feature-modal .modal-content h4 .helper-text {

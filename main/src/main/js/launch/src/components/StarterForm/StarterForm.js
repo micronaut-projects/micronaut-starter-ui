@@ -15,21 +15,25 @@ import RadioGroup from '../RadioGroup'
 import Select from '../Select'
 
 import { defaultsSpreader } from './StarterFormRecipes'
+import {
+  useStarterFormKeyboardEvents,
+  useStarterVersionKeyboardEvents,
+} from './useStarterFormKeyboardEvents'
 
 const StarterForm = ({
   setForm,
   onDefaults,
   form,
   versions,
-  setMicronautApi,
-  micronautApi,
+  setSelectedVersion,
+  selectedVersion,
   onReady,
   ...props
 }) => {
   const [options, setOptions] = useState(LOCAL_SELECT_OPTIONS)
   const touched = useRef({})
 
-  const sdk = useMicronautSdk(micronautApi)
+  const sdk = useMicronautSdk(selectedVersion?.api)
 
   const formDataBuilder = useMemo(() => {
     const remoteDefaults = MicronautStarterSDK.extractDefaults(options)
@@ -43,7 +47,7 @@ const StarterForm = ({
     (event) => {
       // Strip out any non alphanumeric characters (or ".","-","_") from the input.
       const { name: key, value } = event.target
-      if (!key || !value) return
+      if (!key || typeof value !== 'string') return
 
       const spread = formDataBuilder(key, value, touched.current)
       return setForm((draft) => ({
@@ -54,6 +58,14 @@ const StarterForm = ({
     [setForm, formDataBuilder]
   )
 
+  const handleVersionChange = useCallback(
+    (event) => {
+      const { value } = event.target
+      if (!value) return
+      setSelectedVersion(versions.find((v) => v.value === value))
+    },
+    [versions, setSelectedVersion]
+  )
   //----------------------------------------------------------
   // Load and Setup Options
   //-------------------------------------------------------
@@ -91,6 +103,20 @@ const StarterForm = ({
   const LANG_OPTS = options.lang ? options.lang.options : []
   const BUILD_OPTS = options.build ? options.build.options : []
   const TEST_OPTS = options.test ? options.test.options : []
+
+  useStarterVersionKeyboardEvents(
+    handleVersionChange,
+    selectedVersion,
+    versions
+  )
+
+  useStarterFormKeyboardEvents(handleChange, form, {
+    APP_TYPES,
+    LANG_OPTS,
+    BUILD_OPTS,
+    TEST_OPTS,
+    JAVA_OPTS,
+  })
 
   //----------------------------------------------------------
   // handle changes for any non-exsiting default values
@@ -146,6 +172,7 @@ const StarterForm = ({
     <Row className="mn-starter-form-main">
       <Col s={8} m={6} l={3}>
         <Select
+          tabIndex={1}
           className="mn-input"
           label="Application Type"
           value={form.type}
@@ -156,6 +183,7 @@ const StarterForm = ({
       </Col>
       <Col s={4} m={6} l={3}>
         <Select
+          tabIndex={1}
           label="Java Version"
           value={form.javaVersion}
           name="javaVersion"
@@ -165,6 +193,7 @@ const StarterForm = ({
       </Col>
       <Col s={8} m={6} l={3}>
         <TextInput
+          tabIndex={1}
           required
           className="mn-input"
           label="Base Package"
@@ -177,6 +206,7 @@ const StarterForm = ({
       <Col s={4} m={6} l={3}>
         <TextInput
           required
+          tabIndex={1}
           className="mn-input"
           label="Name"
           name="name"
@@ -187,11 +217,12 @@ const StarterForm = ({
       </Col>
       <Col m={3} s={12} className="mn-radio">
         <RadioGroup
+          tabIndex={1}
           label="Micronaut Version"
           id="micronautApi"
           name="micronautApi"
-          value={micronautApi}
-          onChange={({ target: { value } }) => setMicronautApi(value)}
+          value={selectedVersion?.value}
+          onChange={handleVersionChange}
           options={versions}
           loading={!APP_TYPES.length}
           expected={2}
@@ -199,6 +230,7 @@ const StarterForm = ({
       </Col>
       <Col m={3} s={12} className="mn-radio">
         <RadioGroup
+          tabIndex={1}
           label="Language"
           id="lang"
           name="lang"
@@ -210,6 +242,7 @@ const StarterForm = ({
       </Col>
       <Col m={3} s={12} className="mn-radio">
         <RadioGroup
+          tabIndex={1}
           label="Build"
           id="build"
           name="build"
@@ -221,6 +254,7 @@ const StarterForm = ({
       </Col>
       <Col m={3} s={12} className="mn-radio">
         <RadioGroup
+          tabIndex={1}
           label="Test Framework"
           id="test"
           name="test"

@@ -1,4 +1,5 @@
 import { CacheApi, SessionStorageAdapter } from '../helpers/Cache'
+import { DEFAULT_APIS } from './constants'
 import { CreateCommand } from './CreateCommand'
 
 const responseHandler = (type = 'json') => (response) => {
@@ -9,12 +10,17 @@ const responseHandler = (type = 'json') => (response) => {
 }
 
 export class MicronautStarterSDK {
+  static DEFAULT_APIS = DEFAULT_APIS
+
   constructor({ baseUrl }) {
     this.cacheApi = new CacheApi(new SessionStorageAdapter(`${baseUrl}`))
     this.baseUrl = baseUrl
   }
 
   _urlBuilder(url) {
+    if (url.startsWith('http')) {
+      return url
+    }
     return `${this.baseUrl}${url}`
   }
 
@@ -94,7 +100,7 @@ export class MicronautStarterSDK {
    * @return {Promise<String>}         A textual diff
    */
   async diff(configuration) {
-    const createCommand = new CreateCommand(configuration)
+    const createCommand = new CreateCommand(configuration, this.baseUrl)
     return this.get(createCommand.toUrl('diff')).then(responseHandler('text'))
   }
 
@@ -104,7 +110,7 @@ export class MicronautStarterSDK {
    * @return {Promise<Object>}         [description]
    */
   async preview(configuration) {
-    const createCommand = new CreateCommand(configuration)
+    const createCommand = new CreateCommand(configuration, this.baseUrl)
     return this.get(createCommand.toUrl('preview')).then(
       responseHandler('json')
     )
@@ -116,7 +122,7 @@ export class MicronautStarterSDK {
    * @return {Promise<Blob>} A ZIP file containing the generated application.
    */
   async create(configuration) {
-    const createCommand = new CreateCommand(configuration)
+    const createCommand = new CreateCommand(configuration, this.baseUrl)
     return this.get(createCommand.toUrl('create')).then(responseHandler('blob'))
   }
 
@@ -126,8 +132,12 @@ export class MicronautStarterSDK {
    * @return {String} The link will begin processing the github workflow with redirects
    */
   gitHubHref(configuration) {
-    const createCommand = new CreateCommand(configuration)
-    return this._urlBuilder(createCommand.toUrl('github'))
+    const createCommand = new CreateCommand(configuration, this.baseUrl)
+    return createCommand.toUrl('github')
+  }
+
+  static createCommand(configuration, baseUrl) {
+    return new CreateCommand(configuration, baseUrl)
   }
 
   /**
@@ -140,8 +150,22 @@ export class MicronautStarterSDK {
     if (!baseUrl) {
       return '#'
     }
+    const createCommand = new CreateCommand(configuration, baseUrl)
+    return createCommand.toUrl('github')
+  }
+
+  static curlCommand(baseUrl, configuration) {
+    if (!baseUrl) {
+      console.warn('No URL provided for curlCommand')
+      return ''
+    }
+    const createCommand = new CreateCommand(configuration, baseUrl)
+    return createCommand.toCurl()
+  }
+
+  static cliCommand(configuration) {
     const createCommand = new CreateCommand(configuration)
-    return `${baseUrl}${createCommand.toUrl('github')}`
+    return createCommand.toCli()
   }
 
   /**
@@ -177,5 +201,45 @@ export class MicronautStarterSDK {
       acc[key] = options[key].defaultOption.value
       return acc
     }, {})
+  }
+
+  /**
+   * Rebuild features array of string into an object suitable for select options
+   * @note This is mostly for reconstruction from query parameter data.
+   *
+   * @param {Array<String>} features  An Array of Strings
+   * @return {Object<String,Object>}  Select Option keyed by feature name
+   */
+  static reconstructFeatures(features) {
+    return features
+      ? features.reduce((acc, feature) => {
+          acc[feature] = { name: feature }
+          return acc
+        }, {})
+      : {}
+  }
+
+  static async loadVersion({ baseUrl, key, order }) {
+    const mn = new this({ baseUrl })
+    const result = await mn.versions()
+    const version = result.versions['micronaut.version']
+    return {
+      key: key,
+      label: version,
+      version: version,
+      value: baseUrl,
+      api: baseUrl,
+      order,
+    }
+  }
+
+  static async loadVersions() {
+    return (
+      await Promise.all(
+        Object.values(MicronautStarterSDK.DEFAULT_APIS)
+          .sort((a, b) => a.order - b.order)
+          .map((api) => this.loadVersion(api).catch((i) => null))
+      )
+    ).filter((i) => i)
   }
 }

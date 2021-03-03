@@ -1,5 +1,5 @@
 // Diff.js
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react'
 
 import { Button } from 'react-materialize'
 
@@ -16,79 +16,99 @@ import TooltipButton from './TooltipButton'
 import messages from '../constants/messages.json'
 import { capitalize } from '../utility'
 
-const Diff = (
-    { diff, lang, build, theme = 'light', disabled, onLoad, onClose },
-    ref
-) => {
-    return (
-        <React.Fragment>
-            <TooltipButton
-                tooltip={messages.tooltips.diff}
-                disabled={disabled}
-                waves="light"
-                className={theme}
-                style={{ marginRight: '5px', width: '100%' }}
-                onClick={onLoad}
-            >
-                <Icon className="action-button-icon" left>
-                    compare_arrows
-                </Icon>
-                Diff
-            </TooltipButton>
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
+import { DIFF_SHORTCUT } from '../constants/shortcuts'
 
-            <Modal
-                header={
-                    'Showing Diff for a ' +
-                    capitalize(lang) +
-                    ' application using ' +
-                    capitalize(build)
-                }
-                className={'diff ' + theme}
-                fixedFooter
-                options={{
-                    onCloseStart: onClose,
-                    startingTop: '5%',
-                    endingTop: '5%',
+const Diff = (
+  { lang, build, theme = 'light', disabled, onLoad, onClose },
+  ref
+) => {
+  const triggerRef = useRef()
+  const [diff, setDiff] = useState(null)
+  useKeyboardShortcuts(DIFF_SHORTCUT.keys, onLoad, disabled)
+
+  useImperativeHandle(ref, () => ({
+    show: async (text) => {
+      setDiff(text)
+      triggerRef.current.props.onClick()
+    },
+  }))
+
+  function onCloseStart(event) {
+    setDiff('')
+    onClose(event)
+  }
+
+  return (
+    <React.Fragment>
+      <TooltipButton
+        tooltip={messages.tooltips.diff}
+        disabled={disabled}
+        waves="light"
+        className={theme}
+        style={{ marginRight: '5px', width: '100%' }}
+        onClick={onLoad}
+        tabIndex={1}
+      >
+        <Icon className="action-button-icon" left>
+          compare_arrows
+        </Icon>
+        Diff
+      </TooltipButton>
+
+      <Modal
+        header={
+          'Showing Diff for a ' +
+          capitalize(lang) +
+          ' application using ' +
+          capitalize(build)
+        }
+        className={'diff ' + theme}
+        fixedFooter
+        options={{
+          onCloseStart: onCloseStart,
+          startingTop: '5%',
+          endingTop: '5%',
+        }}
+        actions={
+          <Button waves="light" modal="close" flat>
+            Close
+          </Button>
+        }
+        trigger={
+          <Button
+            ref={triggerRef}
+            disabled={disabled}
+            waves="light"
+            className={theme}
+            style={{ display: 'none' }}
+            onClick={onLoad}
+          >
+            <Icon left>compare_arrows</Icon>
+            Diff
+          </Button>
+        }
+      >
+        <Grid container className="grid-container">
+          <Grid item xs={12} className={'grid-column'}>
+            {diff && (
+              <SyntaxHighlighter
+                className="codePreview"
+                lineNumberContainerProps={{
+                  className: 'lineNumbers',
                 }}
-                actions={
-                    <Button waves="light" modal="close" flat>
-                        Close
-                    </Button>
-                }
-                trigger={
-                    <Button
-                        ref={ref}
-                        disabled={disabled}
-                        waves="light"
-                        className={theme}
-                        style={{ display: 'none' }}
-                        onClick={onLoad}
-                    >
-                        <Icon left>compare_arrows</Icon>
-                        Diff
-                    </Button>
-                }
-            >
-                <Grid container className="grid-container">
-                    <Grid item xs={12} className={'grid-column'}>
-                        {diff && (
-                            <SyntaxHighlighter
-                                className="codePreview"
-                                lineNumberContainerProps={{
-                                    className: 'lineNumbers',
-                                }}
-                                language="diff"
-                                style={theme === 'light' ? prism : darcula}
-                                showLineNumbers={true}
-                            >
-                                {diff}
-                            </SyntaxHighlighter>
-                        )}
-                    </Grid>
-                </Grid>
-            </Modal>
-        </React.Fragment>
-    )
+                language="diff"
+                style={theme === 'light' ? prism : darcula}
+                showLineNumbers={true}
+              >
+                {diff}
+              </SyntaxHighlighter>
+            )}
+          </Grid>
+        </Grid>
+      </Modal>
+    </React.Fragment>
+  )
 }
 
 export default forwardRef(Diff)

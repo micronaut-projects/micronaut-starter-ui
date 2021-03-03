@@ -1,65 +1,70 @@
-.mn-starter-form-main {
+/* .mn-starter-form-main .radio-group:focus-within label,
+.mn-starter-form-main .input-field.col:focus-within label {
+  color: orange !important;
 }
+.btn:focus {
+  background-color: orange !important;
+} */
 
 .mn-starter-form-main .input-field .helper-text {
-    min-height: 1px;
+  min-height: 1px;
 }
 
 .mn-starter-form-main .input-field .mn-input {
-    height: 2.7rem;
+  height: 2.7rem;
 }
 
 .mn-starter-form-main .input-field.col {
-    padding: 0 0;
-    width: 100%;
+  padding: 0 0;
+  width: 100%;
 }
 
 .mn-starter-form-main .input-field.col label {
-    left: 0;
+  left: 0;
 }
 
 .mn-starter-form-main .mn-radio {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .mn-starter-form-main .mn-radio .radio-row {
-    position: relative;
+  position: relative;
 }
 
 .mn-starter-form-main .mn-radio label.input-field {
-    display: block;
-    margin-bottom: 5px;
+  display: block;
+  margin-bottom: 5px;
 }
 
 /* Theme */
 body.light .mn-starter-form-main .mn-radio .radio-label {
-    color: black;
+  color: black;
 }
 
 body.dark .mn-starter-form-main .mn-radio .radio-label {
-    color: white;
+  color: white;
 }
 
 /* Media */
 @media screen and (max-width: 600px) {
-    .mn-starter-form-main .mn-radio .radio-label {
-        margin-right: 10px;
-    }
-    [type='radio']:not(:checked) + span,
-    [type='radio']:checked + span {
-        padding-left: 2em;
-    }
+  .mn-starter-form-main .mn-radio .radio-label {
+    margin-right: 10px;
+  }
+  [type='radio']:not(:checked) + span,
+  [type='radio']:checked + span {
+    padding-left: 2em;
+  }
 
-    .mn-radio:last-of-type {
-        margin-top: 10px;
-    }
+  .mn-radio:last-of-type {
+    margin-top: 10px;
+  }
 }
 
 @media screen and (min-width: 600px) {
-    .mn-starter-form-main .mn-radio .radio-label {
-        display: block;
-    }
-    .mn-starter-form-main .mn-radio label.input-field {
-        margin-top: 0;
-    }
+  .mn-starter-form-main .mn-radio .radio-label {
+    display: block;
+  }
+  .mn-starter-form-main .mn-radio label.input-field {
+    margin-top: 0;
+  }
 }

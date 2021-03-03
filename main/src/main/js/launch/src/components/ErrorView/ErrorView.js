@@ -12,58 +12,55 @@ import { copyToClipboard } from '../../utility'
 import './error-view.css'
 
 const ErrorView = ({
-    hasError,
-    message,
-    severity,
-    link,
-    clipboard,
-    onClose,
+  hasError,
+  message,
+  severity,
+  link,
+  clipboard,
+  onClose,
 }) => {
-    const open = Boolean(message && hasError)
-    const [copied, setCopied] = useState(false)
-    const copy = () => {
-        setCopied(true)
-        copyToClipboard(clipboard.text)
-    }
-    const ClipBoardIcon = copied ? AssignmentTurnedInIcon : AssignmentIcon
+  const open = Boolean(message && hasError)
+  const [copied, setCopied] = useState(false)
+  const copy = () => {
+    setCopied(true)
+    copyToClipboard(clipboard.text)
+  }
+  const ClipBoardIcon = copied ? AssignmentTurnedInIcon : AssignmentIcon
 
-    return (
-        <Snackbar
-            className="error-view"
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            open={open}
-            autoHideDuration={6000}
-        >
-            <Alert
-                icon={<Avatar src={logo}>N</Avatar>}
-                onClose={onClose}
-                severity={severity}
-                variant="filled"
-            >
-                {message}{' '}
-                {link && (
-                    <a
-                        className="error-link"
-                        href={link}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                    >
-                        {link}
-                    </a>
-                )}
-                {clipboard && (
-                    <div
-                        className="pt-2 clipboard"
-                        role="button"
-                        onClick={() => copy()}
-                    >
-                        {clipboard.message}
-                        <ClipBoardIcon />
-                    </div>
-                )}
-            </Alert>
-        </Snackbar>
-    )
+  return (
+    <Snackbar
+      className="error-view"
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      open={open}
+      autoHideDuration={6000}
+      onClose={onClose}
+    >
+      <Alert
+        icon={<Avatar src={logo}>N</Avatar>}
+        onClose={onClose}
+        severity={severity}
+        variant="filled"
+      >
+        {message}{' '}
+        {link && (
+          <a
+            className="error-link"
+            href={link}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {link}
+          </a>
+        )}
+        {clipboard && (
+          <div className="pt-2 clipboard" role="button" onClick={() => copy()}>
+            {clipboard.message}
+            <ClipBoardIcon />
+          </div>
+        )}
+      </Alert>
+    </Snackbar>
+  )
 }
 
 export default ErrorView

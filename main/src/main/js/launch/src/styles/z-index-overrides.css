@@ -1,0 +1,23 @@
+.MuiPopover-root {
+  z-index: 2002 !important;
+}
+
+.MuiSnackbar-root.error-view {
+  z-index: 9999;
+}
+
+.modal-overlay {
+  z-index: 2004 !important;
+}
+
+.modal {
+  z-index: 9998 !important;
+}
+
+.sticky {
+  z-index: 2001;
+}
+
+.mn-footer-container {
+  z-index: 1001;
+}
