@@ -211,12 +211,18 @@ export class MicronautStarterSDK {
    * @return {Object<String,Object>}  Select Option keyed by feature name
    */
   static reconstructFeatures(features) {
-    return features
-      ? features.reduce((acc, feature) => {
-          acc[feature] = { name: feature }
-          return acc
-        }, {})
-      : {}
+    if (!features) {
+      return {}
+    }
+
+    if (!Array.isArray(features)) {
+      features = [features]
+    }
+
+    return features.reduce((acc, feature) => {
+      acc[feature] = { name: feature }
+      return acc
+    }, {})
   }
 
   static async loadVersion({ baseUrl, key, order }) {
