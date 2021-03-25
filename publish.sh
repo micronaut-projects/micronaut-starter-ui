@@ -30,8 +30,8 @@ if [[ $EXIT_STATUS -ne 0 ]]; then
 fi
 
 git clone https://${GH_TOKEN}@github.com/${GITHUB_SLUG}.git -b gh-pages gh-pages --single-branch > /dev/null
-cd gh-pages/launch
-cp -r ../../build/launch/* .
+cd gh-pages
+cp -r ../build/launch/* .
 if git diff --quiet; then
   echo "No changes in Micronaut Launch Website"
 else
@@ -39,7 +39,6 @@ else
   git commit -a -m "Updating $GITHUB_SLUG gh-pages branch for Github Actions run:$GITHUB_RUN_ID"
   git push origin HEAD
 fi
-cd ..
 cd ..
 rm -rf gh-pages
 
