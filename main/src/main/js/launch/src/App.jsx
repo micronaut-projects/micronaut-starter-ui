@@ -91,10 +91,6 @@ export default function App() {
   // Processing State
   const [downloading, setDownloading] = useState(false)
   const [initializationAttempted, setInitializationAttempted] = useState(false)
-  const [ready, setReady] = useState(() => {
-    const { error, htmlUrl } = shareData.current
-    return !!error || !!htmlUrl || false
-  })
 
   // Version & SDK State
   const [availableVersions, setAvailableVersions] = useState([])
@@ -110,7 +106,7 @@ export default function App() {
   // Error Handling
   const [error, setError] = useState(ErrorViewData.ofSuccess(''))
   const hasError = Boolean(error.message)
-  const handleResponseError = async (response) => {
+  const handleResponseError = useCallback(async (response) => {
     if (response instanceof Error) {
       return setError(new ErrorViewData(response))
     }
@@ -125,7 +121,7 @@ export default function App() {
     } catch (e) {
       setError(payload)
     }
-  }
+  }, [])
 
   // Use Effect Hook For Error Handling and
   // GitHub on complete callback
@@ -400,8 +396,7 @@ export default function App() {
                 setSelectedVersion={setSelectedVersion}
                 setForm={setForm}
                 form={form}
-                ready={ready}
-                onReady={setReady}
+                onError={handleResponseError}
               />
 
               <Row className="button-row">

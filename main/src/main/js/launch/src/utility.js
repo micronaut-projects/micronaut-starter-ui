@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const OS_NIX = '*nix'
 export const OS_WINDOWS = 'win'
 
@@ -13,6 +15,13 @@ export const guessOs = () => {
   if (appVersion.indexOf('X11') !== -1) return OS_NIX
   if (appVersion.indexOf('Win') !== -1) return OS_WINDOWS
   return ''
+}
+
+export const smartSetState = (newData, comparator = _.isEqual) => (oldData) => {
+  if (comparator(oldData, newData)) {
+    return oldData
+  }
+  return newData
 }
 
 export const capitalize = (s) => {
