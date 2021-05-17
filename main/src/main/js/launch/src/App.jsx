@@ -189,7 +189,12 @@ export default function App() {
     if (!initializationAttempted && !downloading) {
       initializeForm()
     }
-  }, [initializationAttempted, downloading, setSelectedVersion])
+  }, [
+    initializationAttempted,
+    downloading,
+    setSelectedVersion,
+    handleResponseError,
+  ])
 
   // Use Effect to load the features based on the form.type [DEFAULT, CLI, etc...]
   // And the baseUrl of the sdk. Only trying if initialized
@@ -208,7 +213,7 @@ export default function App() {
     if (initializationAttempted && sdk?.baseUrl) {
       loadFeatures()
     }
-  }, [sdk, form.type, initializationAttempted])
+  }, [sdk, form.type, initializationAttempted, handleResponseError])
 
   const addFeature = (feature) => {
     setFeaturesSelected(({ ...draft }) => {
@@ -264,24 +269,27 @@ export default function App() {
         setDownloading(false)
       }
     },
-    []
+    [handleResponseError]
   )
 
-  const routeDiff = useCallback(async (payload, mnSdk) => {
-    try {
-      const text = await mnSdk.diff(payload)
-      if (text === '') {
-        throw new Error(
-          'No features have been selected. Please choose one or more features and try again.'
-        )
+  const routeDiff = useCallback(
+    async (payload, mnSdk) => {
+      try {
+        const text = await mnSdk.diff(payload)
+        if (text === '') {
+          throw new Error(
+            'No features have been selected. Please choose one or more features and try again.'
+          )
+        }
+        diffView.current.show(text)
+      } catch (error) {
+        await handleResponseError(error)
+      } finally {
+        setDownloading(false)
       }
-      diffView.current.show(text)
-    } catch (error) {
-      await handleResponseError(error)
-    } finally {
-      setDownloading(false)
-    }
-  }, [])
+    },
+    [handleResponseError]
+  )
 
   // Deep Linking
   useEffect(() => {
