@@ -71,12 +71,17 @@ const StarterForm = ({
   //----------------------------------------------------------
   // Base the Options for any given type or set loading values
   //-------------------------------------------------------
-  const APP_TYPES = options.type
-    ? options.type.options
-    : [{ value: form.type, label: 'Loading...' }]
-  const JAVA_OPTS = options.jdkVersion
-    ? options.jdkVersion.options
-    : [{ value: form.javaVersion, label: 'Loading...' }]
+  const defaultType = useMemo(
+    () => [{ value: form.type, label: 'Loading...' }],
+    [form.type]
+  )
+  const APP_TYPES = options.type ? options.type.options : defaultType
+
+  const defaultJdk = useMemo(() => {
+    return [{ value: form.javaVersion, label: 'Loading...' }]
+  }, [form.javaVersion])
+
+  const JAVA_OPTS = options.jdkVersion ? options.jdkVersion.options : defaultJdk
   const LANG_OPTS = options.lang ? options.lang.options : []
   const BUILD_OPTS = options.build ? options.build.options : []
   const TEST_OPTS = options.test ? options.test.options : []
@@ -112,8 +117,10 @@ const StarterForm = ({
     javaVersion,
     JAVA_OPTS,
     defaults,
-    handleChange
+    handleChange,
+    'jdkVersion'
   )
+
   useInitialChangeWatcher('lang', lang, LANG_OPTS, defaults, handleChange)
   useInitialChangeWatcher('build', build, BUILD_OPTS, defaults, handleChange)
   useInitialChangeWatcher('test', test, TEST_OPTS, defaults, handleChange)

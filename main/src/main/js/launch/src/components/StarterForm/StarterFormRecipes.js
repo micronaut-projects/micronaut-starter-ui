@@ -22,13 +22,15 @@ export const useInitialChangeWatcher = (
   value,
   opts,
   defaults,
-  handleChange
+  handleChange,
+  optKey
 ) => {
   useEffect(() => {
     if (!value || !opts.find((opt) => opt.value === value)) {
+      const altOptKey = optKey || key
       handleChange({
-        target: { name: key, value: defaults[key] },
+        target: { name: key, value: defaults[altOptKey] },
       })
     }
-  }, [key, value, opts, defaults, handleChange])
+  }, [key, optKey, value, opts, defaults, handleChange])
 }
