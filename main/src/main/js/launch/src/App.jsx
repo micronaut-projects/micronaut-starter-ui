@@ -91,10 +91,6 @@ export default function App() {
   // Processing State
   const [downloading, setDownloading] = useState(false)
   const [initializationAttempted, setInitializationAttempted] = useState(false)
-  const [ready, setReady] = useState(() => {
-    const { error, htmlUrl } = shareData.current
-    return !!error || !!htmlUrl || false
-  })
 
   // Version & SDK State
   const [availableVersions, setAvailableVersions] = useState([])
@@ -110,7 +106,7 @@ export default function App() {
   // Error Handling
   const [error, setError] = useState(ErrorViewData.ofSuccess(''))
   const hasError = Boolean(error.message)
-  const handleResponseError = async (response) => {
+  const handleResponseError = useCallback(async (response) => {
     if (response instanceof Error) {
       return setError(new ErrorViewData(response))
     }
@@ -125,7 +121,7 @@ export default function App() {
     } catch (e) {
       setError(payload)
     }
-  }
+  }, [])
 
   // Use Effect Hook For Error Handling and
   // GitHub on complete callback
@@ -193,7 +189,12 @@ export default function App() {
     if (!initializationAttempted && !downloading) {
       initializeForm()
     }
-  }, [initializationAttempted, downloading, setSelectedVersion])
+  }, [
+    initializationAttempted,
+    downloading,
+    setSelectedVersion,
+    handleResponseError,
+  ])
 
   // Use Effect to load the features based on the form.type [DEFAULT, CLI, etc...]
   // And the baseUrl of the sdk. Only trying if initialized
@@ -212,7 +213,7 @@ export default function App() {
     if (initializationAttempted && sdk?.baseUrl) {
       loadFeatures()
     }
-  }, [sdk, form.type, initializationAttempted])
+  }, [sdk, form.type, initializationAttempted, handleResponseError])
 
   const addFeature = (feature) => {
     setFeaturesSelected(({ ...draft }) => {
@@ -245,17 +246,20 @@ export default function App() {
   }, [featuresSelected, form, apiUrl, availableVersions])
 
   // Routing
-  const routeCreate = useCallback(async (payload, mnSdk) => {
-    try {
-      const blob = await mnSdk.create(payload)
-      downloadBlob(blob, `${payload.name}.zip`)
-      setNextStepsInfo({ show: true, type: 'zip' })
-    } catch (error) {
-      await handleResponseError(error)
-    } finally {
-      setDownloading(false)
-    }
-  }, [])
+  const routeCreate = useCallback(
+    async (payload, mnSdk) => {
+      try {
+        const blob = await mnSdk.create(payload)
+        downloadBlob(blob, `${payload.name}.zip`)
+        setNextStepsInfo({ show: true, type: 'zip' })
+      } catch (error) {
+        await handleResponseError(error)
+      } finally {
+        setDownloading(false)
+      }
+    },
+    [handleResponseError]
+  )
 
   const routePreview = useCallback(
     async (payload, mnSdk, opts = { showing: null }) => {
@@ -268,24 +272,27 @@ export default function App() {
         setDownloading(false)
       }
     },
-    []
+    [handleResponseError]
   )
 
-  const routeDiff = useCallback(async (payload, mnSdk) => {
-    try {
-      const text = await mnSdk.diff(payload)
-      if (text === '') {
-        throw new Error(
-          'No features have been selected. Please choose one or more features and try again.'
-        )
+  const routeDiff = useCallback(
+    async (payload, mnSdk) => {
+      try {
+        const text = await mnSdk.diff(payload)
+        if (text === '') {
+          throw new Error(
+            'No features have been selected. Please choose one or more features and try again.'
+          )
+        }
+        diffView.current.show(text)
+      } catch (error) {
+        await handleResponseError(error)
+      } finally {
+        setDownloading(false)
       }
-      diffView.current.show(text)
-    } catch (error) {
-      await handleResponseError(error)
-    } finally {
-      setDownloading(false)
-    }
-  }, [])
+    },
+    [handleResponseError]
+  )
 
   // Deep Linking
   useEffect(() => {
@@ -400,8 +407,7 @@ export default function App() {
                 setSelectedVersion={setSelectedVersion}
                 setForm={setForm}
                 form={form}
-                ready={ready}
-                onReady={setReady}
+                onError={handleResponseError}
               />
 
               <Row className="button-row">

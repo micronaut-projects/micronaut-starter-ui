@@ -34,7 +34,7 @@ const InfoButton = ({ className = '', theme, style }) => {
         </Button>
       }
     >
-      <div class="info-contents">
+      <div className="info-contents">
         <p>
           Micronaut Launch is a web application that allows you to create
           Micronaut projects through an interface instead of using the console

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { useEffect } from 'react'
 
 export const defaultsSpreader = (defaults) => (key, value, touched) => {
   const spread = {
@@ -14,4 +15,22 @@ export const defaultsSpreader = (defaults) => (key, value, touched) => {
   }
   touched[key] = true
   return spread
+}
+
+export const useInitialChangeWatcher = (
+  key,
+  value,
+  opts,
+  defaults,
+  handleChange,
+  optKey
+) => {
+  useEffect(() => {
+    if (!value || !opts.find((opt) => opt.value === value)) {
+      const altOptKey = optKey || key
+      handleChange({
+        target: { name: key, value: defaults[altOptKey] },
+      })
+    }
+  }, [key, optKey, value, opts, defaults, handleChange])
 }
