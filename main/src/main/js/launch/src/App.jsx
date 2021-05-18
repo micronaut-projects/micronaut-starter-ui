@@ -246,17 +246,20 @@ export default function App() {
   }, [featuresSelected, form, apiUrl, availableVersions])
 
   // Routing
-  const routeCreate = useCallback(async (payload, mnSdk) => {
-    try {
-      const blob = await mnSdk.create(payload)
-      downloadBlob(blob, `${payload.name}.zip`)
-      setNextStepsInfo({ show: true, type: 'zip' })
-    } catch (error) {
-      await handleResponseError(error)
-    } finally {
-      setDownloading(false)
-    }
-  }, [])
+  const routeCreate = useCallback(
+    async (payload, mnSdk) => {
+      try {
+        const blob = await mnSdk.create(payload)
+        downloadBlob(blob, `${payload.name}.zip`)
+        setNextStepsInfo({ show: true, type: 'zip' })
+      } catch (error) {
+        await handleResponseError(error)
+      } finally {
+        setDownloading(false)
+      }
+    },
+    [handleResponseError]
+  )
 
   const routePreview = useCallback(
     async (payload, mnSdk, opts = { showing: null }) => {
