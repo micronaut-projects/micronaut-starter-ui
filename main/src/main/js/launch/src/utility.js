@@ -17,12 +17,14 @@ export const guessOs = () => {
   return ''
 }
 
-export const smartSetState = (newData, comparator = _.isEqual) => (oldData) => {
-  if (comparator(oldData, newData)) {
-    return oldData
+export const smartSetState =
+  (newData, comparator = _.isEqual) =>
+  (oldData) => {
+    if (comparator(oldData, newData)) {
+      return oldData
+    }
+    return newData
   }
-  return newData
-}
 
 export const capitalize = (s) => {
   if (typeof s !== 'string') return ''
@@ -39,15 +41,17 @@ export const downloadBlob = (blob, name = 'file.txt') => {
   a.click()
 }
 
-export const debounceResponse = (start, atLeast = 700) => (response) => {
-  const end = Date.now()
-  const diff = end - start
-  return new Promise((r) => {
-    setTimeout(() => {
-      r(response)
-    }, Math.max(atLeast - diff, 0))
-  })
-}
+export const debounceResponse =
+  (start, atLeast = 700) =>
+  (response) => {
+    const end = Date.now()
+    const diff = end - start
+    return new Promise((r) => {
+      setTimeout(() => {
+        r(response)
+      }, Math.max(atLeast - diff, 0))
+    })
+  }
 
 export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -91,12 +95,14 @@ export const makeNodeTree = (data) => {
   return nodes
 }
 
-export const responseHandler = (type = 'json') => (response) => {
-  if (!response.ok) {
-    throw response
+export const responseHandler =
+  (type = 'json') =>
+  (response) => {
+    if (!response.ok) {
+      throw response
+    }
+    return response[type]()
   }
-  return response[type]()
-}
 
 export const copyToClipboard = async (str) => {
   if (window.navigator.clipboard) {

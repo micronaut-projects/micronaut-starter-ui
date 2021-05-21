@@ -84,7 +84,7 @@ export const FeatureSelectorModal = ({
   onRemoveAllFeatures,
   theme = 'light',
 }) => {
-  const searchRef = useRef(null)
+  const inputRef = useRef(null)
 
   const [search, setSearch] = useState('')
   const selectedFeatureKeys = Object.keys(selectedFeatures)
@@ -134,11 +134,10 @@ export const FeatureSelectorModal = ({
   }
 
   const onModalOpen = () => {
-    console.log(searchRef?.current)
-    if (searchRef.current && searchRef.current.inputRef) {
+    if (inputRef.current && typeof inputRef.current.focus === 'function') {
       setTimeout(() => {
-        searchRef.current.inputRef.focus()
-      }, 700)
+        inputRef.current.focus()
+      }, 300)
     }
   }
 
@@ -181,7 +180,7 @@ export const FeatureSelectorModal = ({
         <h4>
           <div className="modal-header">
             <TextInput
-              ref={searchRef}
+              ref={inputRef}
               className="mn-input"
               s={12}
               label="Search Features"
@@ -198,7 +197,7 @@ export const FeatureSelectorModal = ({
         ) : (
           <Col s={12}>
             {searchResults.length === 0 && <p>No matching features</p>}
-            {Object.keys(groupedResults).map((key, index) => {
+            {Object.keys(groupedResults).map((key) => {
               return (
                 <FeatureAvailableGroup
                   key={key}
