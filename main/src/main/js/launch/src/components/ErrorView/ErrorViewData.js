@@ -59,3 +59,30 @@ export default class ErrorViewData {
     })
   }
 }
+
+export const errorHandlersFactory = (setError) => {
+  const onResponseError = async (response) => {
+    if (response instanceof Error) {
+      return setError(new ErrorViewData(response))
+    }
+    const payload = ErrorViewData.ofError('something went wrong.')
+    if (!response.json instanceof Function) {
+      return setError(payload)
+    }
+    try {
+      const json = await response.json()
+      const message = json.message || payload.message
+      setError(ErrorViewData.ofError(message))
+    } catch (e) {
+      setError(payload)
+    }
+  }
+
+  return {
+    onClear: () => setError(ErrorViewData.ofNone()),
+    onSuccess: (message) => setError(ErrorViewData.ofSuccess(message)),
+    onError: (message) => setError(ErrorViewData.ofError(message)),
+    onWarn: (message) => setError(ErrorViewData.ofWarn(message)),
+    onResponseError,
+  }
+}

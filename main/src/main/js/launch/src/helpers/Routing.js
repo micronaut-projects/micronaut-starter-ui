@@ -49,7 +49,12 @@ export function parseAndConsumeQuery() {
 }
 
 export function isDeepLinkReferral(shareData = {}) {
-  return shareData.type || shareData.lang || shareData.test || shareData.build
+  return !!(
+    shareData.type ||
+    shareData.lang ||
+    shareData.test ||
+    shareData.build
+  )
 }
 
 export function resolveActionRoute(queryData) {

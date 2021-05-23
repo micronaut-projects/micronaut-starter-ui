@@ -1,0 +1,281 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Initial Form Data with "" 1`] = `
+Array [
+  <div
+    className="type"
+  >
+    DEFAULT
+  </div>,
+  <div
+    className="test"
+  >
+    null
+  </div>,
+  <div
+    className="build"
+  >
+    null
+  </div>,
+  <div
+    className="lang"
+  >
+    null
+  </div>,
+  <div
+    className="javaVersion"
+  >
+    
+  </div>,
+  <div
+    className="name"
+  >
+    demo
+  </div>,
+  <div
+    className="package"
+  >
+    com.example
+  </div>,
+]
+`;
+
+exports[`Initial Form Data with "javaVersion" 1`] = `
+Array [
+  <div
+    className="type"
+  >
+    DEFAULT
+  </div>,
+  <div
+    className="test"
+  >
+    null
+  </div>,
+  <div
+    className="build"
+  >
+    null
+  </div>,
+  <div
+    className="lang"
+  >
+    null
+  </div>,
+  <div
+    className="javaVersion"
+  >
+    JDK_12
+  </div>,
+  <div
+    className="name"
+  >
+    demo
+  </div>,
+  <div
+    className="package"
+  >
+    com.example
+  </div>,
+]
+`;
+
+exports[`Initial Form Data with "lang" 1`] = `
+Array [
+  <div
+    className="type"
+  >
+    DEFAULT
+  </div>,
+  <div
+    className="test"
+  >
+    null
+  </div>,
+  <div
+    className="build"
+  >
+    null
+  </div>,
+  <div
+    className="lang"
+  >
+    Java
+  </div>,
+  <div
+    className="javaVersion"
+  >
+    
+  </div>,
+  <div
+    className="name"
+  >
+    demo
+  </div>,
+  <div
+    className="package"
+  >
+    com.example
+  </div>,
+]
+`;
+
+exports[`Initial Form Data with "name" 1`] = `
+Array [
+  <div
+    className="type"
+  >
+    DEFAULT
+  </div>,
+  <div
+    className="test"
+  >
+    null
+  </div>,
+  <div
+    className="build"
+  >
+    null
+  </div>,
+  <div
+    className="lang"
+  >
+    null
+  </div>,
+  <div
+    className="javaVersion"
+  >
+    
+  </div>,
+  <div
+    className="name"
+  >
+    pretendo
+  </div>,
+  <div
+    className="package"
+  >
+    com.example
+  </div>,
+]
+`;
+
+exports[`Initial Form Data with "package" 1`] = `
+Array [
+  <div
+    className="type"
+  >
+    DEFAULT
+  </div>,
+  <div
+    className="test"
+  >
+    null
+  </div>,
+  <div
+    className="build"
+  >
+    null
+  </div>,
+  <div
+    className="lang"
+  >
+    null
+  </div>,
+  <div
+    className="javaVersion"
+  >
+    
+  </div>,
+  <div
+    className="name"
+  >
+    demo
+  </div>,
+  <div
+    className="package"
+  >
+    com.pretend
+  </div>,
+]
+`;
+
+exports[`Initial Form Data with "test" 1`] = `
+Array [
+  <div
+    className="type"
+  >
+    DEFAULT
+  </div>,
+  <div
+    className="test"
+  >
+    JUNIT
+  </div>,
+  <div
+    className="build"
+  >
+    null
+  </div>,
+  <div
+    className="lang"
+  >
+    null
+  </div>,
+  <div
+    className="javaVersion"
+  >
+    
+  </div>,
+  <div
+    className="name"
+  >
+    demo
+  </div>,
+  <div
+    className="package"
+  >
+    com.example
+  </div>,
+]
+`;
+
+exports[`Initial Form Data with "test" 2`] = `
+Array [
+  <div
+    className="type"
+  >
+    DEFAULT
+  </div>,
+  <div
+    className="test"
+  >
+    KOTEST
+  </div>,
+  <div
+    className="build"
+  >
+    null
+  </div>,
+  <div
+    className="lang"
+  >
+    null
+  </div>,
+  <div
+    className="javaVersion"
+  >
+    
+  </div>,
+  <div
+    className="name"
+  >
+    demo
+  </div>,
+  <div
+    className="package"
+  >
+    com.example
+  </div>,
+]
+`;

@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import App from './components/Application/App'
 
 import './style.css'
 import './styles/button-row.css'
