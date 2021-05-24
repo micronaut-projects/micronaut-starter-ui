@@ -19,7 +19,8 @@ const ErrorView = ({
   clipboard,
   onClose,
 }) => {
-  const open = Boolean(message && hasError)
+  const [closing, setClosing] = useState(false)
+  const open = Boolean(message && hasError && !closing)
   const [copied, setCopied] = useState(false)
   const copy = () => {
     setCopied(true)
@@ -27,17 +28,25 @@ const ErrorView = ({
   }
   const ClipBoardIcon = copied ? AssignmentTurnedInIcon : AssignmentIcon
 
+  const handleClose = () => {
+    setClosing(true)
+    setTimeout(() => {
+      onClose()
+      setClosing(false)
+    }, 200)
+  }
+
   return (
     <Snackbar
       className="error-view"
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       open={open}
       autoHideDuration={6000}
-      onClose={onClose}
+      onClose={handleClose}
     >
       <Alert
         icon={<Avatar src={logo}>N</Avatar>}
-        onClose={onClose}
+        onClose={handleClose}
         severity={severity}
         variant="filled"
       >

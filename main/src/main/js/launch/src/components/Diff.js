@@ -1,5 +1,10 @@
 // Diff.js
-import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react'
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useState,
+  useMemo,
+} from 'react'
 
 import { Button } from 'react-materialize'
 
@@ -23,21 +28,26 @@ const Diff = (
   { lang, build, theme = 'light', disabled, onLoad, onClose },
   ref
 ) => {
-  const triggerRef = useRef()
   const [diff, setDiff] = useState(null)
   useKeyboardShortcuts(DIFF_SHORTCUT.keys, onLoad, disabled)
 
   useImperativeHandle(ref, () => ({
     show: async (text) => {
       setDiff(text)
-      triggerRef.current.props.onClick()
     },
   }))
 
-  function onCloseStart(event) {
-    setDiff('')
-    onClose(event)
-  }
+  const options = useMemo(() => {
+    function onCloseStart(event) {
+      setDiff('')
+      onClose(event)
+    }
+    return {
+      onCloseStart: onCloseStart,
+      startingTop: '5%',
+      endingTop: '5%',
+    }
+  }, [onClose, setDiff])
 
   return (
     <React.Fragment>
@@ -65,27 +75,11 @@ const Diff = (
         }
         className={'diff ' + theme}
         fixedFooter
-        options={{
-          onCloseStart: onCloseStart,
-          startingTop: '5%',
-          endingTop: '5%',
-        }}
+        open={!!diff}
+        options={options}
         actions={
           <Button waves="light" modal="close" flat>
             Close
-          </Button>
-        }
-        trigger={
-          <Button
-            ref={triggerRef}
-            disabled={disabled}
-            waves="light"
-            className={theme}
-            style={{ display: 'none' }}
-            onClick={onLoad}
-          >
-            <Icon left>compare_arrows</Icon>
-            Diff
           </Button>
         }
       >

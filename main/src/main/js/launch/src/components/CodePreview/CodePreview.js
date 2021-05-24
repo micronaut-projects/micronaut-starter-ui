@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useMemo,
   useImperativeHandle,
-  useRef,
 } from 'react'
 
 import { Button } from 'react-materialize'
@@ -37,9 +36,9 @@ const CodePreview = (
   { lang, build, theme = 'light', disabled, onLoad, onClose, sharable },
   ref
 ) => {
-  const triggerRef = useRef(null)
   const [showing, setShowing] = useState(null)
   const [preview, setPreview] = useState({})
+  const open = Object.keys(preview).length > 0
 
   useKeyboardShortcuts(PREVIEW_SHORTCUT.keys, onLoad, disabled)
 
@@ -48,7 +47,6 @@ const CodePreview = (
       setShowing(showing || 'README.md')
       const nodes = makeNodeTree(json.contents)
       setPreview(nodes)
-      triggerRef.current.props.onClick()
     },
   }))
 
@@ -193,6 +191,7 @@ const CodePreview = (
         Preview
       </TooltipButton>
       <Modal
+        open={open}
         header={
           'Previewing a ' +
           capitalize(lang) +
@@ -227,19 +226,6 @@ const CodePreview = (
               Close
             </Button>
           </div>
-        }
-        trigger={
-          <Button
-            ref={triggerRef}
-            disabled={disabled}
-            waves="light"
-            className={theme}
-            style={{ display: 'none' }}
-            onClick={onLoad}
-          >
-            <Icon left>search</Icon>
-            Preview
-          </Button>
         }
       >
         <Grid container className="grid-container">
