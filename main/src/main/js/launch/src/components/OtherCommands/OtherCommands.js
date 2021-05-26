@@ -2,30 +2,20 @@
 import React, { useMemo } from 'react'
 import { Button } from 'react-materialize'
 import Modal from 'react-materialize/lib/Modal'
-import { MicronautStarterSDK } from '../../micronaut'
 import Row from 'react-materialize/lib/Row'
 import Col from 'react-materialize/lib/Col'
 import CopyToClipboard from '../CopyToClipboard'
+import { useCreateCommand } from '../../state/store'
 
-export default function OtherCommands({
-  className = '',
-  theme,
-  style,
-  baseUrl,
-  createPayload,
-  trigger,
-}) {
+export default function OtherCommands({ theme, trigger }) {
+  const createCommand = useCreateCommand()
   const actions = useMemo(() => {
-    if (!baseUrl) return []
-    const createCommand = MicronautStarterSDK.createCommand(
-      createPayload,
-      baseUrl
-    )
+    if (!createCommand) return []
     return [
       { link: createCommand.toCli(), title: 'Using the Micronaut CLI' },
       { link: createCommand.toCurl(), title: 'Using cURL' },
     ]
-  }, [createPayload, baseUrl])
+  }, [createCommand])
 
   return (
     <Modal

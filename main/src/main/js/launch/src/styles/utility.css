@@ -46,3 +46,7 @@
 .o-scroll {
   overflow: scroll;
 }
+
+.svg-white path {
+  color: white;
+}

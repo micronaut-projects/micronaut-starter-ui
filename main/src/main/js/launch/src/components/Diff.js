@@ -23,11 +23,11 @@ import { capitalize } from '../utility'
 
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
 import { DIFF_SHORTCUT } from '../constants/shortcuts'
+import { useStarterForm } from '../state/store'
 
-const Diff = (
-  { lang, build, theme = 'light', disabled, onLoad, onClose },
-  ref
-) => {
+const Diff = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
+  const { lang, build } = useStarterForm()
+
   const [diff, setDiff] = useState(null)
   useKeyboardShortcuts(DIFF_SHORTCUT.keys, onLoad, disabled)
 

@@ -15,10 +15,12 @@ export const HANDLED_ACTIVITIES = [
   CREATE_ACTIVITY,
 ]
 
-export function sharableLink(form, features, version) {
+export function sharableLink(form, version) {
+  const { features, ...rest } = form
+
   const parts = [
-    ...Object.keys(form).reduce((acc, key) => {
-      acc.push(`${key}=${form[key]}`)
+    ...Object.keys(rest).reduce((acc, key) => {
+      acc.push(`${key}=${rest[key]}`)
       return acc
     }, []),
     ...Object.keys(features).map((feature) => `${FEATURES_KEY}=${feature}`),

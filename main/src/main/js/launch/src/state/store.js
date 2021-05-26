@@ -1,0 +1,380 @@
+import { useEffect } from 'react'
+import {
+  atom,
+  selector,
+  selectorFamily,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useRecoilValueLoadable,
+} from 'recoil'
+
+import {
+  ACTIVITY_KEY,
+  isDeepLinkReferral,
+  parseAndConsumeQuery,
+  sharableLink,
+} from '../helpers/Routing'
+
+import { getStorageValue, setStorageValue } from '../hooks/useLocalStorage'
+import { MicronautStarterSDK } from '../micronaut'
+
+const INITIAL_FORM_DATA_STORAGE_KEY = 'INITIAL_FORM_DATA'
+
+const defaults = parseAndConsumeQuery()
+const isReferral = isDeepLinkReferral(defaults)
+const versionLoader = MicronautStarterSDK.loadVersions()
+
+function formResets(fallbacks = {}) {
+  const { name, package: pkg, type } = fallbacks
+  return {
+    name: typeof name === 'string' ? name : 'demo',
+    package: typeof pkg === 'string' ? pkg : 'com.example',
+    type: typeof type === 'string' ? type : 'DEFAULT',
+  }
+}
+
+const initialForm = (initialData) => {
+  const { javaVersion, lang, build, test, features } = initialData
+  const parsed = {
+    javaVersion: typeof javaVersion === 'string' ? javaVersion : '', // This is specifically "" to work with the SelectOption component
+    lang: typeof lang === 'string' ? lang : '',
+    build: typeof build === 'string' ? build : '',
+    test: typeof test === 'string' ? test : '',
+    features: MicronautStarterSDK.reconstructFeatures(features),
+    [ACTIVITY_KEY]: initialData[ACTIVITY_KEY],
+  }
+  return {
+    ...parsed,
+    ...formResets(initialData),
+  }
+}
+
+const initialValueData = getStorageValue(
+  INITIAL_FORM_DATA_STORAGE_KEY,
+  initialForm(defaults),
+  isReferral
+)
+
+export const initialValueState = atom({
+  key: 'INITIAL_VALUE_STATE',
+  default: { ...defaults, ...initialValueData },
+})
+
+export const selectedVersionState = atom({
+  key: 'SELECTED_VERSION_STATE',
+  default: getStorageValue('SELECTED_MN_VERSION', null, isReferral),
+})
+
+export const availableVersionsState = selector({
+  key: 'AVAILABLE_VERSIONS_STATE',
+  get: () => versionLoader,
+})
+
+export const baseUrlState = selector({
+  key: 'BASE_URL_STATE',
+  get: ({ get }) => {
+    const selectedVersion = get(selectedVersionState)
+    return selectedVersion?.api
+  },
+})
+
+export const sdkState = selector({
+  key: 'MICRONAUT_SDK_STATE',
+  get: ({ get }) => {
+    const baseUrl = get(baseUrlState)
+    if (!baseUrl) return null
+    return new MicronautStarterSDK({ baseUrl })
+  },
+})
+
+export const optionsState = selector({
+  key: 'SELECT_OPTIONS_STATE',
+  get: async ({ get }) => {
+    const sdk = get(sdkState)
+    if (!sdk) return {}
+    const results = await sdk.selectOptions()
+    return results
+  },
+})
+
+export const optionsForState = selectorFamily({
+  key: 'SELECT_OPTIONS_FOR_STATE',
+  get:
+    (key) =>
+    ({ get }) => {
+      const opts = get(optionsState)
+      return opts[key]
+    },
+})
+
+// Start Form Fields
+export const nameState = atom({
+  key: 'NAME_STATE',
+  default: initialValueData.name,
+})
+export const packageState = atom({
+  key: 'PACKAGE_STATE',
+  default: initialValueData.package,
+})
+
+export const appTypeState = atom({
+  key: 'TYPE_STATE',
+  default: initialValueData.type,
+})
+
+export const testState = atom({
+  key: 'TEST_STATE',
+  default: initialValueData.test,
+})
+
+export const langState = atom({
+  key: 'LANG_STATE',
+  default: initialValueData.lang,
+})
+
+export const buildState = atom({
+  key: 'BUILD_STATE',
+  default: initialValueData.build,
+})
+
+export const javaVersionState = atom({
+  key: 'JAVA_VERSION_STATE',
+  default: initialValueData.javaVersion,
+})
+
+export const featuresState = atom({
+  key: 'FEATURES_STATE',
+  default: initialValueData.features,
+})
+// End Form Data
+
+export const availableFeaturesState = selector({
+  key: 'FEATURES_FOR_TYPE_STATE',
+  get: async ({ get }) => {
+    const sdk = get(sdkState)
+    const type = get(appTypeState)
+    if (!sdk || !type) return []
+    const { features } = await sdk.features({ type })
+    return features
+  },
+})
+
+export const starterFormState = selector({
+  key: 'STARTER_FORM_STATE',
+  get: ({ get }) => {
+    const type = get(appTypeState)
+    const name = get(nameState)
+    const pkg = get(packageState)
+    const build = get(buildState)
+    const lang = get(langState)
+    const test = get(testState)
+    const javaVersion = get(javaVersionState)
+    const features = get(featuresState)
+    return setStorageValue(INITIAL_FORM_DATA_STORAGE_KEY, {
+      type,
+      name,
+      package: pkg,
+      javaVersion,
+      lang,
+      build,
+      test,
+      features,
+    })
+  },
+})
+
+const gitHubLinkState = selector({
+  key: 'GITHUB_LINK_STATE',
+  get: ({ get }) => {
+    const form = get(starterFormState)
+    const baseUrl = get(baseUrlState)
+    return MicronautStarterSDK.githubHrefForUrl(baseUrl, form)
+  },
+})
+
+const createCommandState = selector({
+  key: 'CREATE_COMMAND_STATE',
+  get: ({ get }) => {
+    const form = get(starterFormState)
+    const baseUrl = get(baseUrlState)
+    return MicronautStarterSDK.createCommand(form, baseUrl)
+  },
+})
+
+const sharableLinkState = selector({
+  key: 'SHARABLE_LINK_STATE',
+  get: ({ get }) => {
+    const form = get(starterFormState)
+    const selectedVersion = get(selectedVersionState)
+    return sharableLink(form, selectedVersion?.version)
+  },
+})
+
+//----------------------
+// State Hooks
+//---------------------
+const useDerivedDefultsEffect = (select, setter) => {
+  useEffect(() => {
+    if (!select) return
+    const { defaultOption, options } = select
+    setter((value) => {
+      if (!value) return defaultOption.value
+      const idx = options.findIndex((v) => v.value === value)
+      if (idx < 0) return defaultOption.value
+      return value
+    })
+  }, [select, setter])
+}
+
+export function useCurrenSdk() {
+  return useRecoilValue(sdkState)
+}
+
+export function useInitialData() {
+  return useRecoilValue(initialValueState)
+}
+
+export function useGitHubShareLink() {
+  return useRecoilValue(gitHubLinkState)
+}
+
+export function useSharableLink() {
+  return useRecoilValue(sharableLinkState)
+}
+
+export function useAvailableVersions() {
+  return useRecoilValue(availableVersionsState)
+}
+
+export function useAvailableFeatures() {
+  const loadable = useRecoilValueLoadable(availableFeaturesState)
+  switch (loadable.state) {
+    case 'hasValue':
+      return { features: loadable.contents, loading: false }
+    case 'loading':
+      return { features: [], loading: true }
+    default:
+      return { features: [], loading: false }
+  }
+}
+
+export function useSelectedVersions() {
+  const [value, setter] = useRecoilState(selectedVersionState)
+  const options = useAvailableVersions()
+  useEffect(() => {
+    if (!value) {
+      let idx = Math.max(
+        0,
+        options.findIndex((opt) => opt.version === defaults.version)
+      )
+      setter(options[idx])
+    }
+  }, [value, setter, options])
+  return [value, setter, options]
+}
+
+export function useInitializeVersionEffect(onError) {
+  const [value, setter] = useRecoilState(selectedVersionState)
+  const options = useAvailableVersions()
+  return useEffect(() => {
+    if (!value && options?.length) {
+      const idx = options.findIndex((opt) => opt.version === defaults?.version)
+      if (defaults?.version && idx < 0) {
+        onError({ requested: defaults.version, using: options[0].version })
+      }
+      setter(options[Math.max(idx, 0)])
+    }
+  }, [value, setter, options, onError])
+}
+
+export function useSelectedFeatures() {
+  const [value, setter] = useRecoilState(featuresState)
+  const { features, loading } = useAvailableFeatures()
+  return [value, setter, features, loading]
+}
+
+export function useSelectedFeaturesValue() {
+  return useRecoilValue(featuresState)
+}
+
+export const useAppName = () => useRecoilState(nameState)
+export const useAppPackage = () => useRecoilState(packageState)
+
+const useSelectOptionsForType = (key) => {
+  const loadable = useRecoilValueLoadable(optionsForState(key))
+  switch (loadable.state) {
+    case 'hasValue':
+      return loadable.contents
+    default:
+      return null
+  }
+}
+
+export const useApplicationType = () => {
+  const [value, setter] = useRecoilState(appTypeState)
+  const select = useSelectOptionsForType('type')
+  useDerivedDefultsEffect(select, setter)
+  return [value, setter, select]
+}
+
+export const useTestFramework = () => {
+  const [value, setter] = useRecoilState(testState)
+  const select = useSelectOptionsForType('test')
+  useDerivedDefultsEffect(select, setter)
+  return [value, setter, select]
+}
+
+export const useLanguage = () => {
+  const [value, setter] = useRecoilState(langState)
+  const select = useSelectOptionsForType('lang')
+  useDerivedDefultsEffect(select, setter)
+  return [value, setter, select]
+}
+
+export const useBuild = () => {
+  const [value, setter] = useRecoilState(buildState)
+  const select = useSelectOptionsForType('build')
+  useDerivedDefultsEffect(select, setter)
+  return [value, setter, select]
+}
+
+export const useJavaVersion = () => {
+  const [value, setter] = useRecoilState(javaVersionState)
+  const select = useSelectOptionsForType('jdkVersion')
+  useDerivedDefultsEffect(select, setter)
+  return [value, setter, select]
+}
+
+export const useStarterForm = () => {
+  return useRecoilValue(starterFormState)
+}
+
+export const useCreateCommand = () => {
+  return useRecoilValue(createCommandState)
+}
+
+export const useGetStarterForm = () => {
+  return useRecoilCallback(({ snapshot }) => async () => {
+    const createPayload = await snapshot.getPromise(starterFormState)
+    const sdk = await snapshot.getPromise(sdkState)
+    return { createPayload, sdk }
+  })
+}
+
+export const useResetStarterForm = () => {
+  return useRecoilCallback(({ set, snapshot }) => async () => {
+    const options = await snapshot.getPromise(optionsState)
+    const resets = formResets({})
+
+    set(nameState, resets.name)
+    set(packageState, resets.package)
+
+    set(appTypeState, options.type.defaultOption.value)
+    set(buildState, options.build.defaultOption.value)
+    set(langState, options.lang.defaultOption.value)
+    set(testState, options.test.defaultOption.value)
+    set(javaVersionState, options.jdkVersion.defaultOption.value)
+    set(featuresState, {})
+  })
+}

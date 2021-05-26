@@ -3,6 +3,7 @@ import Modal from 'react-materialize/lib/Modal'
 import { Icon, Row, Col, Button } from 'react-materialize'
 import CopyToClipboard from '../CopyToClipboard'
 import { guessOs, osOpts, OS_WINDOWS, OS_NIX } from '../../utility'
+import { useStarterForm } from '../../state/store'
 
 const guessedOs = guessOs()
 const sortedOsOpts = osOpts.sort((a, b) => {
@@ -15,14 +16,8 @@ const sortedOsOpts = osOpts.sort((a, b) => {
     : -1
 })
 
-const NextSteps = ({
-  name,
-  buildTool,
-  info,
-  theme = 'light',
-  onClose,
-  onStartOver,
-}) => {
+const NextSteps = ({ info, theme = 'light', onClose, onStartOver }) => {
+  const { name, build } = useStarterForm()
   const { htmlUrl, cloneUrl } = info
   const [os, setOs] = useState(guessedOs)
 
@@ -54,7 +49,7 @@ const NextSteps = ({
 
   const launchCommand = useMemo(() => {
     const cmd = { action: 'Launch!' }
-    const tool = buildTool.toLowerCase()
+    const tool = build.toLowerCase()
     switch (tool) {
       case 'maven':
         cmd.cmd = {
@@ -72,7 +67,7 @@ const NextSteps = ({
         break
     }
     return cmd
-  }, [buildTool])
+  }, [build])
 
   return (
     <Modal

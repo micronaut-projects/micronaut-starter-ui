@@ -11,19 +11,17 @@ import { MicronautStarterSDK } from '../../micronaut'
 
 import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
 import { GENERATE_SHORTCUT } from '../../constants/shortcuts'
+import { useGitHubShareLink, useStarterForm } from '../../state/store'
 
 const GenerateButtons = ({
   disabled,
   theme,
   generateProject,
   cloneProject,
-  createPayload,
   baseUrl,
 }) => {
-  const gitHubCreateHref = useMemo(
-    () => MicronautStarterSDK.githubHrefForUrl(baseUrl, createPayload),
-    [createPayload, baseUrl]
-  )
+  const createPayload = useStarterForm()
+  const gitHubCreateHref = useGitHubShareLink()
 
   useKeyboardShortcuts(GENERATE_SHORTCUT.keys, generateProject, disabled)
 

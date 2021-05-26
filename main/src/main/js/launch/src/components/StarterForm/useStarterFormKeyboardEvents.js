@@ -10,7 +10,7 @@ import {
 
 import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
 
-const useOptHandler = (name, value, opts, handleChange) => {
+export const useOptHandler = (name, value, opts, handleChange) => {
   return useCallback(() => {
     if (opts.length <= 1 || !value) return // One or less opt, nothing to do here
 

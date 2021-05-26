@@ -5,12 +5,11 @@ import Col from 'react-materialize/lib/Col'
 import Row from 'react-materialize/lib/Row'
 
 import useAppTheme from '../../hooks/useAppTheme'
-import useMicronautSdk from '../../hooks/useMicronautSdk'
 
-import { parseAndConsumeQuery, resetRoute } from '../../helpers/Routing'
+import { resetRoute } from '../../helpers/Routing'
 import { downloadBlob } from '../../utility'
 
-import { FeatureSelectorModal, FeatureSelectedList } from '../FeatureSelector'
+import { FeatureSelectorModal } from '../FeatureSelector'
 import CodePreview from '../CodePreview'
 import Diff from '../Diff'
 import ErrorView, { ErrorViewData } from '../ErrorView'
@@ -19,26 +18,37 @@ import Header from '../Header'
 import NextSteps from '../NextSteps'
 import StarterForm from '../StarterForm'
 import Footer from '../Footer'
+import { FeatureSelectedList } from '../FeatureSelector/FeatureSelected'
 
 import {
-  useApplicationForm,
-  useFeaturesHandler,
   useHandleShareLinkEffect,
-  useInitialVersionEffect,
   useOnInitialLoadEffect,
 } from './useApplicationForm'
 
-import {
-  useAvailableFeatures,
-  useAvailableVersions,
-} from './useApplicationFormInitializer'
 import { errorHandlersFactory } from '../ErrorView/ErrorViewData'
+import {
+  useGetStarterForm,
+  useInitialData,
+  useInitializeVersionEffect,
+  useResetStarterForm,
+} from '../../state/store'
 
-export default function App() {
-  const shareData = useRef(parseAndConsumeQuery())
+import ApplicationState from '../../state/ApplicationState'
+import Lang from '../../helpers/Lang'
+import { AppLoadingBackdrop } from './AppLoadingBackdrop'
 
-  const [loading, setLoading] = useState(false)
 
+
+export default function Root() {
+  return (
+    <ApplicationState>
+      <App />
+    </ApplicationState>
+  )
+}
+
+export function App() {
+  const initialData = useInitialData()
   // Error Handling
   const [error, setError] = useState(ErrorViewData.ofSuccess(''))
   const hasError = Boolean(error.message)
@@ -47,19 +57,9 @@ export default function App() {
     return errorHandlersFactory(setError)
   }, [setError])
 
-  const { availableVersions, initialized } = useAvailableVersions(
-    setLoading,
-    errorHandlers.onResponseError
-  )
-
   return (
-    <>
-      <AppContainer
-        initialData={shareData.current}
-        availableVersions={availableVersions}
-        initialized={initialized && !loading}
-        errorHandlers={errorHandlers}
-      />
+    <React.Suspense fallback={<AppLoadingBackdrop />}>
+      <AppContainer initialData={initialData} errorHandlers={errorHandlers} />
       <ErrorView
         hasError={hasError}
         severity={error.severity}
@@ -68,16 +68,11 @@ export default function App() {
         clipboard={error.clipboard}
         onClose={errorHandlers.onClear}
       />
-    </>
+    </React.Suspense>
   )
 }
 
-export function AppContainer({
-  initialData,
-  availableVersions,
-  initialized,
-  errorHandlers,
-}) {
+export function AppContainer({ initialData, errorHandlers }) {
   // Refs
   const previewView = useRef()
   const diffView = useRef()
@@ -89,44 +84,37 @@ export function AppContainer({
   // Next Steps
   const [nextStepsInfo, setNextStepsInfo] = useState({})
   const onCloseNextSteps = () => setNextStepsInfo({})
+  // Start Over
+  const resetForm = useResetStarterForm()
+  const onStartOver = () => {
+    onCloseNextSteps()
+    resetForm()
+  }
 
-  // Form Data
-  const {
-    form,
-    setForm,
-    selectedVersion,
-    setSelectedVersion,
-    selectedFeatures,
-    setSelectedFeatures,
-    resetHandlers,
-    createPayload,
-    sharable,
-  } = useApplicationForm(initialData)
-  const featureHandlers = useFeaturesHandler(setSelectedFeatures)
-
-  useInitialVersionEffect(
-    initialData.version,
-    availableVersions,
-    setSelectedVersion,
-    errorHandlers.onWarn
-  )
-
-  // Selected API Related Data
-  const apiUrl = selectedVersion?.api
-  const sdk = useMicronautSdk(apiUrl)
-
-  const { availableFeatures, loadingFeatures } = useAvailableFeatures(
-    sdk,
-    form.type,
-    errorHandlers.onResponseError
+  
+  useInitializeVersionEffect(
+    useCallback(
+      ({ requested, using }) => {
+        const message = Lang.trans('error.versionNoLongerSupported', {
+          requestedVersion: requested,
+          currentVersion: using,
+        })
+        errorHandlers.onWarn(message)
+      },
+      [errorHandlers]
+    )
   )
 
   // Routing
   const routingHandlers = useMemo(() => {
     return {
-      preview: async (payload, mnSdk, opts = { showing: null }) => {
+      onCloned: (repoCreatedInfo) => {
+        setNextStepsInfo(repoCreatedInfo)
+      },
+
+      preview: async (payload, sdk, opts = { showing: null }) => {
         try {
-          const json = await mnSdk.preview(payload)
+          const json = await sdk.preview(payload)
           previewView.current.show(json, opts.showing)
         } catch (error) {
           errorHandlers.onResponseError(error)
@@ -135,9 +123,9 @@ export function AppContainer({
         }
       },
 
-      diff: async (payload, mnSdk) => {
+      diff: async (payload, sdk) => {
         try {
-          const text = await mnSdk.diff(payload)
+          const text = await sdk.diff(payload)
           if (text === '') {
             throw new Error(
               'No features have been selected. Please choose one or more features and try again.'
@@ -151,9 +139,9 @@ export function AppContainer({
         }
       },
 
-      create: async (payload, mnSdk) => {
+      create: async (payload, sdk) => {
         try {
-          const blob = await mnSdk.create(payload)
+          const blob = await sdk.create(payload)
           downloadBlob(blob, `${payload.name}.zip`)
           setNextStepsInfo({ show: true, type: 'zip' })
         } catch (error) {
@@ -165,14 +153,13 @@ export function AppContainer({
     }
   }, [errorHandlers])
 
-  // Handle Initial Load, and setting info if from a GH Repo Generation
-  const onRepoCreated = useCallback((repoCreatedInfo) => {
-    setNextStepsInfo(repoCreatedInfo)
-  }, [])
-  useOnInitialLoadEffect(initialData, onRepoCreated, errorHandlers.onError)
-
+  useOnInitialLoadEffect(
+    initialData,
+    routingHandlers.onCloned,
+    errorHandlers.onError
+  )
   // Share Initial Routing Routing
-  useHandleShareLinkEffect(sdk, initialData, routingHandlers)
+  useHandleShareLinkEffect(initialData, routingHandlers)
 
   // Preflight for any async activity
   const requestPrep = (event) => {
@@ -183,20 +170,23 @@ export function AppContainer({
     setLoading(true)
   }
 
+  const getFormData = useGetStarterForm()
   // GitHub Clone Feat
   const cloneProject = async (e) => {
     setLoading(true)
   }
 
   // Create Feat
-  const generateProject = (e) => {
+  const generateProject = async (e) => {
     requestPrep(e)
+    const { createPayload, sdk } = await getFormData()
     routingHandlers.create(createPayload, sdk)
   }
 
   // Preview Feat
-  const loadPreview = (e) => {
+  const loadPreview = async (e) => {
     requestPrep(e)
+    const { createPayload, sdk } = await getFormData()
     routingHandlers.preview(createPayload, sdk)
   }
   const clearPreview = () => resetRoute()
@@ -204,61 +194,35 @@ export function AppContainer({
   // Diff Feat
   const loadDiff = async (e) => {
     requestPrep(e)
+    const { createPayload, sdk } = await getFormData()
     routingHandlers.diff(createPayload, sdk)
   }
   const clearDiff = () => resetRoute()
 
-  // Start Over
-  const onStartOver = () => {
-    resetHandlers.onResetAll()
-    onCloseNextSteps()
-  }
-
-  const disabled =
-    !initialized || loading || loadingFeatures || !form.name || !form.package
+  const disabled = loading
 
   return (
     <Fragment>
       <div id="mn-main-container" className="mn-main-container sticky">
         <div className="container">
-          <Header
-            theme={theme}
-            onToggleTheme={toggleTheme}
-            sharable={sharable}
-          />
+          <Header theme={theme} onToggleTheme={toggleTheme} />
 
           <div className="mn-container">
             <form onSubmit={generateProject} autoComplete="off">
               <StarterForm
                 theme={theme}
-                versions={availableVersions}
-                selectedVersion={selectedVersion}
-                setSelectedVersion={setSelectedVersion}
-                setForm={setForm}
-                form={form}
                 onError={errorHandlers.onResponseError}
               />
 
               <Row className="button-row">
                 <Col s={3} className="xs6">
-                  <FeatureSelectorModal
-                    theme={theme}
-                    loading={loadingFeatures}
-                    features={availableFeatures}
-                    selectedFeatures={selectedFeatures}
-                    onAddFeature={featureHandlers.addFeature}
-                    onRemoveFeature={featureHandlers.removeFeature}
-                    onRemoveAllFeatures={featureHandlers.removeAllFeatures}
-                  />
+                  <FeatureSelectorModal theme={theme} />
                 </Col>
                 <Col s={3} className="xs6">
                   <Diff
                     ref={diffView}
                     theme={theme}
-                    lang={form.lang}
-                    build={form.build}
                     disabled={disabled}
-                    sharable={sharable}
                     onLoad={loadDiff}
                     onClose={clearDiff}
                   />
@@ -267,9 +231,6 @@ export function AppContainer({
                   <CodePreview
                     ref={previewView}
                     theme={theme}
-                    lang={form.lang}
-                    build={form.build}
-                    sharable={sharable}
                     disabled={disabled}
                     onLoad={loadPreview}
                     onClose={clearPreview}
@@ -279,11 +240,8 @@ export function AppContainer({
                   <GenerateButtons
                     theme={theme}
                     disabled={disabled}
-                    sharable={sharable}
                     cloneProject={cloneProject}
                     generateProject={generateProject}
-                    createPayload={createPayload}
-                    baseUrl={apiUrl}
                   />
                 </Col>
               </Row>
@@ -295,11 +253,7 @@ export function AppContainer({
         </div>
       </div>
       <div className="container mn-feature-container">
-        <FeatureSelectedList
-          theme={theme}
-          selectedFeatures={selectedFeatures}
-          onRemoveFeature={featureHandlers.removeFeature}
-        />
+        <FeatureSelectedList theme={theme} />
       </div>
       <Footer />
       {nextStepsInfo.show && (
@@ -308,8 +262,6 @@ export function AppContainer({
           onStartOver={onStartOver}
           info={nextStepsInfo}
           theme={theme}
-          name={form.name}
-          buildTool={form.build}
         />
       )}
     </Fragment>

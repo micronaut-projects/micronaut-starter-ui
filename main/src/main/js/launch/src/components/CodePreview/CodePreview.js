@@ -31,11 +31,12 @@ import {
   PREVIEW_ACTIVITY,
 } from '../../helpers/Routing'
 import { PREVIEW_SHORTCUT } from '../../constants/shortcuts'
+import { useSharableLink, useStarterForm } from '../../state/store'
 
-const CodePreview = (
-  { lang, build, theme = 'light', disabled, onLoad, onClose, sharable },
-  ref
-) => {
+const CodePreview = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
+  const { lang, build } = useStarterForm()
+  const sharable = useSharableLink()
+
   const [showing, setShowing] = useState(null)
   const [preview, setPreview] = useState({})
   const open = Object.keys(preview).length > 0

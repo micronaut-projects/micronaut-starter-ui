@@ -8,7 +8,6 @@ import Col from 'react-materialize/lib/Col'
 import Preloader from 'react-materialize/lib/Preloader'
 import Row from 'react-materialize/lib/Row'
 import FeatureAvailable from './FeatureAvailable'
-import FeatureSelected from './FeatureSelected'
 import TextInput from '../TextInput'
 
 import TooltipButton from '../TooltipButton'
@@ -16,6 +15,31 @@ import messages from '../../constants/messages.json'
 import { ModalKeyboardHandler } from '../../helpers/ModalKeyboardHandler'
 
 import './feature-selector.css'
+import { useSelectedFeatures } from '../../state/store'
+
+function useFeaturesHandler(setFeaturesSelected) {
+  return useMemo(() => {
+    const addFeature = (feature) => {
+      setFeaturesSelected(({ ...draft }) => {
+        draft[feature.name] = feature
+        return draft
+      })
+    }
+
+    const removeFeature = (feature) => {
+      setFeaturesSelected(({ ...draft }) => {
+        delete draft[feature.name]
+        return draft
+      })
+    }
+
+    const removeAllFeatures = () => {
+      setFeaturesSelected({})
+    }
+
+    return [addFeature, removeFeature, removeAllFeatures]
+  }, [setFeaturesSelected])
+}
 
 const keyboardEventHandler = new ModalKeyboardHandler({
   sectionKey: 'modal-group',
@@ -50,43 +74,17 @@ const FeatureAvailableGroup = ({ category, entities, toggleFeatures }) => {
   )
 }
 
-export const FeatureSelectedList = ({ selectedFeatures, onRemoveFeature }) => {
-  const selectedFeatureValues = Object.values(selectedFeatures).sort((a, b) => {
-    return a.name > b.name ? 1 : -1
-  })
-
-  const sRows = useMemo(
-    () =>
-      selectedFeatureValues.map((f, idx) => (
-        <FeatureSelected
-          key={`${f.name}-${idx}`}
-          feature={f}
-          onRemoveFeature={() => onRemoveFeature(f)}
-        />
-      )),
-    [selectedFeatureValues, onRemoveFeature]
-  )
-
-  return (
-    <div className="col s12">
-      <h6>Included Features ({selectedFeatureValues.length})</h6>
-      {sRows}
-    </div>
-  )
-}
-
-export const FeatureSelectorModal = ({
-  features,
-  selectedFeatures,
-  loading,
-  onAddFeature,
-  onRemoveFeature,
-  onRemoveAllFeatures,
-  theme = 'light',
-}) => {
+export const FeatureSelectorModal = ({ theme = 'light' }) => {
   const inputRef = useRef(null)
 
+  const [selectedFeatures, setSelectedFeatures, features, loading] =
+    useSelectedFeatures()
+
+  const [onAddFeature, onRemoveFeature, onRemoveAllFeatures] =
+    useFeaturesHandler(setSelectedFeatures)
+
   const [search, setSearch] = useState('')
+
   const selectedFeatureKeys = Object.keys(selectedFeatures)
   const availableFeatures = useMemo(() => {
     return features.map((feature) => {
