@@ -7,67 +7,45 @@ import {
   useRecoilState,
   useRecoilValue,
   useRecoilValueLoadable,
+  useSetRecoilState,
 } from 'recoil'
 
-import {
-  ACTIVITY_KEY,
-  isDeepLinkReferral,
-  sharableLink,
-} from '../helpers/Routing'
+import { sharableLink } from '../helpers/Routing'
 
-import { getStorageValue, setStorageValue } from '../hooks/useLocalStorage'
-import {
-  initialValueGenerator,
-  providedDefaults,
-} from './factories/providedDefaults'
+import { setStorageValue } from '../hooks/useLocalStorage'
+import { formResets } from './factories/formResets'
+
 import { StarterSDK } from './factories/StarterSDK'
 import { loadVersions } from './factories/versionLoader'
 
 const INITIAL_FORM_DATA_STORAGE_KEY = 'INITIAL_FORM_DATA'
 
-const defaults = providedDefaults()
-const isReferral = isDeepLinkReferral(defaults)
 const versionLoader = loadVersions()
 
-function formResets(fallbacks = {}) {
-  const { name, package: pkg, type } = fallbacks
-  return {
-    name: typeof name === 'string' ? name : 'demo',
-    package: typeof pkg === 'string' ? pkg : 'com.example',
-    type: typeof type === 'string' ? type : 'DEFAULT',
-  }
-}
-
-const initialForm = (initialData) => {
-  const { javaVersion, lang, build, test, features } = initialData
-  const parsed = {
-    javaVersion: typeof javaVersion === 'string' ? javaVersion : '', // This is specifically "" to work with the SelectOption component
-    lang: typeof lang === 'string' ? lang : '',
-    build: typeof build === 'string' ? build : '',
-    test: typeof test === 'string' ? test : '',
-    features: StarterSDK.reconstructFeatures(features),
-    [ACTIVITY_KEY]: initialData[ACTIVITY_KEY],
-  }
-  return {
-    ...parsed,
-    ...formResets(initialData),
-  }
-}
-
-const initialValueData = initialValueGenerator(
-  INITIAL_FORM_DATA_STORAGE_KEY,
-  initialForm(defaults),
-  isReferral
-)
+const defaultValueSelectorFactory = (key, fallback) =>
+  selector({
+    key: `STATE_DEFAULTS/${key}`,
+    get: ({ get }) => {
+      const initial = get(initialValueState)
+      return initial[key] ?? fallback
+    },
+  })
 
 export const initialValueState = atom({
   key: 'INITIAL_VALUE_STATE',
-  default: { ...defaults, ...initialValueData },
+  default: {},
 })
 
 export const selectedVersionState = atom({
   key: 'SELECTED_VERSION_STATE',
-  default: getStorageValue('SELECTED_MN_VERSION', null, isReferral),
+  default: null,
+  effects_UNSTABLE: [
+    ({ onSet }) => {
+      onSet((version) => {
+        setStorageValue('SELECTED_MN_VERSION', version)
+      })
+    },
+  ],
 })
 
 export const availableVersionsState = selector({
@@ -121,41 +99,42 @@ export const optionsForState = selectorFamily({
 // Start Form Fields
 export const nameState = atom({
   key: 'NAME_STATE',
-  default: initialValueData.name,
+  default: defaultValueSelectorFactory('name'),
 })
+
 export const packageState = atom({
   key: 'PACKAGE_STATE',
-  default: initialValueData.package,
+  default: defaultValueSelectorFactory('package'),
 })
 
 export const appTypeState = atom({
   key: 'TYPE_STATE',
-  default: initialValueData.type,
+  default: defaultValueSelectorFactory('type'),
 })
 
 export const testState = atom({
   key: 'TEST_STATE',
-  default: initialValueData.test,
+  default: defaultValueSelectorFactory('test'),
 })
 
 export const langState = atom({
   key: 'LANG_STATE',
-  default: initialValueData.lang,
+  default: defaultValueSelectorFactory('lang'),
 })
 
 export const buildState = atom({
   key: 'BUILD_STATE',
-  default: initialValueData.build,
+  default: defaultValueSelectorFactory('build'),
 })
 
 export const javaVersionState = atom({
   key: 'JAVA_VERSION_STATE',
-  default: initialValueData.javaVersion,
+  default: defaultValueSelectorFactory('javaVersion'),
 })
 
 export const featuresState = atom({
   key: 'FEATURES_STATE',
-  default: initialValueData.features,
+  default: defaultValueSelectorFactory('features', []),
 })
 // End Form Data
 
@@ -275,31 +254,34 @@ export function useAvailableFeatures() {
 
 export function useSelectedVersions() {
   const [value, setter] = useRecoilState(selectedVersionState)
+  const defaultVersion = useRecoilValue(initialValueState).version
   const options = useAvailableVersions()
   useEffect(() => {
     if (!value) {
       let idx = Math.max(
         0,
-        options.findIndex((opt) => opt.version === defaults.version)
+        options.findIndex((opt) => opt.version === defaultVersion)
       )
       setter(options[idx])
     }
-  }, [value, setter, options])
+  }, [value, setter, options, defaultVersion])
   return [value, setter, options]
 }
 
 export function useConfigureInitialVersionEffect(onError) {
   const [value, setter] = useRecoilState(selectedVersionState)
   const options = useAvailableVersions()
+  const { version: defaultVersion } = useRecoilValue(initialValueState)
+
   return useEffect(() => {
     if (!value && options?.length) {
-      const idx = options.findIndex((opt) => opt.version === defaults?.version)
-      if (defaults?.version && idx < 0) {
-        onError({ requested: defaults.version, using: options[0].version })
+      const idx = options.findIndex((opt) => opt.version === defaultVersion)
+      if (defaultVersion && idx < 0) {
+        onError({ requested: defaultVersion, using: options[0].version })
       }
       setter(options[Math.max(idx, 0)])
     }
-  }, [value, setter, options, onError])
+  }, [value, setter, options, onError, defaultVersion])
 }
 
 export function useSelectedFeatures() {
@@ -313,7 +295,7 @@ export function useSelectedFeaturesValue() {
 }
 
 export function useSelectedFeaturesHandlers() {
-  const [, setFeatures] = useRecoilState(featuresState)
+  const setFeatures = useSetRecoilState(featuresState)
   return useMemo(() => {
     const onAddFeature = (feature) => {
       setFeatures(({ ...draft }) => {

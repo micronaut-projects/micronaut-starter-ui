@@ -31,11 +31,13 @@ import {
 import ApplicationState from '../../state/ApplicationState'
 import Lang from '../../helpers/Lang'
 import { AppLoadingBackdrop } from './AppLoadingBackdrop'
+import { DebugInfo } from './DebugInfo'
 
 export default function Root() {
   return (
     <ApplicationState>
       <App />
+      <DebugInfo />
     </ApplicationState>
   )
 }

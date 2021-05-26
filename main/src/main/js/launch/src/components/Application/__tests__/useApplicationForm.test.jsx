@@ -39,7 +39,7 @@ const TEST_DATA = [
   { initialData: { name: 'pretendo' }, hasError: false },
 ]
 
-TEST_DATA.forEach(({ initialData, hasError }) => {
+TEST_DATA.forEach(({ initialData }) => {
   it(`Initial Form Data with "${Object.keys(initialData).join(',')}"`, () => {
     let testRenderer
     act(() => {

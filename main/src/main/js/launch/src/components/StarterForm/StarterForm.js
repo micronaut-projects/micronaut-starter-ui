@@ -10,12 +10,10 @@ import StarterFormBuild from './StarterFormBuild'
 import StarterFormLang from './StarterFormLang'
 import StarterFormJavaVersion from './StarterFormJavaVersion'
 import StarterFormApplicationType from './StarterFormApplicationType'
-import { DebugInfo } from './DebugInfo'
 
 const StarterForm = ({ onError }) => {
   return (
     <Row className="mn-starter-form-main">
-      <DebugInfo />
       <Col s={8} m={6} l={3}>
         <StarterFormApplicationType />
       </Col>
