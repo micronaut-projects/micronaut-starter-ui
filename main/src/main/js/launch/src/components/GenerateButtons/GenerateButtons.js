@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import Icon from 'react-materialize/lib/Icon'
 import Dropdown from 'react-materialize/lib/Dropdown'
 import Button from 'react-materialize/lib/Button'
@@ -7,7 +7,6 @@ import { TooltipWrapper } from '../TooltipButton'
 
 import messages from '../../constants/messages.json'
 import OtherCommands from '../OtherCommands'
-import { MicronautStarterSDK } from '../../micronaut'
 
 import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
 import { GENERATE_SHORTCUT } from '../../constants/shortcuts'

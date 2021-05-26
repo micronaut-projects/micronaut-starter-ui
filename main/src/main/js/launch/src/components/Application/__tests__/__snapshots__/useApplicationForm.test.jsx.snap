@@ -10,17 +10,17 @@ Array [
   <div
     className="test"
   >
-    null
+    
   </div>,
   <div
     className="build"
   >
-    null
+    
   </div>,
   <div
     className="lang"
   >
-    null
+    
   </div>,
   <div
     className="javaVersion"
@@ -50,17 +50,17 @@ Array [
   <div
     className="test"
   >
-    null
+    
   </div>,
   <div
     className="build"
   >
-    null
+    
   </div>,
   <div
     className="lang"
   >
-    null
+    
   </div>,
   <div
     className="javaVersion"
@@ -90,12 +90,12 @@ Array [
   <div
     className="test"
   >
-    null
+    
   </div>,
   <div
     className="build"
   >
-    null
+    
   </div>,
   <div
     className="lang"
@@ -130,17 +130,17 @@ Array [
   <div
     className="test"
   >
-    null
+    
   </div>,
   <div
     className="build"
   >
-    null
+    
   </div>,
   <div
     className="lang"
   >
-    null
+    
   </div>,
   <div
     className="javaVersion"
@@ -170,17 +170,17 @@ Array [
   <div
     className="test"
   >
-    null
+    
   </div>,
   <div
     className="build"
   >
-    null
+    
   </div>,
   <div
     className="lang"
   >
-    null
+    
   </div>,
   <div
     className="javaVersion"
@@ -215,12 +215,12 @@ Array [
   <div
     className="build"
   >
-    null
+    
   </div>,
   <div
     className="lang"
   >
-    null
+    
   </div>,
   <div
     className="javaVersion"
@@ -255,12 +255,12 @@ Array [
   <div
     className="build"
   >
-    null
+    
   </div>,
   <div
     className="lang"
   >
-    null
+    
   </div>,
   <div
     className="javaVersion"

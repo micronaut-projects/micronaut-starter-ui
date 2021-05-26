@@ -7,12 +7,13 @@ export default function StarterFormPackage() {
 
   return (
     <TextInput
+      id="starter-form-package-input"
       tabIndex={1}
-      required
       className="mn-input"
       label="Base Package"
       name="package"
       placeholder="ex: com.mycompany"
+      required
       value={value}
       onChange={handleChange}
     />

@@ -7,6 +7,7 @@ export default function StarterFormName() {
 
   return (
     <TextInput
+      id="starter-form-name-input"
       required
       tabIndex={1}
       className="mn-input"

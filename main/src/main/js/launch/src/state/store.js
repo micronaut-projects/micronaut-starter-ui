@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import {
   atom,
   selector,
@@ -12,18 +12,22 @@ import {
 import {
   ACTIVITY_KEY,
   isDeepLinkReferral,
-  parseAndConsumeQuery,
   sharableLink,
 } from '../helpers/Routing'
 
 import { getStorageValue, setStorageValue } from '../hooks/useLocalStorage'
-import { MicronautStarterSDK } from '../micronaut'
+import {
+  initialValueGenerator,
+  providedDefaults,
+} from './factories/providedDefaults'
+import { StarterSDK } from './factories/StarterSDK'
+import { loadVersions } from './factories/versionLoader'
 
 const INITIAL_FORM_DATA_STORAGE_KEY = 'INITIAL_FORM_DATA'
 
-const defaults = parseAndConsumeQuery()
+const defaults = providedDefaults()
 const isReferral = isDeepLinkReferral(defaults)
-const versionLoader = MicronautStarterSDK.loadVersions()
+const versionLoader = loadVersions()
 
 function formResets(fallbacks = {}) {
   const { name, package: pkg, type } = fallbacks
@@ -41,7 +45,7 @@ const initialForm = (initialData) => {
     lang: typeof lang === 'string' ? lang : '',
     build: typeof build === 'string' ? build : '',
     test: typeof test === 'string' ? test : '',
-    features: MicronautStarterSDK.reconstructFeatures(features),
+    features: StarterSDK.reconstructFeatures(features),
     [ACTIVITY_KEY]: initialData[ACTIVITY_KEY],
   }
   return {
@@ -50,7 +54,7 @@ const initialForm = (initialData) => {
   }
 }
 
-const initialValueData = getStorageValue(
+const initialValueData = initialValueGenerator(
   INITIAL_FORM_DATA_STORAGE_KEY,
   initialForm(defaults),
   isReferral
@@ -79,12 +83,18 @@ export const baseUrlState = selector({
   },
 })
 
+export const sdkFactoryState = atom({
+  key: 'MICRONAUT_SDK_CREATOR_STATE',
+  default: ({ baseUrl }) => new StarterSDK({ baseUrl }),
+})
+
 export const sdkState = selector({
   key: 'MICRONAUT_SDK_STATE',
   get: ({ get }) => {
     const baseUrl = get(baseUrlState)
     if (!baseUrl) return null
-    return new MicronautStarterSDK({ baseUrl })
+    const factory = get(sdkFactoryState)
+    return factory({ baseUrl })
   },
 })
 
@@ -171,6 +181,10 @@ export const starterFormState = selector({
     const test = get(testState)
     const javaVersion = get(javaVersionState)
     const features = get(featuresState)
+
+    // This technically causes a side effect,
+    // but done here since selectors don't support
+    // recoil effects.
     return setStorageValue(INITIAL_FORM_DATA_STORAGE_KEY, {
       type,
       name,
@@ -184,25 +198,25 @@ export const starterFormState = selector({
   },
 })
 
-const gitHubLinkState = selector({
+export const gitHubLinkState = selector({
   key: 'GITHUB_LINK_STATE',
   get: ({ get }) => {
     const form = get(starterFormState)
     const baseUrl = get(baseUrlState)
-    return MicronautStarterSDK.githubHrefForUrl(baseUrl, form)
+    return StarterSDK.githubHrefForUrl(baseUrl, form)
   },
 })
 
-const createCommandState = selector({
+export const createCommandState = selector({
   key: 'CREATE_COMMAND_STATE',
   get: ({ get }) => {
     const form = get(starterFormState)
     const baseUrl = get(baseUrlState)
-    return MicronautStarterSDK.createCommand(form, baseUrl)
+    return StarterSDK.createCommand(form, baseUrl)
   },
 })
 
-const sharableLinkState = selector({
+export const sharableLinkState = selector({
   key: 'SHARABLE_LINK_STATE',
   get: ({ get }) => {
     const form = get(starterFormState)
@@ -251,11 +265,11 @@ export function useAvailableFeatures() {
   const loadable = useRecoilValueLoadable(availableFeaturesState)
   switch (loadable.state) {
     case 'hasValue':
-      return { features: loadable.contents, loading: false }
+      return { features: loadable.contents, loading: false, error: null }
     case 'loading':
-      return { features: [], loading: true }
+      return { features: [], loading: true, error: null }
     default:
-      return { features: [], loading: false }
+      return { features: [], loading: false, error: loadable.contents }
   }
 }
 
@@ -274,7 +288,7 @@ export function useSelectedVersions() {
   return [value, setter, options]
 }
 
-export function useInitializeVersionEffect(onError) {
+export function useConfigureInitialVersionEffect(onError) {
   const [value, setter] = useRecoilState(selectedVersionState)
   const options = useAvailableVersions()
   return useEffect(() => {
@@ -296,6 +310,30 @@ export function useSelectedFeatures() {
 
 export function useSelectedFeaturesValue() {
   return useRecoilValue(featuresState)
+}
+
+export function useSelectedFeaturesHandlers() {
+  const [, setFeatures] = useRecoilState(featuresState)
+  return useMemo(() => {
+    const onAddFeature = (feature) => {
+      setFeatures(({ ...draft }) => {
+        draft[feature.name] = feature
+        return draft
+      })
+    }
+
+    const onRemoveFeature = (feature) => {
+      setFeatures(({ ...draft }) => {
+        delete draft[feature.name]
+        return draft
+      })
+    }
+
+    const onRemoveAllFeatures = () => {
+      setFeatures({})
+    }
+    return { onAddFeature, onRemoveFeature, onRemoveAllFeatures }
+  }, [setFeatures])
 }
 
 export const useAppName = () => useRecoilState(nameState)

@@ -1,13 +1,17 @@
 import { useEffect, useRef } from 'react'
 
 import {
-  resetRoute,
   resolveActionRoute,
   isDeepLinkReferral,
   ACTIVITY_KEY,
 } from '../../helpers/Routing'
 
 import { useCurrenSdk } from '../../state/store'
+
+export function useOnMountRouting(initialData, routingHandlers, onError) {
+  useOnInitialLoadEffect(initialData, routingHandlers.onRepoCreated, onError)
+  useHandleShareLinkEffect(initialData, routingHandlers)
+}
 
 export function useOnInitialLoadEffect(initialData, onRepoCreated, onError) {
   // Use Effect Hook For Error Handling and
@@ -17,7 +21,6 @@ export function useOnInitialLoadEffect(initialData, onRepoCreated, onError) {
     if (!error && !htmlUrl) {
       return // nothing more to do
     }
-    resetRoute()
     setTimeout(() => {
       if (cloneUrl) {
         onRepoCreated({
@@ -27,7 +30,7 @@ export function useOnInitialLoadEffect(initialData, onRepoCreated, onError) {
           type: 'clone',
         })
       } else if (error) {
-        onError(error.replaceAll('+', ' '))
+        onError(new Error(error.replaceAll('+', ' ')))
       }
     }, 500)
   }, [initialData, onRepoCreated, onError])
@@ -49,8 +52,6 @@ export function useHandleShareLinkEffect(initialData, routingHandlers = {}) {
       // If we're not able to handle the route,
       // discard and reset the history state
       if (!isReferral || !Object.keys(routingHandlers).includes(activity)) {
-        // Push back and return
-        resetRoute()
         return
       }
 

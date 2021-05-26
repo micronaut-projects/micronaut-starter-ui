@@ -1,6 +1,10 @@
 // FeatureSelected.js
 import React, { useMemo } from 'react'
-import { useSelectedFeatures } from '../../state/store'
+import {
+  useAvailableFeatures,
+  useSelectedFeaturesHandlers,
+  useSelectedFeaturesValue,
+} from '../../state/store'
 
 const closeButtonStyle = {
   cursor: 'pointer',
@@ -10,33 +14,14 @@ const closeButtonStyle = {
   paddingLeft: '8px',
 }
 
-function useFeaturesHandler(setFeaturesSelected) {
-  return useMemo(() => {
-    const addFeature = (feature) => {
-      setFeaturesSelected(({ ...draft }) => {
-        draft[feature.name] = feature
-        return draft
-      })
-    }
-
-    const removeFeature = (feature) => {
-      setFeaturesSelected(({ ...draft }) => {
-        delete draft[feature.name]
-        return draft
-      })
-    }
-
-    const removeAllFeatures = () => {
-      setFeaturesSelected({})
-    }
-
-    return [addFeature, removeFeature, removeAllFeatures]
-  }, [setFeaturesSelected])
-}
-
-export function FeatureSelected({ feature, onRemoveFeature }) {
+export function FeatureSelected({ feature, onRemoveFeature, hasError }) {
+  const style = { marginRight: 10 }
+  if (hasError) {
+    style.background = 'var(--theme-danger)'
+    style.color = 'white'
+  }
   return (
-    <div style={{ marginRight: 10 }} className="chip">
+    <div style={style} className="chip">
       {feature.name}
       <i
         onClick={(e) => {
@@ -53,8 +38,9 @@ export function FeatureSelected({ feature, onRemoveFeature }) {
 }
 
 export function FeatureSelectedList() {
-  const [selectedFeatures, setSelectedFeatures] = useSelectedFeatures()
-  const [, onRemoveFeature] = useFeaturesHandler(setSelectedFeatures)
+  const selectedFeatures = useSelectedFeaturesValue()
+  const { features: availableFeatures } = useAvailableFeatures()
+  const { onRemoveFeature } = useSelectedFeaturesHandlers()
 
   const selectedFeatureValues = useMemo(
     () =>
@@ -64,17 +50,18 @@ export function FeatureSelectedList() {
     [selectedFeatures]
   )
 
-  const sRows = useMemo(
-    () =>
-      selectedFeatureValues.map((f, idx) => (
-        <FeatureSelected
-          key={`${f.name}-${idx}`}
-          feature={f}
-          onRemoveFeature={() => onRemoveFeature(f)}
-        />
-      )),
-    [selectedFeatureValues, onRemoveFeature]
-  )
+  const sRows = useMemo(() => {
+    const keys = availableFeatures.map((i) => i.name)
+
+    return selectedFeatureValues.map((f, idx) => (
+      <FeatureSelected
+        key={`${f.name}-${idx}`}
+        feature={f}
+        hasError={keys.length && !keys.includes(f.name)}
+        onRemoveFeature={() => onRemoveFeature(f)}
+      />
+    ))
+  }, [selectedFeatureValues, onRemoveFeature, availableFeatures])
 
   return (
     <div className="col s12">

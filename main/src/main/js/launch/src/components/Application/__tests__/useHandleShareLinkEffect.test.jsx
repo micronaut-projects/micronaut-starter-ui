@@ -1,12 +1,23 @@
 // Link.react.test.js
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import { create, act } from 'react-test-renderer'
+import { useRecoilState } from 'recoil'
 import { MicronautStarterSDK } from '../../../micronaut'
+import ApplicationState from '../../../state/ApplicationState'
+import { selectedVersionState } from '../../../state/store'
+import { useHandleShareLinkEffect } from '../useOnMountRouting'
 
-import { useHandleShareLinkEffect } from '../useApplicationForm'
+const useMount = (cb) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => cb(), [])
+}
 
-const TestView = ({ sdk, initialData, routingHandlers }) => {
-  useHandleShareLinkEffect(sdk, initialData, routingHandlers)
+const TestView = ({ initialData, routingHandlers }) => {
+  useHandleShareLinkEffect(initialData, routingHandlers)
+  const [, setVersion] = useRecoilState(selectedVersionState)
+  useMount(() => {
+    setVersion({ api: 'https://pretend.com' })
+  })
   return <div></div>
 }
 
@@ -36,7 +47,7 @@ const TEST_DATA = [
 TEST_DATA.forEach(({ initialData, explain, hasError }) => {
   it(`Test Deep Linking Effect "${explain || initialData.activity}" ${
     hasError ? 'w/ Error' : ''
-  }`, () => {
+  }`, async () => {
     // Routing
     let action = null
     const sdk = new MicronautStarterSDK({ baseUrl: 'http://localhost' })
@@ -57,11 +68,13 @@ TEST_DATA.forEach(({ initialData, explain, hasError }) => {
     let testRenderer
     act(() => {
       testRenderer = create(
-        <TestView
-          sdk={sdk}
-          initialData={{ ...initialData }}
-          routingHandlers={routingHandlers}
-        />
+        <ApplicationState>
+          <TestView
+            sdk={sdk}
+            initialData={{ ...initialData }}
+            routingHandlers={routingHandlers}
+          />
+        </ApplicationState>
       )
     })
 

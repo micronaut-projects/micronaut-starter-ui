@@ -1,11 +1,20 @@
 // Link.react.test.js
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import { create, act } from 'react-test-renderer'
+import { useRecoilState } from 'recoil'
+import ApplicationState from '../../../state/ApplicationState'
+import { initialValueState } from '../../../state/store'
 
-import { useApplicationForm } from '../useApplicationForm'
+const useMount = (cb) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => cb(), [])
+}
 
 const TestView = ({ initialData }) => {
-  const { form } = useApplicationForm(initialData)
+  const [form, setInitialValue] = useRecoilState(initialValueState)
+  useMount(() => {
+    setInitialValue((prev) => ({ ...prev, ...initialData }))
+  })
 
   return (
     <>
@@ -34,22 +43,26 @@ TEST_DATA.forEach(({ initialData, hasError }) => {
   it(`Initial Form Data with "${Object.keys(initialData).join(',')}"`, () => {
     let testRenderer
     act(() => {
-      testRenderer = create(<TestView initialData={initialData} />)
+      testRenderer = create(
+        <ApplicationState>
+          <TestView initialData={initialData} />
+        </ApplicationState>
+      )
     })
 
     const testInstance = testRenderer.root
     expect(testRenderer.toJSON()).toMatchSnapshot()
 
     expect(testInstance.findByProps({ className: 'test' }).children).toEqual([
-      `${initialData.test || null}`,
+      `${initialData.test || ''}`,
     ])
 
     expect(testInstance.findByProps({ className: 'build' }).children).toEqual([
-      `${initialData.build || null}`,
+      `${initialData.build || ''}`,
     ])
 
     expect(testInstance.findByProps({ className: 'lang' }).children).toEqual([
-      `${initialData.lang || null}`,
+      `${initialData.lang || ''}`,
     ])
 
     expect(

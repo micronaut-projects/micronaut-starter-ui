@@ -23,7 +23,7 @@ export default function StarterFormJavaVersion() {
       value={value}
       name="javaVersion"
       onChange={handleChange}
-      options={select?.options ?? []}
+      options={select?.options ?? [{ value, name: '' }]}
     ></Select>
   )
 }

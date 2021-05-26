@@ -1,8 +1,15 @@
 // Link.react.test.js
-import React from 'react'
+import React, { useEffect, useLayoutEffect } from 'react'
 import { create, act } from 'react-test-renderer'
-
-import { useAvailableFeatures } from '../useApplicationFormInitializer'
+import { useRecoilState, useResetRecoilState } from 'recoil'
+import ApplicationState from '../../../state/ApplicationState'
+import {
+  sdkFactoryState,
+  sdkState,
+  selectedVersionState,
+  useApplicationType,
+  useAvailableFeatures,
+} from '../../../state/store'
 
 const MockTypes = {
   DEFAULT: { features: ['a', 'b', 'c'] },
@@ -18,16 +25,28 @@ const MockSdk = {
   },
 }
 
-const TestView = ({ sdk, applicationType, onError }) => {
-  const { availableFeatures } = useAvailableFeatures(
-    sdk,
-    applicationType,
-    onError
-  )
+const useMount = (cb) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => cb(), [])
+}
 
-  return (
-    <div className="test">{JSON.stringify(availableFeatures, null, 2)}</div>
-  )
+const TestView = ({ sdk, applicationType, onError }) => {
+  const { features, error } = useAvailableFeatures()
+  const [, setVersion] = useRecoilState(selectedVersionState)
+  const [, setType] = useApplicationType()
+  const [, setSdkFactory] = useRecoilState(sdkFactoryState)
+
+  useMount(() => {
+    setVersion({ api: sdk.baseUrl })
+    setSdkFactory(() => () => sdk)
+    setType(applicationType)
+  })
+
+  useEffect(() => {
+    if (error) onError(error)
+  }, [error, onError])
+
+  return <div className="test">{JSON.stringify(features, null, 2)}</div>
 }
 
 const TEST_DATA = [
@@ -45,11 +64,13 @@ TEST_DATA.forEach(({ initialData, hasError }) => {
     let testRenderer
     act(() => {
       testRenderer = create(
-        <TestView
-          sdk={MockSdk}
-          applicationType={initialData.type}
-          onError={onError}
-        />
+        <ApplicationState>
+          <TestView
+            sdk={MockSdk}
+            applicationType={initialData.type}
+            onError={onError}
+          />
+        </ApplicationState>
       )
     })
     await act(() => Promise.resolve())

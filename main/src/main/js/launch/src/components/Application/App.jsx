@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useRef, useMemo, useCallback } from 'react'
 import { ProgressBar } from 'react-materialize'
 import Col from 'react-materialize/lib/Col'
-
 import Row from 'react-materialize/lib/Row'
 
 import useAppTheme from '../../hooks/useAppTheme'
@@ -19,25 +18,19 @@ import NextSteps from '../NextSteps'
 import StarterForm from '../StarterForm'
 import Footer from '../Footer'
 import { FeatureSelectedList } from '../FeatureSelector/FeatureSelected'
-
-import {
-  useHandleShareLinkEffect,
-  useOnInitialLoadEffect,
-} from './useApplicationForm'
-
 import { errorHandlersFactory } from '../ErrorView/ErrorViewData'
+import { useOnMountRouting } from './useOnMountRouting'
+
 import {
   useGetStarterForm,
   useInitialData,
-  useInitializeVersionEffect,
+  useConfigureInitialVersionEffect,
   useResetStarterForm,
 } from '../../state/store'
 
 import ApplicationState from '../../state/ApplicationState'
 import Lang from '../../helpers/Lang'
 import { AppLoadingBackdrop } from './AppLoadingBackdrop'
-
-
 
 export default function Root() {
   return (
@@ -84,6 +77,7 @@ export function AppContainer({ initialData, errorHandlers }) {
   // Next Steps
   const [nextStepsInfo, setNextStepsInfo] = useState({})
   const onCloseNextSteps = () => setNextStepsInfo({})
+
   // Start Over
   const resetForm = useResetStarterForm()
   const onStartOver = () => {
@@ -91,8 +85,7 @@ export function AppContainer({ initialData, errorHandlers }) {
     resetForm()
   }
 
-  
-  useInitializeVersionEffect(
+  useConfigureInitialVersionEffect(
     useCallback(
       ({ requested, using }) => {
         const message = Lang.trans('error.versionNoLongerSupported', {
@@ -108,7 +101,7 @@ export function AppContainer({ initialData, errorHandlers }) {
   // Routing
   const routingHandlers = useMemo(() => {
     return {
-      onCloned: (repoCreatedInfo) => {
+      onRepoCreated: (repoCreatedInfo) => {
         setNextStepsInfo(repoCreatedInfo)
       },
 
@@ -153,13 +146,8 @@ export function AppContainer({ initialData, errorHandlers }) {
     }
   }, [errorHandlers])
 
-  useOnInitialLoadEffect(
-    initialData,
-    routingHandlers.onCloned,
-    errorHandlers.onError
-  )
   // Share Initial Routing Routing
-  useHandleShareLinkEffect(initialData, routingHandlers)
+  useOnMountRouting(initialData, routingHandlers, errorHandlers.onResponseError)
 
   // Preflight for any async activity
   const requestPrep = (event) => {
@@ -171,33 +159,34 @@ export function AppContainer({ initialData, errorHandlers }) {
   }
 
   const getFormData = useGetStarterForm()
+
   // GitHub Clone Feat
-  const cloneProject = async (e) => {
+  const onCloneProject = async (e) => {
     setLoading(true)
   }
 
   // Create Feat
-  const generateProject = async (e) => {
+  const onGenerateProject = async (e) => {
     requestPrep(e)
     const { createPayload, sdk } = await getFormData()
     routingHandlers.create(createPayload, sdk)
   }
 
   // Preview Feat
-  const loadPreview = async (e) => {
+  const onLoadPreview = async (e) => {
     requestPrep(e)
     const { createPayload, sdk } = await getFormData()
     routingHandlers.preview(createPayload, sdk)
   }
-  const clearPreview = () => resetRoute()
+  const onClearPreview = () => resetRoute()
 
   // Diff Feat
-  const loadDiff = async (e) => {
+  const onLoadDiff = async (e) => {
     requestPrep(e)
     const { createPayload, sdk } = await getFormData()
     routingHandlers.diff(createPayload, sdk)
   }
-  const clearDiff = () => resetRoute()
+  const onClearDiff = () => resetRoute()
 
   const disabled = loading
 
@@ -208,7 +197,7 @@ export function AppContainer({ initialData, errorHandlers }) {
           <Header theme={theme} onToggleTheme={toggleTheme} />
 
           <div className="mn-container">
-            <form onSubmit={generateProject} autoComplete="off">
+            <form onSubmit={onGenerateProject} autoComplete="off">
               <StarterForm
                 theme={theme}
                 onError={errorHandlers.onResponseError}
@@ -223,8 +212,8 @@ export function AppContainer({ initialData, errorHandlers }) {
                     ref={diffView}
                     theme={theme}
                     disabled={disabled}
-                    onLoad={loadDiff}
-                    onClose={clearDiff}
+                    onLoad={onLoadDiff}
+                    onClose={onClearDiff}
                   />
                 </Col>
                 <Col s={3} className="xs6">
@@ -232,16 +221,16 @@ export function AppContainer({ initialData, errorHandlers }) {
                     ref={previewView}
                     theme={theme}
                     disabled={disabled}
-                    onLoad={loadPreview}
-                    onClose={clearPreview}
+                    onLoad={onLoadPreview}
+                    onClose={onClearPreview}
                   />
                 </Col>
                 <Col s={3} className="xs6">
                   <GenerateButtons
                     theme={theme}
                     disabled={disabled}
-                    cloneProject={cloneProject}
-                    generateProject={generateProject}
+                    cloneProject={onCloneProject}
+                    generateProject={onGenerateProject}
                   />
                 </Col>
               </Row>

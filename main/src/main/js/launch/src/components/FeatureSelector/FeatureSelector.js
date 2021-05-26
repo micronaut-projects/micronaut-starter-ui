@@ -8,38 +8,17 @@ import Col from 'react-materialize/lib/Col'
 import Preloader from 'react-materialize/lib/Preloader'
 import Row from 'react-materialize/lib/Row'
 import FeatureAvailable from './FeatureAvailable'
-import TextInput from '../TextInput'
-
-import TooltipButton from '../TooltipButton'
+import {
+  useSelectedFeatures,
+  useSelectedFeaturesHandlers,
+} from '../../state/store'
 import messages from '../../constants/messages.json'
+
+import TextInput from '../TextInput'
+import TooltipButton from '../TooltipButton'
 import { ModalKeyboardHandler } from '../../helpers/ModalKeyboardHandler'
 
 import './feature-selector.css'
-import { useSelectedFeatures } from '../../state/store'
-
-function useFeaturesHandler(setFeaturesSelected) {
-  return useMemo(() => {
-    const addFeature = (feature) => {
-      setFeaturesSelected(({ ...draft }) => {
-        draft[feature.name] = feature
-        return draft
-      })
-    }
-
-    const removeFeature = (feature) => {
-      setFeaturesSelected(({ ...draft }) => {
-        delete draft[feature.name]
-        return draft
-      })
-    }
-
-    const removeAllFeatures = () => {
-      setFeaturesSelected({})
-    }
-
-    return [addFeature, removeFeature, removeAllFeatures]
-  }, [setFeaturesSelected])
-}
 
 const keyboardEventHandler = new ModalKeyboardHandler({
   sectionKey: 'modal-group',
@@ -77,11 +56,9 @@ const FeatureAvailableGroup = ({ category, entities, toggleFeatures }) => {
 export const FeatureSelectorModal = ({ theme = 'light' }) => {
   const inputRef = useRef(null)
 
-  const [selectedFeatures, setSelectedFeatures, features, loading] =
-    useSelectedFeatures()
-
-  const [onAddFeature, onRemoveFeature, onRemoveAllFeatures] =
-    useFeaturesHandler(setSelectedFeatures)
+  const [selectedFeatures, , features, loading] = useSelectedFeatures()
+  const { onAddFeature, onRemoveFeature, onRemoveAllFeatures } =
+    useSelectedFeaturesHandlers()
 
   const [search, setSearch] = useState('')
 
@@ -179,13 +156,14 @@ export const FeatureSelectorModal = ({ theme = 'light' }) => {
           <div className="modal-header">
             <TextInput
               ref={inputRef}
+              id="features-selector-search-input"
               className="mn-input"
-              s={12}
               label="Search Features"
               placeholder="ex: cassandra"
               name="search"
-              value={search}
+              s={12}
               autoComplete="off"
+              value={search}
               onChangeText={setSearch}
             />
           </div>

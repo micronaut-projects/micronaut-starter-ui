@@ -19,7 +19,7 @@ export default function StarterFormApplicationType() {
       name="type"
       value={value}
       onChange={handleChange}
-      options={select?.options ?? []}
+      options={select?.options ?? [{ value, name: 'Loading' }]}
     ></Select>
   )
 }
