@@ -1,22 +1,22 @@
 // FeatureSelector.js
 import React, { useMemo, useRef, useState } from 'react'
 
-import Modal from 'react-materialize/lib/Modal'
 import { Button } from 'react-materialize'
-import Icon from 'react-materialize/lib/Icon'
 import Col from 'react-materialize/lib/Col'
+import Icon from 'react-materialize/lib/Icon'
+import Modal from 'react-materialize/lib/Modal'
 import Preloader from 'react-materialize/lib/Preloader'
 import Row from 'react-materialize/lib/Row'
-import FeatureAvailable from './FeatureAvailable'
+import messages from '../../constants/messages.json'
+import { ModalKeyboardHandler } from '../../helpers/ModalKeyboardHandler'
 import {
   useSelectedFeatures,
   useSelectedFeaturesHandlers,
 } from '../../state/store'
-import messages from '../../constants/messages.json'
 
 import TextInput from '../TextInput'
 import TooltipButton from '../TooltipButton'
-import { ModalKeyboardHandler } from '../../helpers/ModalKeyboardHandler'
+import FeatureAvailable from './FeatureAvailable'
 
 import './feature-selector.css'
 

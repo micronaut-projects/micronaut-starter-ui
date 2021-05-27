@@ -8,22 +8,22 @@ import React, {
 
 import { Button } from 'react-materialize'
 
-import Icon from 'react-materialize/lib/Icon'
-import Modal from 'react-materialize/lib/Modal'
-
-import { Grid } from '@material-ui/core'
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { Grid } from '@material-ui/core'
+
+import Icon from 'react-materialize/lib/Icon'
+import Modal from 'react-materialize/lib/Modal'
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-import TooltipButton from './TooltipButton'
 import messages from '../constants/messages.json'
-import { capitalize } from '../utility'
 
-import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
 import { DIFF_SHORTCUT } from '../constants/shortcuts'
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
 import { useStarterForm } from '../state/store'
+import { capitalize } from '../utility'
+import TooltipButton from './TooltipButton'
 
 const Diff = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
   const { lang, build } = useStarterForm()

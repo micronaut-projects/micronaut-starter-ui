@@ -2,14 +2,14 @@
 import Col from 'react-materialize/lib/Col'
 import Row from 'react-materialize/lib/Row'
 
+import StarterFormApplicationType from './StarterFormApplicationType'
+import StarterFormBuild from './StarterFormBuild'
+import StarterFormJavaVersion from './StarterFormJavaVersion'
+import StarterFormLang from './StarterFormLang'
 import StarterFormMicronautVersion from './StarterFormMicronautVersion'
 import StarterFormName from './StarterFormName'
 import StarterFormPackage from './StarterFormPackage'
 import StarterFormTestFramework from './StarterFormTestFramework'
-import StarterFormBuild from './StarterFormBuild'
-import StarterFormLang from './StarterFormLang'
-import StarterFormJavaVersion from './StarterFormJavaVersion'
-import StarterFormApplicationType from './StarterFormApplicationType'
 
 const StarterForm = ({ onError }) => {
   return (

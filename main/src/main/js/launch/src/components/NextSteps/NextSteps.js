@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react'
-import Modal from 'react-materialize/lib/Modal'
 import { Icon, Row, Col, Button } from 'react-materialize'
-import CopyToClipboard from '../CopyToClipboard'
-import { guessOs, osOpts, OS_WINDOWS, OS_NIX } from '../../utility'
+import Modal from 'react-materialize/lib/Modal'
 import { useStarterForm } from '../../state/store'
+import { guessOs, osOpts, OS_WINDOWS, OS_NIX } from '../../utility'
+import CopyToClipboard from '../CopyToClipboard'
 
 const guessedOs = guessOs()
 const sortedOsOpts = osOpts.sort((a, b) => {

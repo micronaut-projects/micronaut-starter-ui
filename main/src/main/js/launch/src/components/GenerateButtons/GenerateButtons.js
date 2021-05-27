@@ -1,16 +1,16 @@
 import React from 'react'
-import Icon from 'react-materialize/lib/Icon'
-import Dropdown from 'react-materialize/lib/Dropdown'
-import Button from 'react-materialize/lib/Button'
 import GitHubIcon from '@material-ui/icons/GitHub'
-import { TooltipWrapper } from '../TooltipButton'
+import Button from 'react-materialize/lib/Button'
+import Dropdown from 'react-materialize/lib/Dropdown'
+import Icon from 'react-materialize/lib/Icon'
 
 import messages from '../../constants/messages.json'
-import OtherCommands from '../OtherCommands'
 
-import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
 import { GENERATE_SHORTCUT } from '../../constants/shortcuts'
+import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
 import { useGitHubShareLink, useStarterForm } from '../../state/store'
+import OtherCommands from '../OtherCommands'
+import { TooltipWrapper } from '../TooltipButton'
 
 const GenerateButtons = ({
   disabled,

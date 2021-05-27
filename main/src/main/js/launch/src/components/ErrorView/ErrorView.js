@@ -1,11 +1,11 @@
 // ErrorView.js
 import React, { useState } from 'react'
-import Snackbar from '@material-ui/core/Snackbar'
 import Avatar from '@material-ui/core/Avatar'
+import Snackbar from '@material-ui/core/Snackbar'
 
-import Alert from '@material-ui/lab/Alert'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn'
+import Alert from '@material-ui/lab/Alert'
 
 import logo from '../../images/micronaut-white-icon.png'
 import { copyToClipboard } from '../../utility'

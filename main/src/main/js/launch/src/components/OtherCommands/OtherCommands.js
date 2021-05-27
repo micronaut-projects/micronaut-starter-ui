@@ -1,11 +1,11 @@
 // Footer.js
 import React, { useMemo } from 'react'
 import { Button } from 'react-materialize'
+import Col from 'react-materialize/lib/Col'
 import Modal from 'react-materialize/lib/Modal'
 import Row from 'react-materialize/lib/Row'
-import Col from 'react-materialize/lib/Col'
-import CopyToClipboard from '../CopyToClipboard'
 import { useCreateCommand } from '../../state/store'
+import CopyToClipboard from '../CopyToClipboard'
 
 export default function OtherCommands({ theme, trigger }) {
   const createCommand = useCreateCommand()

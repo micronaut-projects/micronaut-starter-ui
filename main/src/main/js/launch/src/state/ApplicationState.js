@@ -1,15 +1,15 @@
 import { RecoilRoot } from 'recoil'
-import { initialValueState } from './store'
 
+import { ACTIVITY_KEY, isDeepLinkReferral } from '../helpers/Routing'
+import { getStorageValue } from '../hooks/useLocalStorage'
+import { formResets } from './factories/formResets'
 import {
   initialValueGenerator,
   providedDefaults,
 } from './factories/providedDefaults'
 import { StarterSDK } from './factories/StarterSDK'
 
-import { ACTIVITY_KEY, isDeepLinkReferral } from '../helpers/Routing'
-import { formResets } from './factories/formResets'
-import { getStorageValue } from '../hooks/useLocalStorage'
+import { initialValueState } from './store'
 
 const INITIAL_FORM_DATA_STORAGE_KEY = 'INITIAL_FORM_DATA'
 
@@ -52,7 +52,6 @@ export default function ApplicationState({ initialData, children }) {
     const accessory = extractAccessoryData(query)
     const init = Object.assign({}, initialValueData, accessory, initialData)
 
-    console.log({ query, init })
     set(initialValueState, init)
   }
 

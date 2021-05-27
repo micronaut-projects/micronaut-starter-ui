@@ -1,5 +1,5 @@
 // Link.react.test.js
-import React, { useLayoutEffect } from 'react'
+import React from 'react'
 import { create, act } from 'react-test-renderer'
 import { useRecoilState } from 'recoil'
 import ApplicationState from '../../../state/ApplicationState'

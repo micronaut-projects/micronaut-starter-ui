@@ -1,4 +1,4 @@
-import { FeatureSelectorModal } from './FeatureSelector'
 import { FeatureSelectedList } from './FeatureSelected'
+import { FeatureSelectorModal } from './FeatureSelector'
 
 export { FeatureSelectorModal, FeatureSelectedList }

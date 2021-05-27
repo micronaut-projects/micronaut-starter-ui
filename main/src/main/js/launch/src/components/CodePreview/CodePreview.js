@@ -8,30 +8,30 @@ import React, {
 } from 'react'
 
 import { Button } from 'react-materialize'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { Grid } from '@material-ui/core'
+import TreeItem from '@material-ui/lab/TreeItem'
+import TreeView from '@material-ui/lab/TreeView'
 import Icon from 'react-materialize/lib/Icon'
 import Modal from 'react-materialize/lib/Modal'
-import TreeView from '@material-ui/lab/TreeView'
-import TreeItem from '@material-ui/lab/TreeItem'
-import { Grid } from '@material-ui/core'
 
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
-
 import messages from '../../constants/messages.json'
-import { capitalize, makeNodeTree } from '../../utility'
-
-import TooltipButton, { TooltipWrapper } from '../TooltipButton'
-import CopyToClipboard from '../CopyToClipboard'
+import { PREVIEW_SHORTCUT } from '../../constants/shortcuts'
 import {
   fullyQualifySharableLink,
   ACTIVITY_KEY,
   PREVIEW_ACTIVITY,
 } from '../../helpers/Routing'
-import { PREVIEW_SHORTCUT } from '../../constants/shortcuts'
+import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts'
+
 import { useSharableLink, useStarterForm } from '../../state/store'
+import { capitalize, makeNodeTree } from '../../utility'
+
+import CopyToClipboard from '../CopyToClipboard'
+import TooltipButton, { TooltipWrapper } from '../TooltipButton'
 
 const CodePreview = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
   const { lang, build } = useStarterForm()

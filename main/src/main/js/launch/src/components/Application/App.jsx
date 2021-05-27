@@ -3,35 +3,33 @@ import { ProgressBar } from 'react-materialize'
 import Col from 'react-materialize/lib/Col'
 import Row from 'react-materialize/lib/Row'
 
+import Lang from '../../helpers/Lang'
+import { resetRoute } from '../../helpers/Routing'
 import useAppTheme from '../../hooks/useAppTheme'
 
-import { resetRoute } from '../../helpers/Routing'
-import { downloadBlob } from '../../utility'
-
-import { FeatureSelectorModal } from '../FeatureSelector'
-import CodePreview from '../CodePreview'
-import Diff from '../Diff'
-import ErrorView, { ErrorViewData } from '../ErrorView'
-import GenerateButtons from '../GenerateButtons/GenerateButtons'
-import Header from '../Header'
-import NextSteps from '../NextSteps'
-import StarterForm from '../StarterForm'
-import Footer from '../Footer'
-import { FeatureSelectedList } from '../FeatureSelector/FeatureSelected'
-import { errorHandlersFactory } from '../ErrorView/ErrorViewData'
-import { useOnMountRouting } from './useOnMountRouting'
-
+import ApplicationState from '../../state/ApplicationState'
 import {
   useGetStarterForm,
   useInitialData,
   useConfigureInitialVersionEffect,
   useResetStarterForm,
 } from '../../state/store'
+import { downloadBlob } from '../../utility'
 
-import ApplicationState from '../../state/ApplicationState'
-import Lang from '../../helpers/Lang'
+import CodePreview from '../CodePreview'
+import Diff from '../Diff'
+import ErrorView, { ErrorViewData } from '../ErrorView'
+import { errorHandlersFactory } from '../ErrorView/ErrorViewData'
+import { FeatureSelectorModal } from '../FeatureSelector'
+import { FeatureSelectedList } from '../FeatureSelector/FeatureSelected'
+import Footer from '../Footer'
+import GenerateButtons from '../GenerateButtons/GenerateButtons'
+import Header from '../Header'
+import NextSteps from '../NextSteps'
+import StarterForm from '../StarterForm'
 import { AppLoadingBackdrop } from './AppLoadingBackdrop'
 import { DebugInfo } from './DebugInfo'
+import { useOnMountRouting } from './useOnMountRouting'
 
 export default function Root() {
   return (

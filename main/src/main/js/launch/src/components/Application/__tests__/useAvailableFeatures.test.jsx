@@ -1,11 +1,11 @@
 // Link.react.test.js
 import React, { useEffect, useLayoutEffect } from 'react'
 import { create, act } from 'react-test-renderer'
-import { useRecoilState, useResetRecoilState } from 'recoil'
+import { useRecoilState } from 'recoil'
 import ApplicationState from '../../../state/ApplicationState'
+
 import {
   sdkFactoryState,
-  sdkState,
   selectedVersionState,
   useApplicationType,
   useAvailableFeatures,

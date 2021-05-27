@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from 'react-materialize'
 import Icon from 'react-materialize/lib/Icon'
+import { ReactComponent as MicronautLaunchLogo } from '../../images/micronaut-launch.svg'
 import GitHub from '../GitHubLink'
-import Twitter from '../TwitterLink'
 import InfoButton from '../InfoButton'
 import ShareModal from '../NextSteps/ShareModal'
+import Twitter from '../TwitterLink'
 
-import { ReactComponent as MicronautLaunchLogo } from '../../images/micronaut-launch.svg'
 
 const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
   const [active, setActive] = useState(false)
