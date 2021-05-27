@@ -1,19 +1,24 @@
 import { useEffect, useRef } from 'react'
 
-import {
-  resolveActionRoute,
-  isDeepLinkReferral,
-  ACTIVITY_KEY,
-} from '../../helpers/Routing'
+import { resolveActionRoute, isDeepLinkReferral } from '../../helpers/Routing'
 
 import { useCurrenSdk } from '../../state/store'
 
 export function useOnMountRouting(initialData, routingHandlers, onError) {
-  useOnInitialLoadEffect(initialData, routingHandlers.onRepoCreated, onError)
-  useHandleShareLinkEffect(initialData, routingHandlers)
+  const sdk = useCurrenSdk()
+  useHandleRepoClonedRouteEvent(
+    initialData,
+    routingHandlers.onRepoCreated,
+    onError
+  )
+  useHandleShareLinkRouteEffect(sdk, initialData, routingHandlers)
 }
 
-export function useOnInitialLoadEffect(initialData, onRepoCreated, onError) {
+export function useHandleRepoClonedRouteEvent(
+  initialData,
+  onRepoCreated,
+  onError
+) {
   // Use Effect Hook For Error Handling and
   // GitHub on complete callback
   useEffect(() => {
@@ -36,14 +41,17 @@ export function useOnInitialLoadEffect(initialData, onRepoCreated, onError) {
   }, [initialData, onRepoCreated, onError])
 }
 
-export function useHandleShareLinkEffect(initialData, routingHandlers = {}) {
-  const sdk = useCurrenSdk()
+export function useHandleShareLinkRouteEffect(
+  sdk,
+  initialData,
+  routingHandlers = {}
+) {
   const isReferral = isDeepLinkReferral(initialData)
   const shareData = useRef(initialData)
 
   // Deep Linking
   useEffect(() => {
-    async function handleDeepLink() {
+    function handleDeepLink() {
       const activity = resolveActionRoute(shareData.current)
       if (!activity) {
         return
@@ -55,20 +63,19 @@ export function useHandleShareLinkEffect(initialData, routingHandlers = {}) {
         return
       }
 
-      const { showing } = shareData.current
-      delete shareData.current[ACTIVITY_KEY]
-      delete shareData.current.showing
-
       // This is a common react problem
       // Since we have to wait for the SDK to get initialized
       // but can't watch the create / features objects,
       // we need to rebuild at routing time.
-      const payload = shareData.current
-      await routingHandlers[activity](payload, sdk, { showing })
+      const { showing, ...payload } = shareData.current
+      // Trigger the route handler
+      routingHandlers[activity](payload, sdk, { showing })
     }
 
-    if (sdk?.baseUrl) {
+    if (sdk?.baseUrl && shareData.current) {
       handleDeepLink()
+      // Null out the share data now that the route was handled
+      shareData.current = null
     }
   }, [sdk, routingHandlers, isReferral, shareData])
 }
