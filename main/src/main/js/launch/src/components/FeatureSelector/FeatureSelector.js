@@ -1,19 +1,22 @@
 // FeatureSelector.js
 import React, { useMemo, useRef, useState } from 'react'
 
-import Modal from 'react-materialize/lib/Modal'
 import { Button } from 'react-materialize'
-import Icon from 'react-materialize/lib/Icon'
 import Col from 'react-materialize/lib/Col'
+import Icon from 'react-materialize/lib/Icon'
+import Modal from 'react-materialize/lib/Modal'
 import Preloader from 'react-materialize/lib/Preloader'
 import Row from 'react-materialize/lib/Row'
-import FeatureAvailable from './FeatureAvailable'
-import FeatureSelected from './FeatureSelected'
-import TextInput from '../TextInput'
-
-import TooltipButton from '../TooltipButton'
 import messages from '../../constants/messages.json'
 import { ModalKeyboardHandler } from '../../helpers/ModalKeyboardHandler'
+import {
+  useSelectedFeatures,
+  useSelectedFeaturesHandlers,
+} from '../../state/store'
+
+import TextInput from '../TextInput'
+import TooltipButton from '../TooltipButton'
+import FeatureAvailable from './FeatureAvailable'
 
 import './feature-selector.css'
 
@@ -50,43 +53,15 @@ const FeatureAvailableGroup = ({ category, entities, toggleFeatures }) => {
   )
 }
 
-export const FeatureSelectedList = ({ selectedFeatures, onRemoveFeature }) => {
-  const selectedFeatureValues = Object.values(selectedFeatures).sort((a, b) => {
-    return a.name > b.name ? 1 : -1
-  })
-
-  const sRows = useMemo(
-    () =>
-      selectedFeatureValues.map((f, idx) => (
-        <FeatureSelected
-          key={`${f.name}-${idx}`}
-          feature={f}
-          onRemoveFeature={() => onRemoveFeature(f)}
-        />
-      )),
-    [selectedFeatureValues, onRemoveFeature]
-  )
-
-  return (
-    <div className="col s12">
-      <h6>Included Features ({selectedFeatureValues.length})</h6>
-      {sRows}
-    </div>
-  )
-}
-
-export const FeatureSelectorModal = ({
-  features,
-  selectedFeatures,
-  loading,
-  onAddFeature,
-  onRemoveFeature,
-  onRemoveAllFeatures,
-  theme = 'light',
-}) => {
+export const FeatureSelectorModal = ({ theme = 'light' }) => {
   const inputRef = useRef(null)
 
+  const [selectedFeatures, , features, loading] = useSelectedFeatures()
+  const { onAddFeature, onRemoveFeature, onRemoveAllFeatures } =
+    useSelectedFeaturesHandlers()
+
   const [search, setSearch] = useState('')
+
   const selectedFeatureKeys = Object.keys(selectedFeatures)
   const availableFeatures = useMemo(() => {
     return features.map((feature) => {
@@ -181,13 +156,14 @@ export const FeatureSelectorModal = ({
           <div className="modal-header">
             <TextInput
               ref={inputRef}
+              id="features-selector-search-input"
               className="mn-input"
-              s={12}
               label="Search Features"
               placeholder="ex: cassandra"
               name="search"
-              value={search}
+              s={12}
               autoComplete="off"
+              value={search}
               onChangeText={setSearch}
             />
           </div>

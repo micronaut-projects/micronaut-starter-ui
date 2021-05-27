@@ -1,6 +1,6 @@
 import ErrorView from './ErrorView'
-import ErrorViewData from './ErrorViewData'
 import ErrorViewClipboard from './ErrorViewClipboard'
+import ErrorViewData from './ErrorViewData'
 
 import './error-view.css'
 

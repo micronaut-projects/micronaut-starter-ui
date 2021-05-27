@@ -1,8 +1,8 @@
 // TooltipButton.js
 import React from 'react'
-import Tooltip from '@material-ui/core/Tooltip'
 import { Button } from 'react-materialize'
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles'
+import Tooltip from '@material-ui/core/Tooltip'
 
 const theme = createMuiTheme({
   overrides: {

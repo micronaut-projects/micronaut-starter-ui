@@ -1,8 +1,8 @@
 // Footer.js
 import React, { useCallback, useMemo, useState } from 'react'
 import { Button } from 'react-materialize'
-import Modal from 'react-materialize/lib/Modal'
 import Icon from 'react-materialize/lib/Icon'
+import Modal from 'react-materialize/lib/Modal'
 import { HELP_SHORTCUT, SHORTCUT_REGISTRY } from '../constants/shortcuts'
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
 
