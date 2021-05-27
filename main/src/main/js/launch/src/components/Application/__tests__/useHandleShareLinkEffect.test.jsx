@@ -65,10 +65,9 @@ TEST_DATA.forEach(({ initialData, explain, hasError }) => {
       },
     }
 
-    let testRenderer
     act(() => {
-      testRenderer = create(
-        <ApplicationState>
+      create(
+        <ApplicationState initialData={initialData}>
           <TestView
             sdk={sdk}
             initialData={{ ...initialData }}

@@ -30,10 +30,13 @@ const initialForm = (initialData) => {
 }
 
 function extractAccessoryData(query = {}) {
+  const { debug, cloneUrl, htmlUrl, error, version } = query
   return {
-    version:
-      query?.version ?? getStorageValue('SELECTED_MN_VERSION', null)?.version,
-    debug: query.debug,
+    version: version ?? getStorageValue('SELECTED_MN_VERSION', null)?.version,
+    debug,
+    cloneUrl,
+    htmlUrl,
+    error,
   }
 }
 
@@ -49,6 +52,7 @@ export default function ApplicationState({ initialData, children }) {
     const accessory = extractAccessoryData(query)
     const init = Object.assign({}, initialValueData, accessory, initialData)
 
+    console.log({ query, init })
     set(initialValueState, init)
   }
 

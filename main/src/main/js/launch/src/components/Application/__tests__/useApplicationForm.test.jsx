@@ -5,16 +5,8 @@ import { useRecoilState } from 'recoil'
 import ApplicationState from '../../../state/ApplicationState'
 import { initialValueState } from '../../../state/store'
 
-const useMount = (cb) => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(() => cb(), [])
-}
-
-const TestView = ({ initialData }) => {
-  const [form, setInitialValue] = useRecoilState(initialValueState)
-  useMount(() => {
-    setInitialValue((prev) => ({ ...prev, ...initialData }))
-  })
+const TestView = () => {
+  const [form] = useRecoilState(initialValueState)
 
   return (
     <>
@@ -44,8 +36,8 @@ TEST_DATA.forEach(({ initialData }) => {
     let testRenderer
     act(() => {
       testRenderer = create(
-        <ApplicationState>
-          <TestView initialData={initialData} />
+        <ApplicationState initialData={initialData}>
+          <TestView />
         </ApplicationState>
       )
     })

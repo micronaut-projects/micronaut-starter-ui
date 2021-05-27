@@ -37,6 +37,56 @@ Array [
   >
     com.example
   </div>,
+  <div
+    className="features"
+  >
+    [object Object]
+  </div>,
+]
+`;
+
+exports[`Initial Form Data with "features" 1`] = `
+Array [
+  <div
+    className="type"
+  >
+    DEFAULT
+  </div>,
+  <div
+    className="test"
+  >
+    
+  </div>,
+  <div
+    className="build"
+  >
+    
+  </div>,
+  <div
+    className="lang"
+  >
+    
+  </div>,
+  <div
+    className="javaVersion"
+  >
+    
+  </div>,
+  <div
+    className="name"
+  >
+    demo
+  </div>,
+  <div
+    className="package"
+  >
+    com.example
+  </div>,
+  <div
+    className="features"
+  >
+    a,b,c
+  </div>,
 ]
 `;
 

@@ -37,7 +37,6 @@ export default function Root() {
   return (
     <ApplicationState>
       <App />
-      <DebugInfo />
     </ApplicationState>
   )
 }
@@ -63,6 +62,7 @@ export function App() {
         clipboard={error.clipboard}
         onClose={errorHandlers.onClear}
       />
+      <DebugInfo />
     </React.Suspense>
   )
 }
