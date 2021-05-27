@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application Launches 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "bottom": 0,
+      "display": "flex",
+      "justifyContent": "center",
+      "left": 0,
+      "padding": "1rem",
+      "position": "fixed",
+      "right": 0,
+      "top": 0,
+    }
+  }
+>
+  <svg
+    className="inverse-theme"
+    style={
+      Object {
+        "opacity": 0.1,
+        "position": "absolute",
+        "width": "90%",
+      }
+    }
+  >
+    micronaut-launch.svg
+  </svg>
+</div>
+`;

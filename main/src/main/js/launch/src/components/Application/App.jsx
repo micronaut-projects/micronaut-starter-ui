@@ -31,7 +31,7 @@ import { AppLoadingBackdrop } from './AppLoadingBackdrop'
 import { DebugInfo } from './DebugInfo'
 import { useOnMountRouting } from './useOnMountRouting'
 
-export default function Root() {
+export function Root() {
   return (
     <ApplicationState>
       <App />
