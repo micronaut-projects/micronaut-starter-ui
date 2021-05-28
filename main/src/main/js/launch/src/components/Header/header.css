@@ -1,136 +1,124 @@
 .mn-header {
-    padding: 20px 0;
-    padding-right: 5px;
-    display: flex;
-    align-items: flex-start;
+  padding: 20px 0;
+  padding-right: 5px;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  flex-direction: row;
+  width: 100%;
 }
 
 .mn-header .logo-wrapper {
-    flex: 0;
-    height: 120px;
+  flex: 1;
+  height: 120px;
 }
 
 .mn-header .logo-wrapper .mn-logo {
-    height: 100%;
+  height: 100%;
 }
 
 .mn-header .icon-wrapper {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    padding-top: 1em;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding-left: 2em;
 }
 
 .mn-header .header-icon {
-    margin: 0 5px;
+  margin: 0 5px;
 }
 
 .mn-header .btn-floating,
 .mn-header a.header-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--theme-light);
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    padding: 0;
-    background-color: var(--theme-dark);
-    border-radius: 50%;
-    cursor: pointer;
-    vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--theme-light);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  padding: 0;
+  background-color: var(--theme-dark);
+  border-radius: 50%;
+  cursor: pointer;
+  vertical-align: middle;
 }
 
 .mn-header button.dark,
 body.light .mn-header a.header-icon {
-    color: var(--theme-dark);
-    background-color: var(--theme-light);
+  color: var(--theme-dark);
+  background-color: var(--theme-light);
 }
 
 .mn-header .header-icon .MuiSvgIcon-root {
-    height: 32px;
-    width: 32px;
+  height: 32px;
+  width: 32px;
 }
 
+.mn-header .header-icon .MuiSvgIcon-root.mailto,
 .mn-header .header-icon .MuiSvgIcon-root.twitter {
-    height: 24px;
-    width: 24px;
+  height: 24px;
+  width: 24px;
 }
 
 .mn-header .btn-floating i {
-    line-height: 32px;
+  line-height: 32px;
 }
 
 .mn-header a.header-icon {
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-        0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
 .mn-header a.header-icon img {
-    height: 32px;
-    width: 32px;
+  height: 32px;
+  width: 32px;
 }
 
 .mn-header .mobile-icon-control {
-    display: none;
+  display: none;
 }
 
-@media only screen and (max-width: 840px) {
-    .mn-header .logo-wrapper {
-        height: 100px;
-    }
-    .mn-header .icon-wrapper {
-        padding-top: 0.8em;
-    }
-}
+@media only screen and (max-width: 600px) {
+  .mn-header .icon-wrapper > div {
+    --initial-padding-top: 20px;
+    --icon-increment-top: 36px;
+    position: absolute;
+    top: var(--initial-padding-top);
+    transition: top 0.3s ease;
+  }
 
-@media only screen and (max-width: 750px) {
-    .mn-header .logo-wrapper {
-        height: 80px;
-    }
-    .mn-header .icon-wrapper {
-        padding-top: 0.5em;
-    }
-}
+  .mn-header .icon-wrapper .mobile-icon-control {
+    display: initial;
+    transition: transform 0.3s ease;
+  }
 
-@media only screen and (max-width: 650px) {
-    .mn-header .logo-wrapper {
-        height: 60px;
-    }
-    .mn-header .icon-wrapper {
-        padding-top: 0.3em;
-    }
-}
-
-@media only screen and (max-width: 520px) {
-    .mn-header .icon-wrapper > div {
-        position: absolute;
-        top: 20px;
-        transition: top 0.3s ease;
-    }
-
-    .mn-header .icon-wrapper .mobile-icon-control {
-        display: initial;
-        transition: transform 0.3s ease;
-    }
-
-    .mn-header .icon-wrapper.active .mobile-icon-control {
-        transform: rotate(315deg);
-    }
-
-    .mn-header .icon-wrapper.active > div:nth-child(2) {
-        top: 56px;
-    }
-    .mn-header .icon-wrapper.active > div:nth-child(3) {
-        top: 92px;
-    }
-    .mn-header .icon-wrapper.active > div:nth-child(4) {
-        top: 128px;
-    }
-    .mn-header .icon-wrapper.active > div:nth-child(5) {
-        top: 164px;
-    }
+  .mn-header .icon-wrapper.active .mobile-icon-control {
+    transform: rotate(315deg);
+  }
+  .mn-header .icon-wrapper.active > div:nth-child(2) {
+    top: calc(var(--icon-increment-top) * 1 + var(--initial-padding-top));
+  }
+  .mn-header .icon-wrapper.active > div:nth-child(3) {
+    top: calc(var(--icon-increment-top) * 2 + var(--initial-padding-top));
+  }
+  .mn-header .icon-wrapper.active > div:nth-child(4) {
+    top: calc(var(--icon-increment-top) * 3 + var(--initial-padding-top));
+  }
+  .mn-header .icon-wrapper.active > div:nth-child(5) {
+    top: calc(var(--icon-increment-top) * 4 + var(--initial-padding-top));
+  }
+  .mn-header .icon-wrapper.active > div:nth-child(6) {
+    top: calc(var(--icon-increment-top) * 5 + var(--initial-padding-top));
+  }
+  .mn-header .icon-wrapper.active > div:nth-child(7) {
+    top: calc(var(--icon-increment-top) * 6 + var(--initial-padding-top));
+  }
+  .mn-header .icon-wrapper.active > div:nth-child(8) {
+    top: calc(var(--icon-increment-top) * 7 + var(--initial-padding-top));
+  }
 }
