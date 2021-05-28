@@ -84,6 +84,9 @@ body.light .mn-header a.header-icon {
 }
 
 @media only screen and (max-width: 600px) {
+  .mn-header .logo-wrapper {
+    height: calc(100vw / 5);
+  }
   .mn-header .icon-wrapper > div {
     --initial-padding-top: 20px;
     --icon-increment-top: 36px;
