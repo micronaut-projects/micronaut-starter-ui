@@ -78,9 +78,6 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
           <Getter theme={theme} className="header-icon" />
         </div>
         <div>
-          <Twitter theme={theme} className="header-icon" />
-        </div>
-        <div>
           <MailToLink theme={theme} className="header-icon" />
         </div>
       </div>

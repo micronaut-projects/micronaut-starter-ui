@@ -8,8 +8,8 @@ export const GitHubLink = ({ className, theme }) => {
   return (
     <a
       href="https://github.com/micronaut-projects/micronaut-starter"
-      aria-label="Micronaut Github Repo"
-      title="Micronaut Github Repo"
+      aria-label="Micronaut Launch Github Repo"
+      title="Micronaut Launch Github Repo"
       target="_blank"
       rel="noopener noreferrer"
       className={className}
