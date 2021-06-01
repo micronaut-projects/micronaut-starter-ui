@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from 'react-materialize'
 import Icon from 'react-materialize/lib/Icon'
-import GitHub from '../GitHubLink'
-import Twitter from '../TwitterLink'
+import GitHub from '../Links/GitHubLink'
+import Twitter from '../Links/TwitterLink'
+import Getter from '../Links/GetterLink'
+import MailToLink from '../Links/MailToLink'
 import InfoButton from '../InfoButton'
 import ShareModal from '../NextSteps/ShareModal'
 
@@ -26,23 +28,20 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
   }, [])
 
   return (
-    <div className="mn-header d-flex">
+    <div className="mn-header">
       <div className="logo-wrapper">
         <a href="https://micronaut.io">
           <MicronautLaunchLogo className="mn-logo micronaut-launch-logo" />
         </a>
       </div>
-      <span className={`icon-wrapper ${active && 'active'}`}>
+
+      <div className={`icon-wrapper ${active && 'active'}`}>
         <div
           className="mobile-icon-control"
           style={{ zIndex: 4000 }}
           onClick={toggle}
         >
-          <Button
-            floating
-            className={`${theme} header-icon`}
-            style={{ marginLeft: '5px' }}
-          >
+          <Button floating className={`${theme} header-icon`}>
             <Icon>add</Icon>
           </Button>
         </div>
@@ -54,11 +53,7 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
           theme={theme}
           trigger={
             <div>
-              <Button
-                floating
-                className={`${theme} header-icon`}
-                style={{ marginLeft: '5px' }}
-              >
+              <Button floating className={`${theme} header-icon`}>
                 <Icon className="header-icon">share</Icon>
               </Button>
             </div>
@@ -69,7 +64,6 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
             floating
             className={`${theme} header-icon`}
             onClick={onToggleTheme}
-            style={{ marginLeft: '5px' }}
           >
             <Icon>brightness_medium</Icon>
           </Button>
@@ -80,7 +74,13 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
         <div>
           <Twitter theme={theme} className="header-icon" />
         </div>
-      </span>
+        <div>
+          <Getter theme={theme} className="header-icon" />
+        </div>
+        <div>
+          <MailToLink theme={theme} className="header-icon" />
+        </div>
+      </div>
     </div>
   )
 }
