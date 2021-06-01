@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/launch/static/css/main.08df5120.chunk.css",
-    "main.js": "/launch/static/js/main.8ec29b9a.chunk.js",
-    "main.js.map": "/launch/static/js/main.8ec29b9a.chunk.js.map",
+    "main.js": "/launch/static/js/main.3d22780e.chunk.js",
+    "main.js.map": "/launch/static/js/main.3d22780e.chunk.js.map",
     "runtime-main.js": "/launch/static/js/runtime-main.560cf918.js",
     "runtime-main.js.map": "/launch/static/js/runtime-main.560cf918.js.map",
-    "static/js/2.ec1451f9.chunk.js": "/launch/static/js/2.ec1451f9.chunk.js",
-    "static/js/2.ec1451f9.chunk.js.map": "/launch/static/js/2.ec1451f9.chunk.js.map",
+    "static/js/2.90c52d51.chunk.js": "/launch/static/js/2.90c52d51.chunk.js",
+    "static/js/2.90c52d51.chunk.js.map": "/launch/static/js/2.90c52d51.chunk.js.map",
     "index.html": "/launch/index.html",
     "static/css/main.08df5120.chunk.css.map": "/launch/static/css/main.08df5120.chunk.css.map",
-    "static/js/2.ec1451f9.chunk.js.LICENSE.txt": "/launch/static/js/2.ec1451f9.chunk.js.LICENSE.txt",
+    "static/js/2.90c52d51.chunk.js.LICENSE.txt": "/launch/static/js/2.90c52d51.chunk.js.LICENSE.txt",
     "static/media/micronaut-launch.e1d5f6c8.svg": "/launch/static/media/micronaut-launch.e1d5f6c8.svg",
     "static/media/micronaut-white-icon.10ec0cd5.png": "/launch/static/media/micronaut-white-icon.10ec0cd5.png",
     "static/media/oci-logo.89c5c28b.svg": "/launch/static/media/oci-logo.89c5c28b.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.560cf918.js",
-    "static/js/2.ec1451f9.chunk.js",
+    "static/js/2.90c52d51.chunk.js",
     "static/css/main.08df5120.chunk.css",
-    "static/js/main.8ec29b9a.chunk.js"
+    "static/js/main.3d22780e.chunk.js"
   ]
 }
