@@ -185,7 +185,6 @@ const StarterForm = ({
           onChange={handleVersionChange}
           options={versions}
           loading={!ready}
-          expected={2}
         />
       </Col>
       <Col m={3} s={12} className="mn-radio">
