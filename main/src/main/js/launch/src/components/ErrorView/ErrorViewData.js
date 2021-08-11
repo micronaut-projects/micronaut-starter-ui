@@ -1,4 +1,5 @@
 // ErrorViewData.js
+export const FALLBACK_ERROR_MESSAGE = 'something went wrong.'
 export default class ErrorViewData {
   static SUCCESS = 'success'
   static ERROR = 'error'
@@ -65,23 +66,26 @@ export const errorHandlersFactory = (setError) => {
     if (response instanceof Error) {
       return setError(new ErrorViewData(response))
     }
-    const payload = ErrorViewData.ofError('something went wrong.')
+    const payload = ErrorViewData.ofError(FALLBACK_ERROR_MESSAGE)
     if (!response.json instanceof Function) {
       return setError(payload)
     }
     try {
       const json = await response.json()
-      const message = json.message || payload.message
+      const message =
+        json._embedded?.errors?.[0].message ?? json.message ?? payload.message
+
       setError(ErrorViewData.ofError(message))
-    } catch (e) {
+    } catch (err) {
       setError(payload)
     }
   }
 
   return {
     onClear: () => setError(ErrorViewData.ofNone()),
-    onSuccess: (message) => setError(ErrorViewData.ofSuccess(message)),
     onError: (message) => setError(ErrorViewData.ofError(message)),
+    onInfo: (message) => setError(ErrorViewData.ofInfo(message)),
+    onSuccess: (message) => setError(ErrorViewData.ofSuccess(message)),
     onWarn: (message) => setError(ErrorViewData.ofWarn(message)),
     onResponseError,
   }
