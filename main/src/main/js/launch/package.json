@@ -8,18 +8,20 @@
         "@material-ui/icons": "^4.11.2",
         "@material-ui/lab": "^4.0.0-alpha.58",
         "materialize-css": "^1.0.0",
-        "prettier": "^2.3.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-materialize": "^3.9.8",
-        "react-scripts": "^4.0.3",
-        "react-syntax-highlighter": "^12.2.1",
-        "react-test-renderer": "^17.0.2",
+        "react-syntax-highlighter": "^15.4.4",
         "recoil": "^0.3.1"
+    },
+    "devDependencies": {
+        "prettier": "^2.3.0",
+        "react-scripts": "^4.0.3",
+        "react-test-renderer": "^17.0.2"
     },
     "scripts": {
         "start": "react-scripts start",
-        "start-local": "export REACT_APP_API_URL=http://localhost:8080; export REACT_APP_SNAPSHOT_API_URL=http://localhost:8081;export CORS_ALLOWED_ORIGIN=http://localhost:3000; npm run start",
+        "start:local": "export REACT_APP_API_URL=http://localhost:8080; export REACT_APP_SNAPSHOT_API_URL=http://localhost:8081; export REACT_APP_NEXT_API_URL=http://localhost:8082; export CORS_ALLOWED_ORIGIN=http://localhost:3000; npm run start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
