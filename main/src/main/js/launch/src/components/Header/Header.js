@@ -1,15 +1,16 @@
 // Header.js
 import React, { useState, useEffect } from 'react'
+
 import { Button } from 'react-materialize'
 import Icon from 'react-materialize/lib/Icon'
-import GitHub from '../Links/GitHubLink'
-import Twitter from '../Links/TwitterLink'
-import Getter from '../Links/GetterLink'
-import MailToLink from '../Links/MailToLink'
-import InfoButton from '../InfoButton'
-import ShareModal from '../NextSteps/ShareModal'
-
 import { ReactComponent as MicronautLaunchLogo } from '../../images/micronaut-launch.svg'
+import InfoButton from '../InfoButton'
+import Getter from '../Links/GetterLink'
+import GitHub from '../Links/GitHubLink'
+import MailToLink from '../Links/MailToLink'
+import Twitter from '../Links/TwitterLink'
+
+import ShareModal from '../NextSteps/ShareModal'
 
 const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
   const [active, setActive] = useState(false)

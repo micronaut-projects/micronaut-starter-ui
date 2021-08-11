@@ -14,9 +14,12 @@ import {
   DIFF_ACTIVITY,
   CREATE_ACTIVITY,
 } from '../../helpers/Routing'
+import { useSharableLink } from '../../state/store'
 import CopyToClipboard from '../CopyToClipboard'
 
-const ShareModal = ({ sharable, theme, trigger, onClose }, ref) => {
+const ShareModal = ({ theme, trigger, onClose }, ref) => {
+  const sharable = useSharableLink()
+
   const actions = useMemo(() => {
     return [
       {
