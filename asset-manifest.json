@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/launch/static/css/main.2f49df17.chunk.css",
+    "main.css": "/launch/static/css/main.de82cef0.chunk.css",
     "main.js": "/launch/static/js/main.94cdc9b5.chunk.js",
     "main.js.map": "/launch/static/js/main.94cdc9b5.chunk.js.map",
     "runtime-main.js": "/launch/static/js/runtime-main.42ed269e.js",
@@ -8,7 +8,7 @@
     "static/js/2.22210084.chunk.js": "/launch/static/js/2.22210084.chunk.js",
     "static/js/2.22210084.chunk.js.map": "/launch/static/js/2.22210084.chunk.js.map",
     "index.html": "/launch/index.html",
-    "static/css/main.2f49df17.chunk.css.map": "/launch/static/css/main.2f49df17.chunk.css.map",
+    "static/css/main.de82cef0.chunk.css.map": "/launch/static/css/main.de82cef0.chunk.css.map",
     "static/js/2.22210084.chunk.js.LICENSE.txt": "/launch/static/js/2.22210084.chunk.js.LICENSE.txt",
     "static/media/micronaut-launch.e1d5f6c8.svg": "/launch/static/media/micronaut-launch.e1d5f6c8.svg",
     "static/media/micronaut-white-icon.10ec0cd5.png": "/launch/static/media/micronaut-white-icon.10ec0cd5.png",
@@ -17,7 +17,7 @@
   "entrypoints": [
     "static/js/runtime-main.42ed269e.js",
     "static/js/2.22210084.chunk.js",
-    "static/css/main.2f49df17.chunk.css",
+    "static/css/main.de82cef0.chunk.css",
     "static/js/main.94cdc9b5.chunk.js"
   ]
 }

@@ -1,0 +1,24 @@
+{
+    "versions": [
+        {
+            "key": "RELEASE",
+            "baseUrl": "https://launch.micronaut.io",
+            "order": 0
+        },
+        {
+            "key": "SNAPSHOT",
+            "baseUrl": "https://snapshot.micronaut.io",
+            "order": 1
+        },
+        {
+            "key": "NEXT",
+            "baseUrl": "https://next.micronaut.io",
+            "order": 2
+        },
+        {
+            "key": "PREV",
+            "baseUrl": "https://prev.micronaut.io",
+            "order": 3
+        }
+    ]
+}
