@@ -19,6 +19,7 @@ body {
   --theme-danger: rgb(148, 16, 0);
   --label-grey: #9e9e9e;
   --label-darkgrey: #686868;
+  --bundle-builder-trigger: black;
 }
 
 #root {
