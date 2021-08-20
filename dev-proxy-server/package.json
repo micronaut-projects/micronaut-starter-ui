@@ -4,7 +4,8 @@
   "description": "Simple Proxy Util",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node src/proxy-dev.js",
+    "start:starter": "node src/starter-dev.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
