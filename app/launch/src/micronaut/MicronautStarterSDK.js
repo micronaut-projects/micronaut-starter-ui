@@ -2,12 +2,14 @@ import { CacheApi, SessionStorageAdapter } from '../helpers/Cache'
 import { DEFAULT_APIS } from './constants'
 import { CreateCommand } from './CreateCommand'
 
-const responseHandler = (type = 'json') => (response) => {
-  if (!response.ok) {
-    throw response
+const responseHandler =
+  (type = 'json') =>
+  (response) => {
+    if (!response.ok) {
+      throw response
+    }
+    return response[type]()
   }
-  return response[type]()
-}
 
 export class MicronautStarterSDK {
   static DEFAULT_APIS = DEFAULT_APIS
