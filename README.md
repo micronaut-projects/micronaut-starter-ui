@@ -33,9 +33,10 @@ If you want to run against a version of the starter api (Micronaut Starter Api)[
 Outside of this project pull down that repo
 
 ```bash
-$ git clone git@github.com:micronaut-projects/micronaut-starter.git
-$ cd micronaut-starter
-$ ./gradlew starter-web-netty:run
+git clone git@github.com:micronaut-projects/micronaut-starter.git
+cd micronaut-starter
+export CORS_ALLOWED_ORIGIN=http://localhost:3000
+./gradlew starter-web-netty:run
 ```
 
 Then start up a version server to provide that instance
