@@ -1,5 +1,5 @@
 import { CacheApi, SessionStorageAdapter } from '../helpers/Cache'
-import { DEFAULT_APIS } from './constants'
+import { VERSION_FEED_URL } from './constants'
 import { CreateCommand } from './CreateCommand'
 
 const responseHandler =
@@ -12,8 +12,6 @@ const responseHandler =
   }
 
 export class MicronautStarterSDK {
-  static DEFAULT_APIS = DEFAULT_APIS
-
   constructor({ baseUrl }) {
     this.cacheApi = new CacheApi(new SessionStorageAdapter(`${baseUrl}`))
     this.baseUrl = baseUrl
@@ -242,11 +240,16 @@ export class MicronautStarterSDK {
   }
 
   static async loadVersions() {
+    const { versions } = await fetch(VERSION_FEED_URL).then(
+      responseHandler('json')
+    )
+
+    const maybeLoadVersion = (version) =>
+      this.loadVersion(version).catch((i) => null)
+
     return (
       await Promise.all(
-        Object.values(MicronautStarterSDK.DEFAULT_APIS)
-          .sort((a, b) => a.order - b.order)
-          .map((api) => this.loadVersion(api).catch((i) => null))
+        versions.sort((a, b) => a.order - b.order).map(maybeLoadVersion)
       )
     ).filter((i) => i)
   }
