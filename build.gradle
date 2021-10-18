@@ -12,23 +12,23 @@ apply plugin: 'base'
 apply plugin: "com.github.node-gradle.node"
 
 node {
-    nodeModulesDir = file("${rootProject.projectDir}/main/src/main/js/launch")
+    nodeModulesDir = file("${rootProject.projectDir}/app/launch")
 }
 
 task buildStarter(type: NpmTask) {
     dependsOn npmInstall
-    workingDir = file("${rootProject.projectDir}/main/src/main/js/launch")
+    workingDir = file("${rootProject.projectDir}/app/launch")
     args = ['run', 'build']
 }
 
 task copyLaunchAssets {
     doLast {
         copy {
-            from "${rootProject.projectDir}/main/src/main/js/launch/build"
+            from "${rootProject.projectDir}/app/launch/build"
             into "${project.buildDir}/launch"
         }
         copy {
-            from "${rootProject.projectDir}/main/src/main/resources/start"
+            from "${rootProject.projectDir}/app/start"
             into "${project.buildDir}/start"
             include '*.html'
         }

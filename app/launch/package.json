@@ -21,7 +21,7 @@
     },
     "scripts": {
         "start": "react-scripts start",
-        "start:local": "export REACT_APP_API_URL=http://localhost:8080; export REACT_APP_SNAPSHOT_API_URL=http://localhost:8081; export REACT_APP_NEXT_API_URL=http://localhost:8082; export REACT_APP_PREV_API_URL=http://localhost:8083; export CORS_ALLOWED_ORIGIN=http://localhost:3000; npm run start",
+        "start:local": "export export REACT_APP_VERSION_FEED='http://localhost:8088/mn-version-feed.json'; npm run start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
