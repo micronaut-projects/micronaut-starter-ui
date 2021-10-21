@@ -274,7 +274,8 @@ body.dark .dropdown-content li > span:hover {
 }
 
 body.light svg.mn-logo path,
-body.light svg.oci-logo path {
+body.light svg.micronaut-foundation path,
+body.light svg.micronaut-foundation polygon {
   fill: var(--theme-dark);
 }
 
@@ -286,7 +287,8 @@ body.dark svg.inverse-theme path {
 }
 
 body.dark svg.mn-logo path,
-body.dark svg.oci-logo path {
+body.dark svg.micronaut-foundation path,
+body.dark svg.micronaut-foundation polygon {
   fill: var(--theme-light);
 }
 
