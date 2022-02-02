@@ -28,7 +28,7 @@ const NextSteps = ({ info, theme = 'light', onClose, onStartOver }) => {
         const cmd = { [OS_NIX]: all, [OS_WINDOWS]: all }
         return { action: 'Clone the repo', cmd }
       case 'zip':
-        const nix = `unzip  ${name}.zip -d ${name}`
+        const nix = `unzip ${name}.zip`
         const unzip = { [OS_NIX]: nix }
         return { action: 'Unzip the archive', cmd: unzip }
       default:
