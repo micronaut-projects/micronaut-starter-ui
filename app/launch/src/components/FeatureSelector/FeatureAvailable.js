@@ -12,9 +12,12 @@ const FeatureAvailable = ({ feature, toggleFeatures }) => {
                 feature.selected && 'selected'
             }`}
             title={
-                feature.preview != null && feature.preview
+                (feature.preview != null && feature.preview
                     ? feature.name + ' (preview)'
-                    : feature.name
+                    : feature.name) +
+                (feature.community != null && feature.community
+                    ? ' (community)'
+                    : '')
             }
             onClick={(e) => toggleFeatures(e, feature)}
         >
