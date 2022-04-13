@@ -18,6 +18,8 @@ import { formResets } from './factories/formResets'
 import { StarterSDK } from './factories/StarterSDK'
 import { loadVersions } from './factories/versionLoader'
 
+export const NO_SELECTION_VALUE = '__NONE__';
+
 const INITIAL_FORM_DATA_STORAGE_KEY = 'INITIAL_FORM_DATA'
 
 const versionLoader = loadVersions()
@@ -112,6 +114,11 @@ export const appTypeState = atom({
   default: defaultValueSelectorFactory('type'),
 })
 
+export const cloudProviderState = atom({
+  key: 'CLOUD_PROVIDER_STATE',
+  default: defaultValueSelectorFactory('cloudProvider', NO_SELECTION_VALUE),
+})
+
 export const testState = atom({
   key: 'TEST_STATE',
   default: defaultValueSelectorFactory('test'),
@@ -143,8 +150,9 @@ export const availableFeaturesState = selector({
   get: async ({ get }) => {
     const sdk = get(sdkState)
     const type = get(appTypeState)
+    const cloudProvider = get(cloudProviderState)
     if (!sdk || !type) return []
-    const { features } = await sdk.features({ type })
+    const { features } = await sdk.features({ type, cloudProvider })
     return features
   },
 })
@@ -157,6 +165,7 @@ export const starterFormState = selector({
     const pkg = get(packageState)
     const build = get(buildState)
     const lang = get(langState)
+    const cloudProvider = get(cloudProviderState)
     const test = get(testState)
     const javaVersion = get(javaVersionState)
     const features = get(featuresState)
@@ -169,6 +178,7 @@ export const starterFormState = selector({
       name,
       package: pkg,
       javaVersion,
+      cloudProvider,
       lang,
       build,
       test,
@@ -212,9 +222,9 @@ const useDerivedDefultsEffect = (select, setter) => {
     if (!select) return
     const { defaultOption, options } = select
     setter((value) => {
-      if (!value) return defaultOption.value
+      if (!value) return defaultOption?.value ?? NO_SELECTION_VALUE
       const idx = options.findIndex((v) => v.value === value)
-      if (idx < 0) return defaultOption.value
+      if (idx < 0) return defaultOption?.value ?? NO_SELECTION_VALUE
       return value
     })
   }, [select, setter])
@@ -366,6 +376,13 @@ export const useJavaVersion = () => {
   return [value, setter, select]
 }
 
+export const useCloudProvider = () => {
+  const [value, setter] = useRecoilState(cloudProviderState)
+  const select = useSelectOptionsForType('cloudProvider')
+  useDerivedDefultsEffect(select, setter)
+  return [value, setter, select]
+}
+
 export const useStarterForm = () => {
   return useRecoilValue(starterFormState)
 }
@@ -395,6 +412,7 @@ export const useResetStarterForm = () => {
     set(langState, options.lang.defaultOption.value)
     set(testState, options.test.defaultOption.value)
     set(javaVersionState, options.jdkVersion.defaultOption.value)
+    set(cloudProviderState, null)
     set(featuresState, {})
   })
 }
