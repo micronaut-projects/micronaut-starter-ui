@@ -24,8 +24,8 @@ export default class ToCli {
     const applicationName = createCommand.applicationName()
 
     const features = buildFeaturesArgs(createCommand.features)
-    const cloud = createCommand.cloudProvider != null && createCommand.cloudProvider !== NO_SELECTION_VALUE ? createCommand.cloudProvider : ''
-    const opts = { build, jdk, lang, test, features, cloud }
+    const cloudprovider = createCommand.cloudProvider != null && createCommand.cloudProvider !== NO_SELECTION_VALUE ? createCommand.cloudProvider : ''
+    const opts = { build, jdk, lang, test, features, cloudprovider }
     const args = Object.keys(opts).reduce((acc, key) => {
       const value = opts[key]
       if (value) {
