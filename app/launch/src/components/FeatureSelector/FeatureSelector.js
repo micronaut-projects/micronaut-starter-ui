@@ -78,11 +78,12 @@ export const FeatureSelectorModal = ({ theme = 'light' }) => {
     }
     const lcSearch = search.toLowerCase()
     return availableFeatures.filter((feature) => {
-      const { name, description, category } = feature
+      const { name, description, category, tags } = feature
       return (
         name.toLowerCase().includes(lcSearch) ||
         description.toLowerCase().includes(lcSearch) ||
-        category.toLowerCase().includes(lcSearch)
+        category.toLowerCase().includes(lcSearch) ||
+          (tags && tags.toLowerCase().includes(lcSearch))
       )
     })
   }, [search, availableFeatures])
