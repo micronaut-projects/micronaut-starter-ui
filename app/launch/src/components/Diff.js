@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react'
 
-import { Button } from 'react-materialize'
+import { Button, Toast } from 'react-materialize'
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { Grid } from '@material-ui/core'
@@ -23,6 +23,25 @@ import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
 import { useStarterForm } from '../state/store'
 import { capitalize } from '../utility'
 import TooltipButton from './TooltipButton'
+
+const downloadFile = (name, content) => {
+  const blob = new Blob([ content ], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a')
+
+  link.setAttribute('href', url);
+  link.setAttribute('download', name);
+  link.click();
+};
+
+const copyToClipboard = async (content) => {
+  try {
+    await navigator.clipboard.writeText(content);
+  } 
+  catch (error) {
+    console.error("There was an error copying content to clipboard", error);
+  }
+};
 
 const Diff = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
   const { lang, build } = useStarterForm()
@@ -77,9 +96,13 @@ const Diff = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
         open={!!diff}
         options={options}
         actions={
-          <Button waves="light" modal="close" flat>
-            Close
-          </Button>
+          <React.Fragment>
+            <Button waves="light" modal="close" flat onClick={() => void copyToClipboard(diff)}>Copy to clipboard</Button>
+            <Button waves="light" modal="close" flat onClick={() => void downloadFile("patch.diff", diff)}>Download .patch file</Button>
+            <Button waves="light" modal="close" flat>
+              Close
+            </Button>
+          </React.Fragment>
         }
       >
         <Grid container className="grid-container">
