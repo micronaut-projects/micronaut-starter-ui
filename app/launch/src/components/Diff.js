@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react'
 
-import { Button, Toast } from 'react-materialize'
+import { Button } from 'react-materialize'
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { Grid } from '@material-ui/core'
@@ -97,8 +97,8 @@ const Diff = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
         options={options}
         actions={
           <React.Fragment>
-            <Button waves="light" modal="close" flat onClick={() => void copyToClipboard(diff)}>Copy to clipboard</Button>
-            <Button waves="light" modal="close" flat onClick={() => void downloadFile("patch.diff", diff)}>Download .patch file</Button>
+            <Button waves="light" flat onClick={() => void copyToClipboard(diff)}>Copy to clipboard</Button>
+            <Button waves="light" flat onClick={() => void downloadFile("patch.diff", diff)}>Download .patch file</Button>
             <Button waves="light" modal="close" flat>
               Close
             </Button>
