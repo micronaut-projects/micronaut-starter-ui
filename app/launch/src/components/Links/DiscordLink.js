@@ -6,7 +6,7 @@ export const DiscordLink = ({ className, theme }) => {
 
   return (
     <a
-      href="https://discord.com/channels/1121511613250412714/1122325810200719400"
+      href="https://discord.com/channels/1121511613250412714/1122324729756385300"
       aria-label="Micronaut Discord Channel"
       title="Micronaut Discord Channel"
       target="_blank"
