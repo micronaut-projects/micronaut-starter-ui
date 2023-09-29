@@ -55,7 +55,7 @@ export class ModalKeyboardHandler {
       hasHeader: true,
     }
   ) {
-    if (!config instanceof Object) {
+    if (!(config instanceof Object)) {
       throw Error('ModalKeyboardHandler must be created with a config object')
     }
     this.config = config

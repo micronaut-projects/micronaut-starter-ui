@@ -25,4 +25,6 @@ class LangApi {
   }
 }
 
-export default new LangApi()
+const langApi = new LangApi()
+
+export default langApi
