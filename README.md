@@ -38,6 +38,8 @@ CORS_ALLOWED_ORIGIN=http://localhost:3000 ./gradlew starter-web-netty:run
 
 ### Run the dev proxy server
 
+In a separate terminal, at the root of this project:
+
 ```bash
 cd dev-proxy-server
 npm install
@@ -45,6 +47,8 @@ npm run start:starter
 ```
 
 ### Run the application locally
+
+In yet another terminal, at the root of this project:
 
 ```bash
 cd app/launch
