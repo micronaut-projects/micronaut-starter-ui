@@ -23,6 +23,15 @@ v20.8.0
 
 ### Run micronaut-starter locally
 
+Ensure you have micronaut-starter checked out somewhere:
+
+```bash
+git clone git@github.com:micronaut-projects/micronaut-starter.git
+cd micronaut-starter
+```
+
+And then run the starter-web-netty app (with the CORS filter configured):
+
 ```bash
 CORS_ALLOWED_ORIGIN=http://localhost:3000 ./gradlew starter-web-netty:run
 ```
@@ -39,6 +48,7 @@ npm run start:starter
 
 ```bash
 cd app/launch
+npm install
 npm run start:local
 ```
 
@@ -97,45 +107,3 @@ You can find the version feed file at [./app/launch/public/mn-version-feed.json]
       ...
   },
   ```
-
----
-## Previous instructions...
-
-These were here before I started working on this project. I'm leaving them here for now in case they are useful.
-
-## For local development mimicing production launch site:
-
-- To bypass CORS restrictions, Launch the Local Version / Proxy Server
-
-```
-cd ./dev-proxy-server
-npm run start
-```
-
-- Start the dev build of the site
-
-```
-cd ./app/launch/
-npm run start:local
-```
-
-## Running a Micronaut Starter API locally to dev against
-
-If you want to run against a version of the starter api (Micronaut Starter Api)[https://github.com/micronaut-projects/micronaut-starter]
-
-Outside of this project pull down that repo
-
-```bash
-git clone git@github.com:micronaut-projects/micronaut-starter.git
-cd micronaut-starter
-export CORS_ALLOWED_ORIGIN=http://localhost:3000
-./gradlew starter-web-netty:run
-```
-
-Then start up a version server to provide that instance
-
-```
-cd ./dev-proxy-server
-npm run start:starter
-```
-
