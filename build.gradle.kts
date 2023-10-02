@@ -3,6 +3,7 @@ import com.github.gradle.node.npm.task.NpmTask
 plugins {
     id("base")
     id("com.github.node-gradle.node") version "7.0.0"
+    id("org.nosphere.gradle.github.actions") version "1.3.2"
 }
 
 node {
