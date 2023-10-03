@@ -24,6 +24,25 @@ import { useStarterForm } from '../state/store'
 import { capitalize } from '../utility'
 import TooltipButton from './TooltipButton'
 
+const downloadFile = (content) => {
+  const blob = new Blob([ content ], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a')
+
+  link.setAttribute('href', url);
+  link.setAttribute('download', "patch.diff");
+  link.click();
+};
+
+const copyToClipboard = async (content) => {
+  try {
+    await navigator.clipboard.writeText(content);
+  } 
+  catch (error) {
+    console.error("There was an error copying content to clipboard", error);
+  }
+};
+
 const Diff = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
   const { lang, build } = useStarterForm()
 
@@ -77,9 +96,13 @@ const Diff = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
         open={!!diff}
         options={options}
         actions={
-          <Button waves="light" modal="close" flat>
-            Close
-          </Button>
+          <React.Fragment>
+            <Button waves="light" flat onClick={() => void copyToClipboard(diff)}>Copy to clipboard</Button>
+            <Button waves="light" flat onClick={() => void downloadFile(diff)}>Download .patch file</Button>
+            <Button waves="light" modal="close" flat>
+              Close
+            </Button>
+          </React.Fragment>
         }
       >
         <Grid container className="grid-container">
