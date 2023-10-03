@@ -24,13 +24,13 @@ import { useStarterForm } from '../state/store'
 import { capitalize } from '../utility'
 import TooltipButton from './TooltipButton'
 
-const downloadFile = (name, content) => {
+const downloadFile = (content) => {
   const blob = new Blob([ content ], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a')
 
   link.setAttribute('href', url);
-  link.setAttribute('download', name);
+  link.setAttribute('download', "patch.diff");
   link.click();
 };
 
@@ -98,7 +98,7 @@ const Diff = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
         actions={
           <React.Fragment>
             <Button waves="light" flat onClick={() => void copyToClipboard(diff)}>Copy to clipboard</Button>
-            <Button waves="light" flat onClick={() => void downloadFile("patch.diff", diff)}>Download .patch file</Button>
+            <Button waves="light" flat onClick={() => void downloadFile(diff)}>Download .patch file</Button>
             <Button waves="light" modal="close" flat>
               Close
             </Button>
