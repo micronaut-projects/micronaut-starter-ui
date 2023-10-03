@@ -1,10 +1,10 @@
 // TooltipButton.js
 import React from 'react'
 import { Button } from 'react-materialize'
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles'
+import {MuiThemeProvider, createTheme} from '@material-ui/core/styles'
 import Tooltip from '@material-ui/core/Tooltip'
 
-const theme = createMuiTheme({
+const theme = createTheme({
   overrides: {
     MuiTooltip: {
       tooltip: {

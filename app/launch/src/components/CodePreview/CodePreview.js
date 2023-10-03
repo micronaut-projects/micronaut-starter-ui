@@ -251,7 +251,7 @@ const CodePreview = ({ theme = 'light', disabled, onLoad, onClose }, ref) => {
             {currentFile.contents && (
               <SyntaxHighlighter
                 className="codePreview"
-                lineNumberContainerProps={{
+                lineNumberContainerStyle={{
                   className: 'lineNumbers',
                 }}
                 language={currentFile.language}
