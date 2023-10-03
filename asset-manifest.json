@@ -1,23 +1,16 @@
 {
   "files": {
-    "main.css": "/launch/static/css/main.6dfe806f.chunk.css",
-    "main.js": "/launch/static/js/main.ac14b376.chunk.js",
-    "main.js.map": "/launch/static/js/main.ac14b376.chunk.js.map",
-    "runtime-main.js": "/launch/static/js/runtime-main.42ed269e.js",
-    "runtime-main.js.map": "/launch/static/js/runtime-main.42ed269e.js.map",
-    "static/js/2.12d648a2.chunk.js": "/launch/static/js/2.12d648a2.chunk.js",
-    "static/js/2.12d648a2.chunk.js.map": "/launch/static/js/2.12d648a2.chunk.js.map",
+    "main.css": "/launch/static/css/main.fa46a5a9.css",
+    "main.js": "/launch/static/js/main.4fc8e750.js",
+    "static/media/micronaut-foundation-logo.svg": "/launch/static/media/micronaut-foundation-logo.712e98de6c75f2e7fd2c06acd36747df.svg",
+    "static/media/micronaut-launch.svg": "/launch/static/media/micronaut-launch.e1d5f6c83fd36d4615059d604ce5316b.svg",
+    "static/media/micronaut-white-icon.png": "/launch/static/media/micronaut-white-icon.10ec0cd5258d29378cce.png",
     "index.html": "/launch/index.html",
-    "static/css/main.6dfe806f.chunk.css.map": "/launch/static/css/main.6dfe806f.chunk.css.map",
-    "static/js/2.12d648a2.chunk.js.LICENSE.txt": "/launch/static/js/2.12d648a2.chunk.js.LICENSE.txt",
-    "static/media/micronaut-foundation-logo.712e98de.svg": "/launch/static/media/micronaut-foundation-logo.712e98de.svg",
-    "static/media/micronaut-launch.e1d5f6c8.svg": "/launch/static/media/micronaut-launch.e1d5f6c8.svg",
-    "static/media/micronaut-white-icon.10ec0cd5.png": "/launch/static/media/micronaut-white-icon.10ec0cd5.png"
+    "main.fa46a5a9.css.map": "/launch/static/css/main.fa46a5a9.css.map",
+    "main.4fc8e750.js.map": "/launch/static/js/main.4fc8e750.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.42ed269e.js",
-    "static/js/2.12d648a2.chunk.js",
-    "static/css/main.6dfe806f.chunk.css",
-    "static/js/main.ac14b376.chunk.js"
+    "static/css/main.fa46a5a9.css",
+    "static/js/main.4fc8e750.js"
   ]
 }
