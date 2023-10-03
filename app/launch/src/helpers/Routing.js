@@ -60,7 +60,7 @@ export function isDeepLinkReferral(shareData = {}) {
 }
 
 export function resolveActionRoute(queryData) {
-  if (!queryData instanceof Object) {
+  if (!(queryData instanceof Object)) {
     return
   }
   const { activity } = queryData

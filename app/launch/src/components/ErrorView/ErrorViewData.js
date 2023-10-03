@@ -67,7 +67,7 @@ export const errorHandlersFactory = (setError) => {
       return setError(new ErrorViewData(response))
     }
     const payload = ErrorViewData.ofError(FALLBACK_ERROR_MESSAGE)
-    if (!response.json instanceof Function) {
+    if (!(response.json instanceof Function)) {
       return setError(payload)
     }
     try {

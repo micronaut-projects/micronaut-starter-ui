@@ -5,7 +5,7 @@ import { Button } from 'react-materialize'
 import Icon from 'react-materialize/lib/Icon'
 import { ReactComponent as MicronautLaunchLogo } from '../../images/micronaut-launch.svg'
 import InfoButton from '../InfoButton'
-import Getter from '../Links/GetterLink'
+import Discord from '../Links/DiscordLink'
 import GitHub from '../Links/GitHubLink'
 import MailToLink from '../Links/MailToLink'
 import Twitter from '../Links/TwitterLink'
@@ -76,7 +76,7 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
           <Twitter theme={theme} className="header-icon" />
         </div>
         <div>
-          <Getter theme={theme} className="header-icon" />
+          <Discord theme={theme} className="header-icon" />
         </div>
         <div>
           <MailToLink theme={theme} className="header-icon" />

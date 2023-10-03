@@ -1,56 +1,69 @@
 # Micronaut Launch UI
 
 [![Build Status](https://github.com/micronaut-projects/micronaut-starter-ui/workflows/Publish/badge.svg)](https://github.com/micronaut-projects/micronaut-starter-ui/actions)
+[![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.micronaut.io/scans)
 
 This project builds the [Micronaut Launch UI](https://launch.micronaut.io).
 
 ## To build the site for CI run:
 
 ```bash
-./gradlew build --console=plain
+./gradlew build
 ```
 
-## For local development mimicing production launch site:
+## Running locally
 
-- To bypass CORS restrictions, Launch the Local Version / Proxy Server
+Tested on my machine with:
 
-```
-cd ./dev-proxy-server
-npm run start
-```
-
-- Start the dev build of the site
-
-```
-cd ./app/launch/
-npm run start:local
+```bash
+❯ npm --version
+10.1.0
+❯ node --version
+v20.8.0
 ```
 
-## Running a Micronaut Starter API locally to dev against
+### Run micronaut-starter locally
 
-If you want to run against a version of the starter api (Micronaut Starter Api)[https://github.com/micronaut-projects/micronaut-starter]
-
-Outside of this project pull down that repo
+Ensure you have micronaut-starter checked out somewhere:
 
 ```bash
 git clone git@github.com:micronaut-projects/micronaut-starter.git
 cd micronaut-starter
-export CORS_ALLOWED_ORIGIN=http://localhost:3000
-./gradlew starter-web-netty:run
 ```
 
-Then start up a version server to provide that instance
+And then run the starter-web-netty app (with the CORS filter configured):
 
+```bash
+CORS_ALLOWED_ORIGIN=http://localhost:3000 ./gradlew starter-web-netty:run
 ```
-cd ./dev-proxy-server
+
+### Run the dev proxy server
+
+In a separate terminal, at the root of this project:
+
+```bash
+cd dev-proxy-server
+npm install
 npm run start:starter
 ```
+
+### Run the application locally
+
+In yet another terminal, at the root of this project:
+
+```bash
+cd app/launch
+npm install
+npm run start:local
+```
+
+Your default browser should then navigate to http://localhost:3000/launch
 
 ## Updating The Version feed
 
 You can find the version feed file at [./app/launch/public/mn-version-feed.json](./app/launch/public/mn-version-feed.json). It must be in valid JSON format, so beware of these gotyas!
 
-**Keys must be quoted**
+#### Keys must be quoted
 
 - GOOD
 
@@ -72,7 +85,7 @@ You can find the version feed file at [./app/launch/public/mn-version-feed.json]
   }
   ```
 
-**No trailing comma**
+#### No trailing comma
 
 - GOOD
 
