@@ -1,7 +1,7 @@
 # Micronaut Launch UI
 
 [![Build Status](https://github.com/micronaut-projects/micronaut-starter-ui/workflows/Publish/badge.svg)](https://github.com/micronaut-projects/micronaut-starter-ui/actions)
-[![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.micronaut.io/scans)
+[![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.micronaut.io/scans)
 
 This project builds the [Micronaut Launch UI](https://launch.micronaut.io).
 
