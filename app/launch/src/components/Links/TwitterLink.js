@@ -4,7 +4,7 @@ import React from 'react'
 export const TwitterLink = ({ className, theme }) => {
   const backgroundColor =
     theme === 'dark' ? 'var(--theme-light)' : 'var(--theme-dark)'
-  const color = theme === 'dark' ? 'var(--theme-dark)' : 'white'
+  const fill = theme === 'dark' ? 'var(--theme-dark)' : 'white'
 
   return (
     <a
