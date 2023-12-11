@@ -21,7 +21,7 @@ export const TwitterLink = ({ className, theme }) => {
         <svg
             aria-hidden="true"
             focusable="false"
-            viewBox="-50 -28.5 356 256"
+            viewBox="-100 -100 500 500"
             width="32px"
         >
             <path
