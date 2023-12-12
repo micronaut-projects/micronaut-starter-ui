@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/launch/static/css/main.fa46a5a9.css",
-    "main.js": "/launch/static/js/main.1c72594c.js",
+    "main.js": "/launch/static/js/main.d84bcfc4.js",
     "static/media/micronaut-foundation-logo.svg": "/launch/static/media/micronaut-foundation-logo.712e98de6c75f2e7fd2c06acd36747df.svg",
     "static/media/micronaut-launch.svg": "/launch/static/media/micronaut-launch.e1d5f6c83fd36d4615059d604ce5316b.svg",
     "static/media/micronaut-white-icon.png": "/launch/static/media/micronaut-white-icon.10ec0cd5258d29378cce.png",
     "index.html": "/launch/index.html",
     "main.fa46a5a9.css.map": "/launch/static/css/main.fa46a5a9.css.map",
-    "main.1c72594c.js.map": "/launch/static/js/main.1c72594c.js.map"
+    "main.d84bcfc4.js.map": "/launch/static/js/main.d84bcfc4.js.map"
   },
   "entrypoints": [
     "static/css/main.fa46a5a9.css",
-    "static/js/main.1c72594c.js"
+    "static/js/main.d84bcfc4.js"
   ]
 }
