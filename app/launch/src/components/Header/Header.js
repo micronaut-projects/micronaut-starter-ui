@@ -8,6 +8,7 @@ import InfoButton from '../InfoButton'
 import Discord from '../Links/DiscordLink'
 import GitHub from '../Links/GitHubLink'
 import MailToLink from '../Links/MailToLink'
+import Mastodon from '../Links/MastodonLink'
 import Twitter from '../Links/TwitterLink'
 
 import ShareModal from '../NextSteps/ShareModal'
@@ -77,6 +78,9 @@ const Header = ({ info, theme, onToggleTheme, onShowInfo, sharable }) => {
         </div>
         <div>
           <Discord theme={theme} className="header-icon" />
+        </div>
+        <div>
+          <Mastodon theme={theme} className="header-icon" />
         </div>
         <div>
           <MailToLink theme={theme} className="header-icon" />
