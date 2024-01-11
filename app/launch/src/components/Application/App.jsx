@@ -160,11 +160,6 @@ export function AppContainer({ initialData, errorHandlers }) {
 
   const getFormData = useGetStarterForm()
 
-  // GitHub Clone Feat
-  const onCloneProject = async (e) => {
-    setLoading(true)
-  }
-
   // Create Feat
   const onGenerateProject = async (e) => {
     requestPrep(e)
@@ -229,7 +224,6 @@ export function AppContainer({ initialData, errorHandlers }) {
                   <GenerateButtons
                     theme={theme}
                     disabled={disabled}
-                    cloneProject={onCloneProject}
                     generateProject={onGenerateProject}
                   />
                 </Col>

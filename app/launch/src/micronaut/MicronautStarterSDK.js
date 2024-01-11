@@ -140,19 +140,6 @@ export class MicronautStarterSDK {
     return new CreateCommand(configuration, baseUrl)
   }
 
-  /**
-   * Get The HREF for the clone to github feature.
-   * @param {String} the baseUrl
-   * @param  {Object} configuration The create command data
-   * @return {String} The link will begin processing the github workflow with redirects
-   */
-  static githubHrefForUrl(baseUrl, configuration) {
-    if (!baseUrl) {
-      return '#'
-    }
-    const createCommand = new CreateCommand(configuration, baseUrl)
-    return createCommand.toUrl('github')
-  }
 
   static curlCommand(baseUrl, configuration) {
     if (!baseUrl) {
