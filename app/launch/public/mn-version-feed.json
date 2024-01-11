@@ -11,14 +11,9 @@
             "order": 1
         },
         {
-            "key": "NEXT",
-            "baseUrl": "https://next.micronaut.io",
-            "order": 2
-        },
-        {
             "key": "PREV",
             "baseUrl": "https://prev.micronaut.io",
-            "order": 3
+            "order": 2
         }
     ]
 }
