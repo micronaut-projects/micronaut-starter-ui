@@ -4,7 +4,7 @@ const VERSION_FEED_URL = "https://micronaut.io/launch/mn-version-feed.json";
 const { startVersionServer, toLocalUrl } = require("./commands");
 
 /**
- * Start a version server server that serves up
+ * Start a version server that serves up
  * Micronaut Starter API (https://github.com/micronaut-projects/micronaut-starter)
  * you are running locally, which by default runs on port 8080
  * when started via `./gradlew :starter-web-netty:run`
