@@ -177,15 +177,6 @@ export const starterFormState = selector({
   },
 })
 
-export const gitHubLinkState = selector({
-  key: 'GITHUB_LINK_STATE',
-  get: ({ get }) => {
-    const form = get(starterFormState)
-    const baseUrl = get(baseUrlState)
-    return StarterSDK.githubHrefForUrl(baseUrl, form)
-  },
-})
-
 export const createCommandState = selector({
   key: 'CREATE_COMMAND_STATE',
   get: ({ get }) => {
@@ -226,10 +217,6 @@ export function useCurrenSdk() {
 
 export function useInitialData() {
   return useRecoilValue(initialValueState)
-}
-
-export function useGitHubShareLink() {
-  return useRecoilValue(gitHubLinkState)
 }
 
 export function useSharableLink() {
