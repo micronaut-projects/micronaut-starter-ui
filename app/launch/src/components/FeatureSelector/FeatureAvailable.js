@@ -17,6 +17,9 @@ const FeatureAvailable = ({ feature, toggleFeatures }) => {
                     : feature.name) +
                 (feature.community != null && feature.community
                     ? ' (community)'
+                    : '') +
+                (feature.cloudProvider != null
+                    ? ' (' + feature.cloudProvider + ')'
                     : '')
             }
             onClick={(e) => toggleFeatures(e, feature)}

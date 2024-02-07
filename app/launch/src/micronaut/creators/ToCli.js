@@ -1,3 +1,5 @@
+import {NO_SELECTION_VALUE} from "../../state/store";
+
 function deriveCommand(type) {
   switch (type) {
     case 'DEFAULT':
@@ -22,7 +24,8 @@ export default class ToCli {
     const applicationName = createCommand.applicationName()
 
     const features = buildFeaturesArgs(createCommand.features)
-    const opts = { build, jdk, lang, test, features }
+    const cloudprovider = createCommand.cloudProvider != null && createCommand.cloudProvider !== NO_SELECTION_VALUE ? createCommand.cloudProvider : ''
+    const opts = { build, jdk, lang, test, features, cloudprovider }
     const args = Object.keys(opts).reduce((acc, key) => {
       const value = opts[key]
       if (value) {

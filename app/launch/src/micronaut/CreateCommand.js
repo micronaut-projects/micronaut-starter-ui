@@ -4,7 +4,7 @@ import ToUrl from './creators/ToUrl'
 
 export class CreateCommand {
   constructor(
-    { type, javaVersion, build, lang, test, name, package: _package, features },
+    { type, javaVersion, build, lang, test, cloudProvider, name, package: _package, features },
     baseUrl = ''
   ) {
     this.type = type
@@ -13,6 +13,7 @@ export class CreateCommand {
     this.lang = lang
     this.build = build
     this.test = test
+    this.cloudProvider = cloudProvider
     this.package = _package
     this.features = features
     this.baseUrl = baseUrl

@@ -1,6 +1,7 @@
 import {
   KEY_CODE_A,
   KEY_CODE_B,
+  KEY_CODE_C,
   KEY_CODE_D,
   KEY_CODE_ENTER,
   KEY_CODE_J,
@@ -74,6 +75,12 @@ export const NEXT_TEST_SHORTCUT = {
   keys: [KEY_CODE_SHIFT, KEY_CODE_T],
 }
 
+export const NEXT_CLOUD_PROVIDER_SHORTCUT = {
+  label: 'Toggle to the Next Cloud Provider',
+  textValue: SHIFT_TEXT + ' + C',
+  keys: [KEY_CODE_SHIFT, KEY_CODE_C],
+}
+
 export const SHORTCUT_REGISTRY = [
   HELP_SHORTCUT,
   GENERATE_SHORTCUT,
@@ -85,4 +92,5 @@ export const SHORTCUT_REGISTRY = [
   NEXT_LANG_SHORTCUT,
   NEXT_BUILD_SHORTCUT,
   NEXT_TEST_SHORTCUT,
+  NEXT_CLOUD_PROVIDER_SHORTCUT,
 ]
