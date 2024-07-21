@@ -1,3 +1,5 @@
+import {NO_SELECTION_VALUE} from "../../state/store";
+
 function buildFeaturesQuery(features) {
   return Object.keys(features)
     .reduce((array, feature) => {
@@ -20,6 +22,7 @@ export default class ToUrl {
       build,
       test,
       javaVersion,
+      cloudProvider,
       features,
       baseUrl,
     } = createCommand
@@ -32,6 +35,7 @@ export default class ToUrl {
       build && `build=${build}`,
       test && `test=${test}`,
       javaVersion && `javaVersion=${javaVersion}`,
+      cloudProvider && createCommand.cloudProvider !== NO_SELECTION_VALUE && `cloudProvider=${cloudProvider}`,
     ].filter((i) => i)
 
     const featuresQuery = buildFeaturesQuery(features)

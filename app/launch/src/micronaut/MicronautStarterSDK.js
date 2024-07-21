@@ -87,9 +87,9 @@ export class MicronautStarterSDK {
    * @param  {String} options.type Application Type
    * @return {Promise<Array>}               List of features
    */
-  async features({ type }) {
+  async features({ type, cloudProvider }) {
     return this._cache(
-      `/application-types/${type}/features`,
+      `/application-types/${type}/features${cloudProvider ? `?cloudProvider=${cloudProvider}` : ''}`,
       responseHandler('json')
     )
   }
