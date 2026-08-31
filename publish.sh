@@ -31,8 +31,9 @@ fi
 
 git clone https://${GH_TOKEN}@github.com/${GITHUB_SLUG}.git -b gh-pages gh-pages --single-branch > /dev/null
 cd gh-pages
-cp -r ../build/launch/* .
-if git diff --quiet; then
+mkdir -p launch
+rsync -a --delete ../build/launch/ launch/
+if [ -z "$(git status --porcelain)" ]; then
   echo "No changes in Micronaut Launch Website"
 else
   git add -A

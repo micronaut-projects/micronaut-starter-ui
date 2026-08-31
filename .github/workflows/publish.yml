@@ -28,5 +28,5 @@ jobs:
       - name: Publish Micronaut Launch
         run: ./publish.sh
         env:
-          GITHUB_SLUG: micronaut-projects/micronaut-starter-ui
+          GITHUB_SLUG: micronaut-projects/micronaut-web
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
