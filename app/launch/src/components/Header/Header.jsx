@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 
 import { Button } from 'react-materialize'
 import Icon from 'react-materialize/lib/Icon'
-import { ReactComponent as MicronautLaunchLogo } from '../../images/micronaut-launch.svg'
+import MicronautLaunchLogo from '../../images/micronaut-launch.svg?react'
 import InfoButton from '../InfoButton'
 import Discord from '../Links/DiscordLink'
 import GitHub from '../Links/GitHubLink'

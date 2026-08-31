@@ -1,4 +1,4 @@
-import { ReactComponent as BackdropImage } from '../../images/micronaut-launch.svg'
+import BackdropImage from '../../images/micronaut-launch.svg?react'
 
 export function AppLoadingBackdrop({ children }) {
   return (

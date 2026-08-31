@@ -2,33 +2,40 @@
     "name": "app",
     "version": "0.1.1",
     "private": true,
-    "homepage": "https://micronaut.io/launch",
+    "engines": {
+        "node": ">=24.20.0"
+    },
     "dependencies": {
         "@material-ui/core": "^4.11.4",
         "@material-ui/icons": "^4.11.3",
         "@material-ui/lab": "^4.0.0-alpha.61",
-        "materialize-css": "^1.0.0",
+        "lodash": "^4.18.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-materialize": "^3.10.0",
-        "react-syntax-highlighter": "^15.5.0",
+        "react-syntax-highlighter": "^16.1.1",
         "recoil": "^0.7.7"
     },
     "devDependencies": {
-        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-        "prettier": "^2.3.0",
-        "react-scripts": "^5.0.1",
-        "react-test-renderer": "^17.0.2"
+        "@vitejs/plugin-react": "^6.1.1",
+        "eslint": "^10.9.1",
+        "eslint-plugin-import-x": "^4.17.1",
+        "jsdom": "^30.0.1",
+        "prettier": "^3.9.6",
+        "react-test-renderer": "^17.0.2",
+        "vite": "^8.2.2",
+        "vite-plugin-svgr": "^5.2.0",
+        "vitest": "^4.1.11"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "start:local": "export export REACT_APP_VERSION_FEED='http://localhost:8088/mn-version-feed.json'; npm run start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
-        "format": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
-        "lint": "eslint './src/**/*.js'",
-        "lint:fix": "eslint './src/**/*.js' --fix"
+        "start": "vite",
+        "start:local": "VITE_VERSION_FEED='http://localhost:8088/mn-version-feed.json' vite",
+        "build": "vite build",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "format": "prettier --write \"**/*.+(js|jsx|mjs|json|css|md)\"",
+        "lint": "eslint './src/**/*.{js,jsx}'",
+        "lint:fix": "eslint './src/**/*.{js,jsx}' --fix"
     },
     "browserslist": {
         "production": [

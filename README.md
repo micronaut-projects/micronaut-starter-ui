@@ -17,9 +17,9 @@ Tested on my machine with:
 
 ```bash
 ❯ npm --version
-10.1.0
+11.19.0
 ❯ node --version
-v20.8.0
+v24.20.0
 ```
 
 ### Run micronaut-starter locally

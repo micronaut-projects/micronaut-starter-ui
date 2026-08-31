@@ -26,7 +26,6 @@ const MockSdk = {
 }
 
 const useMount = (cb) => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => cb(), [])
 }
 

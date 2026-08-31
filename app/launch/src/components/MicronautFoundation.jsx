@@ -1,6 +1,6 @@
 //MicronautFoundation.js
 import React from 'react'
-import { ReactComponent as MicronautFoundationLogo } from '../images/micronaut-foundation-logo.svg'
+import MicronautFoundationLogo from '../images/micronaut-foundation-logo.svg?react'
 
 const MicronautFoundation = ({theme}) => {
   return (
