@@ -31,3 +31,9 @@ jobs:
         env:
           GITHUB_SLUG: micronaut-projects/micronaut-web
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Trigger Micronaut web deployment
+        run: |
+          gh api --method POST repos/micronaut-projects/micronaut-web/dispatches \
+            -f event_type=micronaut-starter-ui-published
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
